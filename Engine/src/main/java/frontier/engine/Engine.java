@@ -27,7 +27,11 @@ public class Engine {
     }
 
     public void render() {
-        renderer.clear();
+        renderer.beginFrame();
+
+        renderer.render();
+
+        renderer.endFrame();
     }
 
     public void shutdown() {

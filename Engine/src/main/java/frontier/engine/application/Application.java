@@ -25,9 +25,9 @@ public class Application {
     }
 
     private void initialize() {
+        mainWindow.create();
         engine.initialize(config);
 
-        mainWindow.create();
         game.initialize(engine);
     }
 
