@@ -1,0 +1,4 @@
+rootProject.name = 'Frontier'
+
+include 'Engine'
+include 'Game'
