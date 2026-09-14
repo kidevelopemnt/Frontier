@@ -30,10 +30,10 @@ public class VertexArray {
 
         GL20.glVertexAttribPointer(
                 0,
-                2,
+                3,
                 GL11.GL_FLOAT,
                 false,
-                2 * Float.BYTES,
+                3 * Float.BYTES,
                 0
         );
 

@@ -12,7 +12,7 @@ public class Application {
     double lastTime = System.nanoTime() / 1e9;
 
     public Application(ApplicationConfiguration config, IGame game) {
-        this.engine = new Engine();
+        this.engine = new Engine(this);
         this.mainWindow = new Window();
         this.game = game;
         this.config = config;
@@ -50,5 +50,9 @@ public class Application {
         game.shutdown();
         mainWindow.destroy();
         engine.shutdown();
+    }
+
+    public Window getMainWindow() {
+        return mainWindow;
     }
 }

@@ -1,5 +1,6 @@
 package frontier.engine.application;
 
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -82,5 +83,10 @@ public class Window {
     private void saveSizeAndPosition() {
         GLFW.glfwGetWindowPos(window, savedX, savedY);
         GLFW.glfwGetWindowSize(window, savedWidth, savedHeight);
+    }
+
+    public Vector2f getSize() {
+        saveSizeAndPosition();
+        return new Vector2f(savedWidth[0], savedHeight[0]);
     }
 }

@@ -1,5 +1,8 @@
 package frontier.engine.graphics;
 
+import frontier.engine.Engine;
+import frontier.engine.application.Window;
+import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
 
@@ -9,16 +12,22 @@ import java.nio.FloatBuffer;
 import java.nio.charset.StandardCharsets;
 
 public class Renderer {
+    private Engine engine;
+    private Camera camera;
+
     private VertexBuffer vertexBuffer;
     private VertexArray vertexArray;
     private Shader shader;
     private Transform transform;
 
-    public void initialize() {
+    public void initialize(Engine engine) {
+        this.engine = engine;
+        camera = new Camera();
+
         float[] vertices = {
-            0.5f,  0.5f,
-            -0.5f, -0.5f,
-            0.5f, -0.5f
+            0.0f,  0.5f, 0.0f,
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f
         };
 
         transform = new Transform();
@@ -35,10 +44,18 @@ public class Renderer {
     }
 
     public void render() {
-        vertexArray.bind();
         shader.bind();
 
         shader.setMatrix4f("model", transform.getMatrix());
+        shader.setMatrix4f("view", camera.getViewMatrix());
+        Window mainWindow = engine.getApp().getMainWindow();
+        Vector2f winSize = mainWindow.getSize();
+        shader.setMatrix4f(
+                "projection",
+                camera.getProjectionMatrix(winSize.x / winSize.y)
+        );
+
+        vertexArray.bind();
 
         GL11.glDrawArrays(
             GL11.GL_TRIANGLES,
