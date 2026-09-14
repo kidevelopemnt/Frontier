@@ -1,11 +1,16 @@
 package frontier.engine.graphics;
 
+import org.joml.Matrix4f;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.FloatBuffer;
 import java.nio.charset.StandardCharsets;
+
 
 public class Shader {
     private String vertSource;
@@ -77,6 +82,22 @@ public class Shader {
 
     public void delete() {
         GL20.glDeleteProgram(shaderProgram);
+    }
+
+    public void setMatrix4f(String name, Matrix4f matrix) {
+        int location = GL20.glGetUniformLocation(shaderProgram, name);
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(16);
+
+            matrix.get(buffer);
+
+            GL20.glUniformMatrix4fv(
+                    location,
+                    false,
+                    buffer
+            );
+        }
     }
 
     private static String loadShader(String path) {

@@ -12,13 +12,16 @@ public class Renderer {
     private VertexBuffer vertexBuffer;
     private VertexArray vertexArray;
     private Shader shader;
+    private Transform transform;
 
     public void initialize() {
         float[] vertices = {
-            0.2f,  0.5f,
+            0.5f,  0.5f,
             -0.5f, -0.5f,
             0.5f, -0.5f
         };
+
+        transform = new Transform();
 
         shader = new Shader("shaders/basic.vert", "shaders/basic.frag");
         vertexBuffer = new VertexBuffer(vertices);
@@ -28,11 +31,14 @@ public class Renderer {
 
     public void beginFrame() {
         clear();
+        // transform.position.set(transform.position.x + 0.01f, 0.0f, 0.0f);
     }
 
     public void render() {
         vertexArray.bind();
         shader.bind();
+
+        shader.setMatrix4f("model", transform.getMatrix());
 
         GL11.glDrawArrays(
             GL11.GL_TRIANGLES,
