@@ -15,27 +15,63 @@ public class Renderer {
     private Engine engine;
     private Camera camera;
 
-    private VertexBuffer vertexBuffer;
-    private VertexArray vertexArray;
+    private Mesh mesh;
     private Shader shader;
     private Transform transform;
 
     public void initialize(Engine engine) {
         this.engine = engine;
         camera = new Camera();
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
 
         float[] vertices = {
-            0.0f,  0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f
+                // Front
+                -0.5f, -0.5f,  0.5f,
+                0.5f, -0.5f,  0.5f,
+                0.5f,  0.5f,  0.5f,
+                -0.5f,  0.5f,  0.5f,
+
+                // Back
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f,  0.5f, -0.5f,
+                -0.5f,  0.5f, -0.5f
+        };
+
+        int[] indices = {
+                // Front
+                0, 1, 2,
+                0, 2, 3,
+
+                // Back
+                5, 4, 7,
+                5, 7, 6,
+
+                // Left
+                4, 0, 3,
+                4, 3, 7,
+
+                // Right
+                1, 5, 6,
+                1, 6, 2,
+
+                // Top
+                3, 2, 6,
+                3, 6, 7,
+
+                // Bottom
+                4, 5, 1,
+                4, 1, 0
         };
 
         transform = new Transform();
+        transform.position.z = 0;
+        transform.rotation.y = (float) Math.toRadians(30);
+        transform.rotation.x = (float) Math.toRadians(20);
 
         shader = new Shader("shaders/basic.vert", "shaders/basic.frag");
-        vertexBuffer = new VertexBuffer(vertices);
-        vertexArray = new VertexArray();
-        vertexArray.addVertexBuffer(vertexBuffer);
+        mesh = new Mesh(vertices, indices);
+        mesh.bind();
     }
 
     public void beginFrame() {
@@ -55,12 +91,11 @@ public class Renderer {
                 camera.getProjectionMatrix(winSize.x / winSize.y)
         );
 
-        vertexArray.bind();
-
-        GL11.glDrawArrays(
+        GL11.glDrawElements(
             GL11.GL_TRIANGLES,
-            0,
-            3
+            mesh.getIndexCount(),
+            GL11.GL_UNSIGNED_INT,
+            0
         );
     }
 
@@ -70,23 +105,17 @@ public class Renderer {
 
     public void shutdown() {
         shader.delete();
-        vertexBuffer.delete();
-        vertexArray.delete();
+        mesh.delete();
     }
 
     public void clear() {
         GL11.glClear(
-                GL11.GL_COLOR_BUFFER_BIT |
-                        GL11.GL_DEPTH_BUFFER_BIT
+        GL11.GL_COLOR_BUFFER_BIT |
+                GL11.GL_DEPTH_BUFFER_BIT
         );
     }
 
-    public void setFillColor(
-            float r,
-            float g,
-            float b,
-            float a
-    ) {
+    public void setFillColor(float r, float g, float b, float a) {
         GL11.glClearColor(r, g, b, a);
     }
 }

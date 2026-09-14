@@ -40,6 +40,11 @@ public class VertexArray {
         GL20.glEnableVertexAttribArray(0);
     }
 
+    public void setIndexBuffer(IndexBuffer indexBuffer) {
+        // this.indexBuffer = indexBuffer;
+        indexBuffer.bind();
+    }
+
     public void bind() {
         GL30.glBindVertexArray(vao);
     }
