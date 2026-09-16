@@ -5,6 +5,8 @@ import frontier.engine.application.ApplicationConfiguration;
 import frontier.engine.graphics.Renderer;
 import frontier.engine.core.Logger;
 import frontier.engine.core.Time;
+import frontier.engine.graphics.Shader;
+import frontier.engine.graphics.lighting.DirectionalLight;
 
 import java.awt.desktop.AppForegroundListener;
 
@@ -12,6 +14,9 @@ public class Engine {
     private Logger logger;
     private Renderer renderer;
     private Time time;
+
+    public GameObject object;  // TODO: Add scenes, this is Temporary!
+    public DirectionalLight lightObject;
 
     private Application application;
 
@@ -38,7 +43,8 @@ public class Engine {
     public void render() {
         renderer.beginFrame();
 
-        renderer.render();
+
+        renderer.render(object);
 
         renderer.endFrame();
     }

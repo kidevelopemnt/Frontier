@@ -1,8 +1,13 @@
 package frontier.engine.graphics;
 
 import frontier.engine.Engine;
+import frontier.engine.GameObject;
 import frontier.engine.application.Window;
+import frontier.engine.graphics.lighting.DirectionalLight;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
 
@@ -15,74 +20,31 @@ public class Renderer {
     private Engine engine;
     private Camera camera;
 
-    private Mesh mesh;
-    private Shader shader;
-    private Transform transform;
+    private Shader defaultShader;
+    private Vector3f ambientLight = new Vector3f(0.5f, 0.5f, 0.5f);
 
     public void initialize(Engine engine) {
         this.engine = engine;
         camera = new Camera();
+
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-        float[] vertices = {
-                // Front
-                -0.5f, -0.5f,  0.5f,
-                0.5f, -0.5f,  0.5f,
-                0.5f,  0.5f,  0.5f,
-                -0.5f,  0.5f,  0.5f,
-
-                // Back
-                -0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, -0.5f,
-                0.5f,  0.5f, -0.5f,
-                -0.5f,  0.5f, -0.5f
-        };
-
-        int[] indices = {
-                // Front
-                0, 1, 2,
-                0, 2, 3,
-
-                // Back
-                5, 4, 7,
-                5, 7, 6,
-
-                // Left
-                4, 0, 3,
-                4, 3, 7,
-
-                // Right
-                1, 5, 6,
-                1, 6, 2,
-
-                // Top
-                3, 2, 6,
-                3, 6, 7,
-
-                // Bottom
-                4, 5, 1,
-                4, 1, 0
-        };
-
-        transform = new Transform();
-        transform.position.z = 0;
-        transform.rotation.y = (float) Math.toRadians(30);
-        transform.rotation.x = (float) Math.toRadians(20);
-
-        shader = new Shader("shaders/basic.vert", "shaders/basic.frag");
-        mesh = new Mesh(vertices, indices);
-        mesh.bind();
+        defaultShader = new Shader("shaders/basic.vert", "shaders/basic.frag");
     }
 
     public void beginFrame() {
         clear();
-        // transform.position.set(transform.position.x + 0.01f, 0.0f, 0.0f);
     }
 
-    public void render() {
-        shader.bind();
+    public void render(GameObject object) {
+        Material material = object.getMaterial();
 
-        shader.setMatrix4f("model", transform.getMatrix());
+        material.bind();
+
+        Shader shader = material.getShader();
+        Matrix4f model = object.getTransform().getMatrix();
+
+        shader.setMatrix4f("model", model);
         shader.setMatrix4f("view", camera.getViewMatrix());
         Window mainWindow = engine.getApp().getMainWindow();
         Vector2f winSize = mainWindow.getSize();
@@ -91,21 +53,39 @@ public class Renderer {
                 camera.getProjectionMatrix(winSize.x / winSize.y)
         );
 
+        shader.setVector3f("ambientLight", ambientLight);
+        DirectionalLight light = engine.lightObject;  // TODO: This is temporary, add scenes!
+        shader.setVector3f(
+                "lightDirection",
+                light.getDirection()
+        );
+
+        shader.setVector3f(
+                "directionalLight",
+                light.getColorWithIntensity()
+        );
+
+        Matrix3f normalMatrix = new Matrix3f(model).invert().transpose();
+        shader.setMatrix3f("normalMatrix", normalMatrix);
+
+        object.getMesh().bind();
+
         GL11.glDrawElements(
             GL11.GL_TRIANGLES,
-            mesh.getIndexCount(),
+            object.getMesh().getIndexCount(),
             GL11.GL_UNSIGNED_INT,
             0
         );
     }
+
 
     public void endFrame() {
 
     }
 
     public void shutdown() {
-        shader.delete();
-        mesh.delete();
+        defaultShader.delete();
+        // cube.delete();  TODO: Store a list of objects and delete all
     }
 
     public void clear() {
@@ -117,5 +97,9 @@ public class Renderer {
 
     public void setFillColor(float r, float g, float b, float a) {
         GL11.glClearColor(r, g, b, a);
+    }
+
+    public Shader getDefaultShader() {
+        return defaultShader;
     }
 }

@@ -24,11 +24,13 @@ dependencies {
     implementation "org.lwjgl:lwjgl-glfw::$lwjglNatives"
     implementation "org.lwjgl:lwjgl-opengl"
     implementation "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    implementation "org.lwjgl:lwjgl-stb:${lwjglVersion}"
     implementation "org.joml:joml:1.10.9"
 
-    runtimeOnly "org.lwjgl:lwjgl:3.4.3:natives-windows"
-    runtimeOnly "org.lwjgl:lwjgl-glfw:3.4.3:natives-windows"
-    runtimeOnly "org.lwjgl:lwjgl-opengl:3.4.3:natives-windows"
+    runtimeOnly "org.lwjgl:lwjgl:3.4.3:${lwjglNatives}"
+    runtimeOnly "org.lwjgl:lwjgl-glfw:3.4.3:${lwjglNatives}"
+    runtimeOnly "org.lwjgl:lwjgl-opengl:3.4.3:${lwjglNatives}"
+    runtimeOnly "org.lwjgl:lwjgl-stb:${lwjglVersion}:${lwjglNatives}"
 }
 
 test {

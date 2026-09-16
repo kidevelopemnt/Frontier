@@ -1,7 +1,9 @@
 package frontier.engine.graphics;
 
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
@@ -22,8 +24,7 @@ public class Shader {
 
         fragSource = loadShader(fragPath);
 
-        int vertexShader =
-                GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
+        int vertexShader = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
 
         GL20.glShaderSource(vertexShader, vertSource);
         GL20.glCompileShader(vertexShader);
@@ -98,6 +99,32 @@ public class Shader {
                     buffer
             );
         }
+    }
+
+    public void setMatrix3f(String name, Matrix3f matrix) {
+        int location = GL20.glGetUniformLocation(shaderProgram, name);
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(16);
+
+            matrix.get(buffer);
+
+            GL20.glUniformMatrix3fv(
+                    location,
+                    false,
+                    buffer
+            );
+        }
+    }
+
+    public void setVector3f(String name, Vector3f value) {
+        int location = GL20.glGetUniformLocation(shaderProgram, name);
+        GL20.glUniform3f(location, value.x, value.y, value.z);
+    }
+
+    public void setInt(String name, int value) {
+        int location = GL20.glGetUniformLocation(shaderProgram, name);
+        GL20.glUniform1i(location, value);
     }
 
     private static String loadShader(String path) {
