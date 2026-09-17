@@ -8,13 +8,18 @@ import frontier.engine.graphics.Mesh;
 import frontier.engine.graphics.Texture;
 import frontier.engine.graphics.lighting.DirectionalLight;
 import frontier.engine.graphics.lighting.PointLight;
+
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
+
 
 public class FrontierGame implements IGame {
 
     private Engine engine;
 
     private GameObject cube;
+    private float cameraSpeed = 5.0f;
+    private float sensitivity = 1.0f;
 
     @Override
     public void initialize(Engine engine) {
@@ -108,6 +113,33 @@ public class FrontierGame implements IGame {
     @Override
     public void update(float deltaTime) {
         cube.getTransform().rotation.y += 0.5f * deltaTime;
+
+        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_W)) {
+            engine.getRenderer().getCamera().moveForward(cameraSpeed * deltaTime);
+        }
+        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_A)) {
+            engine.getRenderer().getCamera().moveLeft(cameraSpeed * deltaTime);
+        }
+        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_S)) {
+            engine.getRenderer().getCamera().moveBackward(cameraSpeed * deltaTime);
+        }
+        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_D)) {
+            engine.getRenderer().getCamera().moveRight(cameraSpeed * deltaTime);
+        }
+        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_Q)) {
+            engine.getRenderer().getCamera().moveDown(cameraSpeed * deltaTime);
+        }
+        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_E)) {
+            engine.getRenderer().getCamera().moveUp(cameraSpeed * deltaTime);
+        }
+
+        float mouseX = engine.getInput().getMouseDeltaX();
+        float mouseY = engine.getInput().getMouseDeltaY();
+        // FIXME: ROTATION NOT WORKING
+        engine.getRenderer().getCamera().rotate(
+            -mouseY * sensitivity,
+            -mouseX * sensitivity
+        );
     }
 
     @Override

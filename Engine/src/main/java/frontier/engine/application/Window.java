@@ -46,6 +46,13 @@ public class Window {
         GLFW.glfwMakeContextCurrent(window);
         GLFW.glfwSwapInterval(1);
         GL.createCapabilities();
+
+        // TODO: Move this to be a toggleable show/hide mouse pointer, and add helper method
+        GLFW.glfwSetInputMode(
+                window,
+                GLFW.GLFW_CURSOR,
+                GLFW.GLFW_CURSOR_DISABLED
+        );
     }
 
     public boolean shouldClose() {
@@ -54,6 +61,10 @@ public class Window {
 
     public void update() {
         GLFW.glfwPollEvents();
+
+        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_W) == 1) {
+
+        }
     }
 
     public void draw() {
@@ -88,5 +99,9 @@ public class Window {
     public Vector2f getSize() {
         saveSizeAndPosition();
         return new Vector2f(savedWidth[0], savedHeight[0]);
+    }
+
+    public long getHandle() {
+        return window;
     }
 }

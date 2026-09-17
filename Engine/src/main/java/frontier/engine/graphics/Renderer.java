@@ -111,6 +111,10 @@ public class Renderer {
         GL11.glClearColor(r, g, b, a);
     }
 
+    public Camera getCamera() {
+        return camera;
+    }
+
     public Shader getDefaultShader() {
         return defaultShader;
     }

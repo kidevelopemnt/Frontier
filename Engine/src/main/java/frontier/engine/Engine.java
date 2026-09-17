@@ -7,9 +7,11 @@ import frontier.engine.core.Logger;
 import frontier.engine.core.Time;
 import frontier.engine.graphics.lighting.DirectionalLight;
 import frontier.engine.graphics.lighting.PointLight;
+import frontier.engine.input.Input;
 
 public class Engine {
     private Logger logger;
+    private Input input;
     private Renderer renderer;
     private Time time;
 
@@ -25,6 +27,7 @@ public class Engine {
 
     public void initialize(ApplicationConfiguration config) {
         logger = new Logger();
+        input = new Input(application.getMainWindow());
         renderer = new Renderer();
         time = new Time();
 
@@ -36,15 +39,14 @@ public class Engine {
     }
 
     public void update(double deltaTime) {
-
+        input.update();
+        // Game.update();
+        input.endFrame();
     }
 
     public void render() {
         renderer.beginFrame();
-
-
         renderer.render(object);
-
         renderer.endFrame();
     }
 
@@ -59,6 +61,10 @@ public class Engine {
 
     public Logger getLogger() {
         return logger;
+    }
+
+    public Input getInput() {
+        return input;
     }
 
     public Renderer getRenderer() {
