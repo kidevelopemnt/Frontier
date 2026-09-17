@@ -4,17 +4,12 @@ import frontier.engine.Engine;
 import frontier.engine.GameObject;
 import frontier.engine.application.Window;
 import frontier.engine.graphics.lighting.DirectionalLight;
+import frontier.engine.graphics.lighting.PointLight;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.FloatBuffer;
-import java.nio.charset.StandardCharsets;
 
 public class Renderer {
     private Engine engine;
@@ -54,15 +49,32 @@ public class Renderer {
         );
 
         shader.setVector3f("ambientLight", ambientLight);
-        DirectionalLight light = engine.lightObject;  // TODO: This is temporary, add scenes!
+        DirectionalLight directionalLight = engine.directionalLight;  // TODO: This is temporary, add scenes!
+        PointLight pointLight = engine.pointLight;
+
         shader.setVector3f(
                 "lightDirection",
-                light.getDirection()
+                directionalLight.getDirection()
         );
 
         shader.setVector3f(
                 "directionalLight",
-                light.getColorWithIntensity()
+                directionalLight.getColorWithIntensity()
+        );
+
+        shader.setVector3f(
+                "pointLightPosition",
+                pointLight.getPosition()
+        );
+
+        shader.setVector3f(
+                "pointLightColor",
+                pointLight.getColor()
+        );
+
+        shader.setFloat(
+                "pointLightIntensity",
+                pointLight.getIntensity()
         );
 
         Matrix3f normalMatrix = new Matrix3f(model).invert().transpose();

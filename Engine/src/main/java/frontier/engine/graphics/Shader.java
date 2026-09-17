@@ -127,6 +127,12 @@ public class Shader {
         GL20.glUniform1i(location, value);
     }
 
+    public void setFloat(String name, float value) {
+        int location = GL20.glGetUniformLocation(shaderProgram, name);
+        GL20.glUniform1f(location, value);
+    }
+
+
     private static String loadShader(String path) {
 
         try (InputStream input = Shader.class

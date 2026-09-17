@@ -11,6 +11,7 @@ uniform mat3 normalMatrix;
 
 out vec2 fragmentTexCoord;
 out vec3 fragmentNormal;
+out vec3 fragmentPosition;
 
 void main()
 {
@@ -22,4 +23,5 @@ void main()
 
     fragmentTexCoord = texCoord;
     fragmentNormal = normalize(normalMatrix * normal);
+    fragmentPosition = vec3(model * vec4(position, 1.0));
 }

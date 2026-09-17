@@ -5,18 +5,17 @@ import frontier.engine.application.ApplicationConfiguration;
 import frontier.engine.graphics.Renderer;
 import frontier.engine.core.Logger;
 import frontier.engine.core.Time;
-import frontier.engine.graphics.Shader;
 import frontier.engine.graphics.lighting.DirectionalLight;
-
-import java.awt.desktop.AppForegroundListener;
+import frontier.engine.graphics.lighting.PointLight;
 
 public class Engine {
     private Logger logger;
     private Renderer renderer;
     private Time time;
 
-    public GameObject object;  // TODO: Add scenes, this is Temporary!
-    public DirectionalLight lightObject;
+    public GameObject object;  // TODO: Add scenes, these are Temporary!
+    public DirectionalLight directionalLight;
+    public PointLight pointLight;
 
     private Application application;
 

@@ -2,17 +2,13 @@ package frontier.game;
 
 import frontier.engine.Engine;
 import frontier.engine.GameObject;
-import frontier.engine.core.Logger;
 import frontier.engine.game.IGame;
 import frontier.engine.graphics.Material;
 import frontier.engine.graphics.Mesh;
-import frontier.engine.graphics.Shader;
 import frontier.engine.graphics.Texture;
 import frontier.engine.graphics.lighting.DirectionalLight;
+import frontier.engine.graphics.lighting.PointLight;
 import org.joml.Vector3f;
-import org.w3c.dom.Text;
-
-import java.io.InputStream;
 
 public class FrontierGame implements IGame {
 
@@ -98,13 +94,20 @@ public class FrontierGame implements IGame {
                 1.0f
         );
 
+        PointLight lamp = new PointLight(
+                new Vector3f(2, 1, 2),
+                new Vector3f(1, 1, 1),
+                2.0f
+        );
+
         engine.object = cube;
-        engine.lightObject = sun;
+        engine.directionalLight = sun;
+        engine.pointLight = lamp;
     }
 
     @Override
     public void update(float deltaTime) {
-        cube.getTransform().rotation.y += 0.25f;
+        cube.getTransform().rotation.y += 0.5f * deltaTime;
     }
 
     @Override
