@@ -3,7 +3,7 @@ package frontier.engine.ecs.components;
 import frontier.engine.graphics.Material;
 import frontier.engine.graphics.Mesh;
 
-public class MeshRendererComponent extends Component {
+public class MeshRenderer extends Component {
     private Mesh mesh;
     private Material material;
 

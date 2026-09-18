@@ -37,7 +37,21 @@ public class Entity {
         return type.cast(components.get(type));
     }
 
-    public TransformComponent getTransform() {
+    public TransformComponent getTransformComponent() {
         return getComponent(TransformComponent.class);
+    }
+
+    public Transform getTransform() {
+        return getTransformComponent().getTransform();
+    }
+
+    public UUID getID() {
+        return id;
+    }
+
+    public void cleanup() {
+        for (Component c : components.values()) {
+            c.cleanup();
+        }
     }
 }

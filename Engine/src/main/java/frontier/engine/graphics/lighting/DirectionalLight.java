@@ -10,6 +10,11 @@ public class DirectionalLight extends Light {
         this.direction = direction;
     }
 
+    public DirectionalLight() {
+        super(new Vector3f(255f, 255f, 255f), 1);
+        this.direction = new Vector3f(1.0f, 0.0f, 0.0f);
+    }
+
     public Vector3f getDirection() {
         return direction;
     }

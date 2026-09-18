@@ -38,4 +38,8 @@ public class TransformComponent extends Component {
     public Vector3f getScale() {
         return transform.scale;
     }
+
+    public Transform getTransform() {
+        return transform;
+    }
 }

@@ -2,10 +2,6 @@ package frontier.engine.graphics;
 
 import frontier.engine.Engine;
 import frontier.engine.application.Window;
-import frontier.engine.ecs.Entity;
-import frontier.engine.ecs.components.MeshRendererComponent;
-import frontier.engine.graphics.lighting.DirectionalLight;
-import frontier.engine.graphics.lighting.PointLight;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -32,14 +28,11 @@ public class Renderer {
         clear();
     }
 
-    public void render(Entity entity) {
-        MeshRendererComponent object = entity.getComponent(MeshRendererComponent.class);
-        Material material = object.getMaterial();
-
+    public void render(Mesh mesh, Material material, Transform transform) {
         material.bind();
 
         Shader shader = material.getShader();
-        Matrix4f model = entity.getTransform().getMatrix();
+        Matrix4f model = transform.getMatrix();
 
         shader.setMatrix4f("model", model);
         shader.setMatrix4f("view", camera.getViewMatrix());
@@ -51,10 +44,8 @@ public class Renderer {
         );
 
         shader.setVector3f("ambientLight", ambientLight);
-        DirectionalLight directionalLight = engine.directionalLight;  // TODO: This is temporary, add scenes!
-        PointLight pointLight = engine.pointLight;
 
-        shader.setVector3f(
+        /* shader.setVector3f(
                 "lightDirection",
                 directionalLight.getDirection()
         );
@@ -77,16 +68,16 @@ public class Renderer {
         shader.setFloat(
                 "pointLightIntensity",
                 pointLight.getIntensity()
-        );
+        ); */
 
         Matrix3f normalMatrix = new Matrix3f(model).invert().transpose();
         shader.setMatrix3f("normalMatrix", normalMatrix);
 
-        object.getMesh().bind();
+        mesh.bind();
 
         GL11.glDrawElements(
             GL11.GL_TRIANGLES,
-            object.getMesh().getIndexCount(),
+            mesh.getIndexCount(),
             GL11.GL_UNSIGNED_INT,
             0
         );

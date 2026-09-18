@@ -6,21 +6,21 @@ import frontier.engine.ecs.Entity;
 import frontier.engine.graphics.Renderer;
 import frontier.engine.core.Logger;
 import frontier.engine.core.Time;
+import frontier.engine.graphics.SceneRenderer;
 import frontier.engine.graphics.lighting.DirectionalLight;
 import frontier.engine.graphics.lighting.PointLight;
 import frontier.engine.input.Input;
+import frontier.engine.scene.Scene;
 
 public class Engine {
     private Logger logger;
     private Input input;
     private Renderer renderer;
+    private SceneRenderer sceneRenderer;
     private Time time;
 
-    public Entity entity;  // TODO: Add scenes, these are Temporary!
-    public DirectionalLight directionalLight;
-    public PointLight pointLight;
-
     private Application application;
+    private Scene activeScene;
 
     public Engine (Application application) {
         this.application = application;
@@ -30,6 +30,7 @@ public class Engine {
         logger = new Logger();
         input = new Input(application.getMainWindow());
         renderer = new Renderer();
+        sceneRenderer = new SceneRenderer(renderer);
         time = new Time();
 
         logger.setLogMode(config.logMode);
@@ -37,6 +38,14 @@ public class Engine {
 
         renderer.initialize(this);
         logger.logInfo("Engine initialized.");
+    }
+
+    public void loadScene(Scene scene) {
+        activeScene = scene;
+    }
+
+    public Scene getActiveScene() {
+        return activeScene;
     }
 
     public void update(double deltaTime) {
@@ -47,7 +56,9 @@ public class Engine {
 
     public void render() {
         renderer.beginFrame();
-        renderer.render(entity);
+        if (activeScene != null) {
+            sceneRenderer.render(activeScene);
+        }
         renderer.endFrame();
     }
 

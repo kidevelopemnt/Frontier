@@ -10,6 +10,11 @@ public class PointLight extends Light {
         this.position = position;
     }
 
+    public PointLight() {
+        super(new Vector3f(255f, 255f, 255f), 1);
+        this.position = new Vector3f(0.0f, 0.0f, 0.0f);
+    }
+
     public Vector3f getPosition() {
         return position;
     }
