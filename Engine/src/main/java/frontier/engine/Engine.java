@@ -2,6 +2,7 @@ package frontier.engine;
 
 import frontier.engine.application.Application;
 import frontier.engine.application.ApplicationConfiguration;
+import frontier.engine.ecs.Entity;
 import frontier.engine.graphics.Renderer;
 import frontier.engine.core.Logger;
 import frontier.engine.core.Time;
@@ -15,7 +16,7 @@ public class Engine {
     private Renderer renderer;
     private Time time;
 
-    public GameObject object;  // TODO: Add scenes, these are Temporary!
+    public Entity entity;  // TODO: Add scenes, these are Temporary!
     public DirectionalLight directionalLight;
     public PointLight pointLight;
 
@@ -46,7 +47,7 @@ public class Engine {
 
     public void render() {
         renderer.beginFrame();
-        renderer.render(object);
+        renderer.render(entity);
         renderer.endFrame();
     }
 

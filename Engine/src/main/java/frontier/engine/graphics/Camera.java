@@ -39,7 +39,7 @@ public class Camera {
         Vector3f forward = getForward();
 
         return new Vector3f(
-                -forward.z,
+                forward.z,
                 0,
                 forward.x
         ).normalize();

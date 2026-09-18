@@ -1,8 +1,9 @@
 package frontier.engine.graphics;
 
 import frontier.engine.Engine;
-import frontier.engine.GameObject;
 import frontier.engine.application.Window;
+import frontier.engine.ecs.Entity;
+import frontier.engine.ecs.components.MeshRendererComponent;
 import frontier.engine.graphics.lighting.DirectionalLight;
 import frontier.engine.graphics.lighting.PointLight;
 import org.joml.Matrix3f;
@@ -31,13 +32,14 @@ public class Renderer {
         clear();
     }
 
-    public void render(GameObject object) {
+    public void render(Entity entity) {
+        MeshRendererComponent object = entity.getComponent(MeshRendererComponent.class);
         Material material = object.getMaterial();
 
         material.bind();
 
         Shader shader = material.getShader();
-        Matrix4f model = object.getTransform().getMatrix();
+        Matrix4f model = entity.getTransform().getMatrix();
 
         shader.setMatrix4f("model", model);
         shader.setMatrix4f("view", camera.getViewMatrix());

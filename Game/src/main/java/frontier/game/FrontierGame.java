@@ -1,7 +1,8 @@
 package frontier.game;
 
 import frontier.engine.Engine;
-import frontier.engine.GameObject;
+import frontier.engine.ecs.Entity;
+import frontier.engine.ecs.components.MeshRendererComponent;
 import frontier.engine.game.IGame;
 import frontier.engine.graphics.Material;
 import frontier.engine.graphics.Mesh;
@@ -12,12 +13,14 @@ import frontier.engine.graphics.lighting.PointLight;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import java.lang.reflect.InvocationTargetException;
+
 
 public class FrontierGame implements IGame {
 
     private Engine engine;
 
-    private GameObject cube;
+    private Entity cube;
     private float cameraSpeed = 5.0f;
     private float sensitivity = 0.0025f;
 
@@ -85,13 +88,13 @@ public class FrontierGame implements IGame {
                 cubeTexture
         );
 
-        cube = new GameObject(
-                cubeMesh,
-                cubeMaterial
-        );
+        cube = new Entity("cube");
+        MeshRendererComponent meshRenderer = cube.addComponent(MeshRendererComponent.class);
+        meshRenderer.setMesh(cubeMesh);
+        meshRenderer.setMaterial(cubeMaterial);
 
-        cube.getTransform().rotation.y = (float) Math.toRadians(30);
-        cube.getTransform().rotation.x = (float) Math.toRadians(20);
+        cube.getTransform().getRotation().y = (float) Math.toRadians(30);
+        cube.getTransform().getRotation().x = (float) Math.toRadians(20);
 
         DirectionalLight sun = new DirectionalLight(
                 new Vector3f(-1, -1, -1),
@@ -105,14 +108,14 @@ public class FrontierGame implements IGame {
                 2.0f
         );
 
-        engine.object = cube;
+        engine.entity = cube;
         engine.directionalLight = sun;
         engine.pointLight = lamp;
     }
 
     @Override
     public void update(float deltaTime) {
-        cube.getTransform().rotation.y += 0.5f * deltaTime;
+        cube.getTransform().getRotation().y += 0.5f * deltaTime;
 
         if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_W)) {
             engine.getRenderer().getCamera().moveForward(cameraSpeed * deltaTime);
