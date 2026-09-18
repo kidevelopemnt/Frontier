@@ -3,6 +3,7 @@ package frontier.engine;
 import frontier.engine.application.Application;
 import frontier.engine.application.ApplicationConfiguration;
 import frontier.engine.ecs.Entity;
+import frontier.engine.ecs.components.Camera;
 import frontier.engine.graphics.Renderer;
 import frontier.engine.core.Logger;
 import frontier.engine.core.Time;
@@ -82,6 +83,11 @@ public class Engine {
     public Renderer getRenderer() {
         return renderer;
     }
+
+    public Camera getCamera() {
+        return sceneRenderer.findCamera(activeScene);
+    }
+
 
     public Time getTime() {
         return time;

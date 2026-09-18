@@ -42,4 +42,8 @@ public class LightComponent extends Component {
     public void setIntensity(float intensity) {
         this.intensity = intensity;
     }
+
+    public Vector3f getColorWithIntensity() {
+        return new Vector3f(color).mul(intensity);
+    }
 }

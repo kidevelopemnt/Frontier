@@ -26,6 +26,7 @@ public class Entity {
     public <T extends Component> T addComponent(Class<T> c) {
         try {
             Component component = c.getDeclaredConstructor().newInstance();
+            component.setEntity(this);
             components.put(c, component);
             return c.cast(component);
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {

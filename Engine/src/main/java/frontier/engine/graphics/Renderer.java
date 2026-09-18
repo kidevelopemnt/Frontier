@@ -2,6 +2,9 @@ package frontier.engine.graphics;
 
 import frontier.engine.Engine;
 import frontier.engine.application.Window;
+import frontier.engine.ecs.Entity;
+import frontier.engine.ecs.components.Camera;
+import frontier.engine.ecs.components.LightComponent;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -10,14 +13,12 @@ import org.lwjgl.opengl.*;
 
 public class Renderer {
     private Engine engine;
-    private Camera camera;
 
     private Shader defaultShader;
     private Vector3f ambientLight = new Vector3f(0.5f, 0.5f, 0.5f);
 
     public void initialize(Engine engine) {
         this.engine = engine;
-        camera = new Camera();
 
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
@@ -28,7 +29,7 @@ public class Renderer {
         clear();
     }
 
-    public void render(Mesh mesh, Material material, Transform transform) {
+    public void render(Mesh mesh, Material material, Transform transform, Camera camera, Entity directionalLight, Entity pointLight) {
         material.bind();
 
         Shader shader = material.getShader();
@@ -45,30 +46,33 @@ public class Renderer {
 
         shader.setVector3f("ambientLight", ambientLight);
 
-        /* shader.setVector3f(
+        LightComponent directionalLC = directionalLight.getComponent(LightComponent.class);
+        LightComponent pointLC = pointLight.getComponent(LightComponent.class);
+
+        shader.setVector3f(
                 "lightDirection",
-                directionalLight.getDirection()
+                directionalLight.getTransform().rotation
         );
 
         shader.setVector3f(
                 "directionalLight",
-                directionalLight.getColorWithIntensity()
+                directionalLC.getColorWithIntensity()
         );
 
         shader.setVector3f(
                 "pointLightPosition",
-                pointLight.getPosition()
+                pointLight.getTransform().position
         );
 
         shader.setVector3f(
                 "pointLightColor",
-                pointLight.getColor()
+                pointLC.getColor()
         );
 
         shader.setFloat(
                 "pointLightIntensity",
-                pointLight.getIntensity()
-        ); */
+                pointLC.getIntensity()
+        );
 
         Matrix3f normalMatrix = new Matrix3f(model).invert().transpose();
         shader.setMatrix3f("normalMatrix", normalMatrix);
@@ -102,10 +106,6 @@ public class Renderer {
 
     public void setFillColor(float r, float g, float b, float a) {
         GL11.glClearColor(r, g, b, a);
-    }
-
-    public Camera getCamera() {
-        return camera;
     }
 
     public Shader getDefaultShader() {
