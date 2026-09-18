@@ -19,7 +19,7 @@ public class FrontierGame implements IGame {
 
     private GameObject cube;
     private float cameraSpeed = 5.0f;
-    private float sensitivity = 1.0f;
+    private float sensitivity = 0.0025f;
 
     @Override
     public void initialize(Engine engine) {
@@ -135,10 +135,10 @@ public class FrontierGame implements IGame {
 
         float mouseX = engine.getInput().getMouseDeltaX();
         float mouseY = engine.getInput().getMouseDeltaY();
-        // FIXME: ROTATION NOT WORKING
+        System.out.println(mouseX + " " + mouseY);
         engine.getRenderer().getCamera().rotate(
-            -mouseY * sensitivity,
-            -mouseX * sensitivity
+            mouseY * sensitivity,
+            mouseX * sensitivity
         );
     }
 

@@ -9,6 +9,8 @@ public class Input {
     private double mouseX;
     private double mouseY;
 
+    private double mouseDeltaX;
+    private double mouseDeltaY;
     private double lastMouseX;
     private double lastMouseY;
 
@@ -35,20 +37,29 @@ public class Input {
             lastMouseX = mouseX;
             lastMouseY = mouseY;
             firstMouse = false;
+
+            mouseDeltaX = 0;
+            mouseDeltaY = 0;
+
+            return;
         }
+
+        mouseDeltaX = mouseX - lastMouseX;
+        mouseDeltaY = mouseY - lastMouseY;
+
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
     }
 
     public float getMouseDeltaX() {
-        return (float) (mouseX - lastMouseX);
+        return (float) mouseDeltaX;
     }
 
     public float getMouseDeltaY() {
-        return (float) (mouseY - lastMouseY);
+        return (float) mouseDeltaY;
     }
 
     public void endFrame() {
-        lastMouseX = mouseX;
-        lastMouseY = mouseY;
-        System.out.println(lastMouseX);
+
     }
 }
