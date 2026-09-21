@@ -2,7 +2,6 @@ package frontier.engine.ecs;
 
 import frontier.engine.ecs.components.Component;
 import frontier.engine.ecs.components.TransformComponent;
-import frontier.engine.graphics.Material;
 import frontier.engine.graphics.Transform;
 
 import java.lang.reflect.InvocationTargetException;
@@ -23,12 +22,12 @@ public class Entity {
         components.put(TransformComponent.class, new TransformComponent());
     }
 
-    public <T extends Component> T addComponent(Class<T> c) {
+    public <T extends Component> T addComponent(Class<?> c) {
         try {
-            Component component = c.getDeclaredConstructor().newInstance();
+            Component component = (Component) c.getDeclaredConstructor().newInstance();
             component.setEntity(this);
-            components.put(c, component);
-            return c.cast(component);
+            components.put((Class<? extends Component>) c, component);
+            return (T) c.cast(component);
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -46,13 +45,42 @@ public class Entity {
         return getTransformComponent().getTransform();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public UUID getID() {
         return id;
+    }
+
+    public void setID(UUID id) {
+        this.id = id;
     }
 
     public void cleanup() {
         for (Component c : components.values()) {
             c.cleanup();
         }
+    }
+
+    public Map<String, Object> serialize() {
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("id", id.toString());
+        data.put("name", name);
+        // data.put("__TransformComponent", getTransformComponent().serialize());
+
+        for (Component component : components.values()) {
+            data.put("__" + component.getClass().getSimpleName(), component.serialize());
+        }
+
+        // TODO: Serialize all components
+        // And put "__component": "TransformComponent"
+
+        return data;
     }
 }

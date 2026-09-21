@@ -4,8 +4,17 @@ import frontier.engine.graphics.Transform;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Camera extends Component {
     float limit = (float) Math.toRadians(89.0);
+
+    @Override
+    public Map<String, Object> serialize() {
+        Map<String, Object> data = new HashMap<>();
+        return data;
+    }
 
     public Matrix4f getViewMatrix() {
         Transform transform = getEntity().getTransform();

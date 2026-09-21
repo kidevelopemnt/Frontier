@@ -14,6 +14,8 @@ import frontier.engine.scene.Scene;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.UUID;
+
 
 public class FrontierGame implements IGame {
 
@@ -27,6 +29,7 @@ public class FrontierGame implements IGame {
     @Override
     public void initialize(Engine engine) {
         this.engine = engine;
+        engine.loadScene(new Scene("Test Scene").getFilepath());
         engine.getRenderer().setFillColor(.1f, .2f, .1f, 1.0f);
 
         float[] vertices = {
@@ -88,9 +91,9 @@ public class FrontierGame implements IGame {
                 cubeTexture
         );
 
-        scene = new Scene();
+        scene = engine.getActiveScene();
 
-        cube = new Entity("cube");
+        /*cube = new Entity("cube");
         MeshRenderer meshRenderer = cube.addComponent(MeshRenderer.class);
         meshRenderer.setMesh(cubeMesh);
         meshRenderer.setMaterial(cubeMaterial);
@@ -123,9 +126,13 @@ public class FrontierGame implements IGame {
         scene.addEntity(cube);
         scene.addEntity(cube2);
         scene.addEntity(sun);
-        scene.addEntity(lamp);
+        scene.addEntity(lamp);*/
 
-        engine.loadScene(scene);
+        for (Entity entity : scene.getEntities()) {
+            if (entity.getName().equals("cube")) {
+                cube = entity;
+            }
+        }
     }
 
     @Override
@@ -133,6 +140,7 @@ public class FrontierGame implements IGame {
         cube.getTransform().rotation.y += 0.5f * deltaTime;
 
         if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_W)) {
+            // engine.saveScene();
             engine.getCamera().moveForward(cameraSpeed * deltaTime);
         }
         if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_A)) {
@@ -153,7 +161,6 @@ public class FrontierGame implements IGame {
 
         float mouseX = engine.getInput().getMouseDeltaX();
         float mouseY = engine.getInput().getMouseDeltaY();
-        System.out.println(mouseX + " " + mouseY);
         engine.getCamera().rotate(
             mouseY * sensitivity,
             mouseX * sensitivity

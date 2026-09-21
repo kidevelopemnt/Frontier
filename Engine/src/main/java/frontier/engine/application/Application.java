@@ -3,18 +3,22 @@ package frontier.engine.application;
 import frontier.engine.Engine;
 import frontier.engine.game.IGame;
 
+import java.nio.file.Path;
+
 public class Application {
     private final Engine engine;
     private final Window mainWindow;
     private final IGame game;
+    private final Path projectDirectory;
     private final ApplicationConfiguration config;
 
     double lastTime = System.nanoTime() / 1e9;
 
-    public Application(ApplicationConfiguration config, IGame game) {
+    public Application(Path projectDirectory, ApplicationConfiguration config, IGame game) {
         this.engine = new Engine(this);
         this.mainWindow = new Window();
         this.game = game;
+        this.projectDirectory = projectDirectory;
         this.config = config;
     }
 
@@ -54,5 +58,9 @@ public class Application {
 
     public Window getMainWindow() {
         return mainWindow;
+    }
+
+    public Path getProjectDirectory() {
+        return projectDirectory;
     }
 }

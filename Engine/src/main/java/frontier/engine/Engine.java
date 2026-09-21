@@ -12,6 +12,8 @@ import frontier.engine.graphics.lighting.DirectionalLight;
 import frontier.engine.graphics.lighting.PointLight;
 import frontier.engine.input.Input;
 import frontier.engine.scene.Scene;
+import frontier.engine.scene.SceneSerializer;
+import org.apache.commons.io.FilenameUtils;
 
 public class Engine {
     private Logger logger;
@@ -21,6 +23,7 @@ public class Engine {
     private Time time;
 
     private Application application;
+    private SceneSerializer sceneSerializer;
     private Scene activeScene;
 
     public Engine (Application application) {
@@ -32,6 +35,7 @@ public class Engine {
         input = new Input(application.getMainWindow());
         renderer = new Renderer();
         sceneRenderer = new SceneRenderer(renderer);
+        sceneSerializer = new SceneSerializer(this);
         time = new Time();
 
         logger.setLogMode(config.logMode);
@@ -41,8 +45,13 @@ public class Engine {
         logger.logInfo("Engine initialized.");
     }
 
-    public void loadScene(Scene scene) {
-        activeScene = scene;
+    public void loadScene(String filepath) {
+        activeScene = new Scene(FilenameUtils.getBaseName(filepath), filepath, false);
+        sceneSerializer.load(activeScene, getApp().getProjectDirectory().resolve("src/main/resources/scenes").resolve(filepath));
+    }
+
+    public void saveScene() {
+        sceneSerializer.save(activeScene);
     }
 
     public Scene getActiveScene() {

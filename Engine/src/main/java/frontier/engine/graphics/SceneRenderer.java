@@ -61,8 +61,7 @@ public class SceneRenderer {
     public Camera findCamera(Scene scene) {
         for (Entity entity : scene.getEntities()) {
 
-            Camera camera =
-                    entity.getComponent(Camera.class);
+            Camera camera = entity.getComponent(Camera.class);
 
             if (camera != null) {
                 return camera;

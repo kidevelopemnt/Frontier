@@ -7,6 +7,10 @@ import frontier.engine.graphics.lighting.LightType;
 import frontier.engine.graphics.lighting.PointLight;
 import org.joml.Vector3f;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class LightComponent extends Component {
 
     private LightType lightType;
@@ -17,6 +21,17 @@ public class LightComponent extends Component {
         lightType = LightType.AMBIENT;
         color = new Vector3f(1, 1, 1);
         intensity = 1.0f;
+    }
+
+    @Override
+    public Map<String, Object> serialize() {
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("lightType", lightType.toString());
+        data.put("color", List.of(color.x, color.y, color.z));
+        data.put("intensity", intensity);
+
+        return data;
     }
 
     public LightType getLightType() {
