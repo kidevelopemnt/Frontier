@@ -37,6 +37,16 @@ public class Scene {
         return entities.values();
     }
 
+    public Camera getCamera() {
+        for (Entity entity : getEntities()) {
+            if (entity.hasComponent(Camera.class) && entity.isEnabled()) {
+                return entity.getComponent(Camera.class);
+            }
+        }
+
+        return null;
+    }
+
     public void destroyEntity(Entity entity) {
         entity.cleanup();
         entities.remove(entity.getID());

@@ -2,6 +2,8 @@ package frontier.game;
 
 import frontier.engine.Engine;
 import frontier.engine.ecs.Entity;
+import frontier.engine.ecs.components.Camera;
+import frontier.engine.ecs.components.CameraController;
 import frontier.engine.ecs.components.LightComponent;
 import frontier.engine.ecs.components.MeshRenderer;
 import frontier.engine.game.IGame;
@@ -129,6 +131,9 @@ public class FrontierGame implements IGame {
         scene.addEntity(cube2);
         scene.addEntity(sun);
         scene.addEntity(lamp); */
+
+        Camera camera = scene.getCamera();
+        camera.getEntity().addComponent(CameraController.class);
 
         for (Entity entity : scene.getEntities()) {
             if (entity.getName().equals("cube")) {

@@ -20,7 +20,7 @@ public class SceneRenderer {
         Entity directionalLight = null; // TODO: Temporary
         Entity pointLight = null;
 
-        Camera camera = findCamera(scene);
+        Camera camera = scene.getCamera();
 
         if (camera == null) {
             return;
@@ -56,17 +56,6 @@ public class SceneRenderer {
 
             renderer.render(meshRenderer.getMesh(), meshRenderer.getMaterial(), entity.getTransform(), camera, directionalLight, pointLight);
         }
-    }
-
-    public Camera findCamera(Scene scene) {
-        for (Entity entity : scene.getEntities()) {
-
-            if (entity.hasComponent(Camera.class) && entity.isEnabled()) {
-                return entity.getComponent(Camera.class);
-            }
-        }
-
-        return null;
     }
 
     private List<Entity> findLights(Scene scene) {
