@@ -1,6 +1,5 @@
 package frontier.engine.input;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,15 +15,27 @@ public class ActionRegistry {
         registry.put(name, action);
     }
 
+    private InputAction getAction(String name) {
+        InputAction action = registry.get(name);
+
+        if (action == null) {
+            throw new IllegalArgumentException(
+                    "Input action is not registered: " + name
+            );
+        }
+
+        return action;
+    }
+
     public boolean isDown(String name) {
-        return registry.get(name).isDown(input);
+        return getAction(name).isDown(input);
     }
 
     public boolean isHeld(String name) {
-        return registry.get(name).isHeld(input);
+        return getAction(name).isHeld(input);
     }
 
     public boolean isUp(String name) {
-        return registry.get(name).isUp(input);
+        return getAction(name).isUp(input);
     }
 }
