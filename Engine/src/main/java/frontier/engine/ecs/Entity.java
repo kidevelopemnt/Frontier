@@ -3,6 +3,7 @@ package frontier.engine.ecs;
 import frontier.engine.ecs.components.Component;
 import frontier.engine.ecs.components.TransformComponent;
 import frontier.engine.graphics.Transform;
+import frontier.engine.scene.Scene;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -13,14 +14,22 @@ public class Entity {
     private UUID id;
     private String name;
     private Map<Class<? extends Component>, Component> components = new HashMap<>();
+    private Scene scene;
 
     private boolean isEnabled = true;
 
-    public Entity (String name) {
+    public Entity (String name, Scene scene) {
         this.id = UUID.randomUUID();
         this.name = name;
+        this.scene = scene;
 
         components.put(TransformComponent.class, new TransformComponent());
+    }
+
+    public void update(float deltaTime) {
+        for (Component c : components.values()) {
+            c.update(deltaTime);
+        }
     }
 
     public boolean hasComponent(Class<?> type) {
@@ -102,5 +111,9 @@ public class Entity {
         // And put "__component": "TransformComponent"
 
         return data;
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 }

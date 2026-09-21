@@ -19,15 +19,11 @@ import frontier.engine.input.KeyBinding;
 import frontier.engine.scene.Scene;
 import frontier.game.input.Actions;
 import frontier.game.input.ForwardAction;
+import frontier.game.scenes.PlaygroundScene;
 import org.joml.Vector3f;
 
 public class FrontierGame implements IGame {
     private Engine engine;
-
-    private Scene scene;
-    private Entity cube;
-    private float cameraSpeed = 5.0f;
-    private float sensitivity = 0.0025f;
 
     @Override
     public void initialize(Engine engine) {
@@ -39,111 +35,9 @@ public class FrontierGame implements IGame {
 
         // Once I add an editor, the editor will handle creating scenes
         // Once I add an editor, I will use the save/load scene methods instead of this
-        scene = engine.createScene("Test Scene");
-        engine.setActiveScene(scene);
-
-        float[] vertices = {
-                // Front (+Z)
-                // position             normal          UV
-                -0.5f, -0.5f,  0.5f,    0, 0, 1,       0, 0,
-                0.5f, -0.5f,  0.5f,    0, 0, 1,       1, 0,
-                0.5f,  0.5f,  0.5f,    0, 0, 1,       1, 1,
-                -0.5f,  0.5f,  0.5f,    0, 0, 1,       0, 1,
-
-                // Back (-Z)
-                -0.5f, -0.5f, -0.5f,    0, 0, -1,      1, 0,
-                0.5f, -0.5f, -0.5f,    0, 0, -1,      0, 0,
-                0.5f,  0.5f, -0.5f,    0, 0, -1,      0, 1,
-                -0.5f,  0.5f, -0.5f,    0, 0, -1,      1, 1,
-
-                // Left (-X)
-                -0.5f, -0.5f, -0.5f,   -1, 0, 0,       0, 0,
-                -0.5f, -0.5f,  0.5f,   -1, 0, 0,       1, 0,
-                -0.5f,  0.5f,  0.5f,   -1, 0, 0,       1, 1,
-                -0.5f,  0.5f, -0.5f,   -1, 0, 0,       0, 1,
-
-                // Right (+X)
-                0.5f, -0.5f,  0.5f,    1, 0, 0,       0, 0,
-                0.5f, -0.5f, -0.5f,    1, 0, 0,       1, 0,
-                0.5f,  0.5f, -0.5f,    1, 0, 0,       1, 1,
-                0.5f,  0.5f,  0.5f,    1, 0, 0,       0, 1,
-
-                // Top (+Y)
-                -0.5f,  0.5f,  0.5f,    0, 1, 0,       0, 0,
-                0.5f,  0.5f,  0.5f,    0, 1, 0,       1, 0,
-                0.5f,  0.5f, -0.5f,    0, 1, 0,       1, 1,
-                -0.5f,  0.5f, -0.5f,    0, 1, 0,       0, 1,
-
-                // Bottom (-Y)
-                -0.5f, -0.5f, -0.5f,    0, -1, 0,      0, 1,
-                0.5f, -0.5f, -0.5f,    0, -1, 0,      1, 1,
-                0.5f, -0.5f,  0.5f,    0, -1, 0,      1, 0,
-                -0.5f, -0.5f,  0.5f,    0, -1, 0,      0, 0
-        };
-
-        int[] indices = {
-                0, 1, 2,    0, 2, 3,
-                4, 5, 6,    4, 6, 7,
-                8, 9, 10,   8, 10, 11,
-                12, 13, 14, 12, 14, 15,
-                16, 17, 18, 16, 18, 19,
-                20, 21, 22, 20, 22, 23
-        };
-
-        Mesh cubeMesh = new Mesh(vertices, indices);
-        cubeMesh.setName("cube");
-
-        Texture cubeTexture = new Texture(
-                "textures/crate.jpg"
-        );
-
-        Material cubeMaterial = new Material(
-                engine.getRenderer().getDefaultShader(),
-                cubeTexture
-        );
-        cubeMaterial.setName("cubeMaterial");
-
-        // engine.loadScene(new Scene("Test Scene").getFilepath());
-
-        cube = new Entity("cube");
-        MeshRenderer meshRenderer = cube.addComponent(MeshRenderer.class);
-        meshRenderer.setMesh(cubeMesh);
-        meshRenderer.setMaterial(cubeMaterial);
-        cube.getTransform().rotation.y = (float) Math.toRadians(30);
-        cube.getTransform().rotation.x = (float) Math.toRadians(20);
-
-        Entity cube2 = new Entity("cube2");
-        meshRenderer = cube2.addComponent(MeshRenderer.class);
-        meshRenderer.setMesh(cubeMesh);
-        meshRenderer.setMaterial(cubeMaterial);
-        cube2.getTransform().position.x = 5f;
-        cube2.getTransform().rotation.y = (float) Math.toRadians(30);
-        cube2.getTransform().rotation.x = (float) Math.toRadians(20);
-
-
-        Entity sun = new Entity("sun");
-        sun.getTransform().rotation = new Vector3f(-1, -1, -1);
-        LightComponent sunLight = sun.addComponent(LightComponent.class);
-        sunLight.setLightType(LightType.DIRECTIONAL);
-        sunLight.setColor(new Vector3f(1, 1, 1));
-        sunLight.setIntensity(1.0f);
-
-        Entity lamp = new Entity("lamp");
-        lamp.getTransform().position = new Vector3f(2, 1, 2);
-        LightComponent lampLight = lamp.addComponent(LightComponent.class);
-        lampLight.setLightType(LightType.POINT);
-        lampLight.setColor(new Vector3f(1, 0, 0));
-        lampLight.setIntensity(2.0f);
-
-        scene.addEntity(cube);
-        scene.addEntity(cube2);
-        scene.addEntity(sun);
-        scene.addEntity(lamp);
-
-        Camera camera = scene.getCamera();
-        camera.getEntity().addComponent(CameraController.class);
-
-       // cube = scene.findEntity("cube");
+        PlaygroundScene playground = new PlaygroundScene(engine);
+        playground.initialize();
+        engine.setActiveScene(playground.getScene());
     }
 
     private void setupInput() {
@@ -155,34 +49,7 @@ public class FrontierGame implements IGame {
 
     @Override
     public void update(float deltaTime) {
-        cube.getTransform().rotation.y += 0.5f * deltaTime;
 
-        if (engine.getInput().isHeld(Actions.FORWARD)) {
-            // engine.saveScene();
-            engine.getCamera().moveForward(cameraSpeed * deltaTime);
-        }
-        if (engine.getInput().isHeld(Actions.LEFT)) {
-            engine.getCamera().moveLeft(cameraSpeed * deltaTime);
-        }
-        if (engine.getInput().isHeld(Actions.BACK)) {
-            engine.getCamera().moveBackward(cameraSpeed * deltaTime);
-        }
-        if (engine.getInput().isHeld(Actions.RIGHT)) {
-            engine.getCamera().moveRight(cameraSpeed * deltaTime);
-        }
-        if (engine.getInput().isKeyHeld(Key.Q)) {
-            engine.getCamera().moveDown(cameraSpeed * deltaTime);
-        }
-        if (engine.getInput().isKeyHeld(Key.E)) {
-            engine.getCamera().moveUp(cameraSpeed * deltaTime);
-        }
-
-        float mouseX = engine.getInput().getMouse().getDeltaX();
-        float mouseY = engine.getInput().getMouse().getDeltaY();
-        engine.getCamera().rotate(
-            mouseY * sensitivity,
-            mouseX * sensitivity
-        );
     }
 
     @Override

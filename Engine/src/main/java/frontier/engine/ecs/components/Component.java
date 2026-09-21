@@ -1,5 +1,6 @@
 package frontier.engine.ecs.components;
 
+import frontier.engine.Engine;
 import frontier.engine.ecs.Entity;
 
 import java.lang.reflect.Field;
@@ -16,6 +17,10 @@ public abstract class Component {
 
     public Entity getEntity() {
         return entity;
+    }
+
+    public Engine getEngine() {
+        return entity.getScene().getEngine();
     }
 
     public void initialize() {

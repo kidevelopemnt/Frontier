@@ -1,5 +1,6 @@
 package frontier.engine.scene;
 
+import frontier.engine.Engine;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.Camera;
 
@@ -9,24 +10,32 @@ public class Scene {
     private String name;
     private String filepath;
     private Map<UUID, Entity> entities = new HashMap<>();
+    private Engine engine;
 
-    public Scene(String name, String filepath, boolean addCamera) {
+    public Scene(String name, String filepath, Engine engine, boolean addCamera) {
         this.name = name;
         this.filepath = filepath;
+        this.engine = engine;
 
         if (addCamera) {
-            Entity camera = new Entity("Main Camera");
+            Entity camera = new Entity("Main Camera", this);
             camera.addComponent(Camera.class);
             addEntity(camera);
         }
     }
 
-    public Scene(String name, String filepath) {
-        this(name, filepath, true);
+    public Scene(String name, String filepath, Engine engine) {
+        this(name, filepath, engine, true);
     }
 
-    public Scene(String name) {
-        this(name, name + ".scene");
+    public Scene(String name, Engine engine) {
+        this(name, name + ".scene", engine);
+    }
+
+    public void update(float deltaTime) {
+        for (Entity e : entities.values()) {
+            e.update(deltaTime);
+        }
     }
 
     public void addEntity(Entity entity) {
@@ -79,5 +88,9 @@ public class Scene {
 
     public String getFilepath() {
         return filepath;
+    }
+
+    public Engine getEngine() {
+        return engine;
     }
 }

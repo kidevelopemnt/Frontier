@@ -47,7 +47,7 @@ public class Engine {
     }
 
     public Scene createScene(String name) {
-        return new Scene(name);
+        return new Scene(name, this);
     }
 
     public void setActiveScene(Scene scene) {
@@ -55,7 +55,7 @@ public class Engine {
     }
 
     public void loadScene(String filepath) {
-        activeScene = new Scene(FilenameUtils.getBaseName(filepath), filepath, false);
+        activeScene = new Scene(FilenameUtils.getBaseName(filepath), filepath, this, false);
         sceneSerializer.load(activeScene, getApp().getProjectDirectory().resolve("src/main/resources/scenes").resolve(filepath));
     }
 
@@ -69,6 +69,7 @@ public class Engine {
 
     public void update(double deltaTime) {
         input.update();
+        activeScene.update((float) deltaTime);
         // Game.update();
     }
 

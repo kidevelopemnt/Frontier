@@ -65,7 +65,7 @@ public class SceneSerializer {
 
     private void loadEntity(Scene scene, Map<String, Object> entityData) {
         String name = (String) entityData.getOrDefault("name", "Unnamed Entity");
-        Entity entity = new Entity(name);
+        Entity entity = new Entity(name, scene);
 
         // Jackson parses JSON strings as Strings, not UUID objects.
         // This fixes the ClassCastException you would get from (UUID) entityData.get("id")
