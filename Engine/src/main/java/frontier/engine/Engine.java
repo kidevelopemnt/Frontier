@@ -10,6 +10,7 @@ import frontier.engine.core.Time;
 import frontier.engine.graphics.SceneRenderer;
 import frontier.engine.graphics.lighting.DirectionalLight;
 import frontier.engine.graphics.lighting.PointLight;
+import frontier.engine.input.ActionRegistry;
 import frontier.engine.input.Input;
 import frontier.engine.scene.Scene;
 import frontier.engine.scene.SceneSerializer;

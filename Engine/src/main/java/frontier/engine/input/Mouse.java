@@ -79,15 +79,15 @@ public class Mouse {
         isCursorLocked = locked;
     }
 
-    public boolean isButtonPressed(MouseButton button) {
-        return glfwInput.isMouseButtonPressed(button);
+    public boolean isButtonDown(MouseButton button) {
+        return glfwInput.isMouseButtonDown(button);
     }
 
     public boolean isButtonHeld(MouseButton button) {
         return glfwInput.isMouseButtonHeld(button);
     }
 
-    public boolean isButtonReleased(MouseButton button) {
-        return glfwInput.isMouseButtonReleased(button);
+    public boolean isButtonUp(MouseButton button) {
+        return glfwInput.isMouseButtonUp(button);
     }
 }

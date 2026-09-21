@@ -111,7 +111,7 @@ public class GLFWInput {
         scrollY = 0;
     }
 
-    public boolean isKeyPressed(Key key) {
+    public boolean isKeyDown(Key key) {
         return currentKeyState.get(key) && !previousKeyState.get(key);
     }
 
@@ -119,11 +119,11 @@ public class GLFWInput {
         return currentKeyState.get(key);
     }
 
-    public boolean isKeyReleased(Key key) {
+    public boolean isKeyUp(Key key) {
         return !currentKeyState.get(key) && previousKeyState.get(key);
     }
 
-    public boolean isMouseButtonPressed(MouseButton button) {
+    public boolean isMouseButtonDown(MouseButton button) {
         return currentMouseState.get(button) && !previousMouseState.get(button);
     }
 
@@ -131,7 +131,7 @@ public class GLFWInput {
         return currentMouseState.get(button);
     }
 
-    public boolean isMouseButtonReleased(MouseButton button) {
+    public boolean isMouseButtonUp(MouseButton button) {
         return !currentMouseState.get(button) && previousMouseState.get(button);
     }
 

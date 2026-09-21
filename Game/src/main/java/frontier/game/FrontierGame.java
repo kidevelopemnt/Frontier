@@ -4,22 +4,18 @@ import frontier.engine.Engine;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.Camera;
 import frontier.engine.ecs.components.CameraController;
-import frontier.engine.ecs.components.LightComponent;
-import frontier.engine.ecs.components.MeshRenderer;
 import frontier.engine.game.IGame;
 import frontier.engine.graphics.Material;
 import frontier.engine.graphics.Mesh;
 import frontier.engine.graphics.Texture;
-import frontier.engine.graphics.lighting.LightType;
 
+import frontier.engine.input.ActionRegistry;
+import frontier.engine.input.InputAction;
 import frontier.engine.input.Key;
-import frontier.engine.input.MouseButton;
+import frontier.engine.input.KeyBinding;
 import frontier.engine.scene.Scene;
-import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
-
-import java.util.UUID;
-
+import frontier.game.input.Actions;
+import frontier.game.input.ForwardAction;
 
 public class FrontierGame implements IGame {
 
@@ -35,6 +31,11 @@ public class FrontierGame implements IGame {
         this.engine = engine;
         engine.getRenderer().setFillColor(.1f, .2f, .1f, 1.0f);
         engine.getInput().getMouse().setCursorLocked(true);
+
+        engine.getInput().registerAction(Actions.FORWARD, new ForwardAction());
+        engine.getInput().registerAction(Actions.BACK, new InputAction().addBinding(new KeyBinding(Key.S)));
+        engine.getInput().registerAction(Actions.LEFT, new InputAction().addBinding(new KeyBinding(Key.A)));
+        engine.getInput().registerAction(Actions.RIGHT, new InputAction().addBinding(new KeyBinding(Key.D)));
 
         float[] vertices = {
                 // Front (+Z)
@@ -149,17 +150,17 @@ public class FrontierGame implements IGame {
     public void update(float deltaTime) {
         cube.getTransform().rotation.y += 0.5f * deltaTime;
 
-        if (engine.getInput().isKeyHeld(Key.W)) {
+        if (engine.getInput().isHeld(Actions.FORWARD)) {
             // engine.saveScene();
             engine.getCamera().moveForward(cameraSpeed * deltaTime);
         }
-        if (engine.getInput().isKeyHeld(Key.A)) {
+        if (engine.getInput().isHeld(Actions.LEFT)) {
             engine.getCamera().moveLeft(cameraSpeed * deltaTime);
         }
-        if (engine.getInput().isKeyHeld(Key.S)) {
+        if (engine.getInput().isHeld(Actions.BACK)) {
             engine.getCamera().moveBackward(cameraSpeed * deltaTime);
         }
-        if (engine.getInput().isKeyHeld(Key.D)) {
+        if (engine.getInput().isHeld(Actions.RIGHT)) {
             engine.getCamera().moveRight(cameraSpeed * deltaTime);
         }
         if (engine.getInput().isKeyHeld(Key.Q)) {
