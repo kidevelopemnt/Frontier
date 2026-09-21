@@ -61,6 +61,9 @@ public class Engine {
     public void update(double deltaTime) {
         input.update();
         // Game.update();
+    }
+
+    public void endFrame() {
         input.endFrame();
     }
 

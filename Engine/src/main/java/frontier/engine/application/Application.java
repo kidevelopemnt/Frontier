@@ -47,6 +47,7 @@ public class Application {
             game.update(deltaTime);
             engine.render();
             mainWindow.draw();
+            engine.endFrame();
         }
     }
 

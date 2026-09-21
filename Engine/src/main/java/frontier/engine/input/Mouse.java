@@ -63,8 +63,8 @@ public class Mouse {
         return (float) deltaY;
     }
 
-    public float getScrollX() { return (float) 0; }
-    public float getScrollY() { return (float) 0; }
+    public float getScrollX() { return (float) glfwInput.getMouseScrollX(); }
+    public float getScrollY() { return (float) glfwInput.getMouseScrollY(); }
 
     public boolean isCursorLocked() {
         return this.isCursorLocked;

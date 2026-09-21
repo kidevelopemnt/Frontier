@@ -21,7 +21,7 @@ public class Input {
     }
 
     public void endFrame() {
-
+        glfwInput.endFrame();
     }
 
     public boolean isKeyPressed(Key key) {

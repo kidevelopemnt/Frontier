@@ -15,6 +15,8 @@ public class GLFWInput {
 
     private final Map<MouseButton, Boolean> currentMouseState = new HashMap<>();
     private final Map<MouseButton, Boolean> previousMouseState = new HashMap<>();
+    private double scrollX;
+    private double scrollY;
 
     public GLFWInput(long window) {
         this.window = window;
@@ -28,6 +30,12 @@ public class GLFWInput {
             currentMouseState.put(mb, false);
             previousMouseState.put(mb, false);
         }
+
+        GLFW.glfwSetScrollCallback(window, (windowHandle, xOffset, yOffset) -> {
+            scrollX += xOffset;
+            scrollY += yOffset;
+        });
+
     }
 
     private void initializeMappings() {
@@ -98,6 +106,11 @@ public class GLFWInput {
         }
     }
 
+    public void endFrame() {
+        scrollX = 0;
+        scrollY = 0;
+    }
+
     public boolean isKeyPressed(Key key) {
         return currentKeyState.get(key) && !previousKeyState.get(key);
     }
@@ -120,6 +133,14 @@ public class GLFWInput {
 
     public boolean isMouseButtonReleased(MouseButton button) {
         return !currentMouseState.get(button) && previousMouseState.get(button);
+    }
+
+    public double getMouseScrollX() {
+        return scrollX;
+    }
+
+    public double getMouseScrollY() {
+        return scrollY;
     }
 
     public void lockMouse() {
