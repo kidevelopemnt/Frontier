@@ -94,7 +94,7 @@ public class Engine {
     }
 
     public Camera getCamera() {
-        return sceneRenderer.findCamera(activeScene);
+        return activeScene.getCamera();
     }
 
 
