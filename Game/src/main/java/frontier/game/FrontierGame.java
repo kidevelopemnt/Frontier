@@ -1,26 +1,14 @@
 package frontier.game;
 
 import frontier.engine.Engine;
-import frontier.engine.ecs.Entity;
-import frontier.engine.ecs.components.Camera;
-import frontier.engine.ecs.components.CameraController;
-import frontier.engine.ecs.components.LightComponent;
-import frontier.engine.ecs.components.MeshRenderer;
 import frontier.engine.game.IGame;
-import frontier.engine.graphics.Material;
-import frontier.engine.graphics.Mesh;
-import frontier.engine.graphics.Texture;
 
-import frontier.engine.graphics.lighting.LightType;
-import frontier.engine.input.ActionRegistry;
+import frontier.engine.input.Input;
 import frontier.engine.input.InputAction;
 import frontier.engine.input.Key;
 import frontier.engine.input.KeyBinding;
-import frontier.engine.scene.Scene;
 import frontier.game.input.Actions;
-import frontier.game.input.ForwardAction;
 import frontier.game.scenes.PlaygroundScene;
-import org.joml.Vector3f;
 
 public class FrontierGame implements IGame {
     private Engine engine;
@@ -41,7 +29,7 @@ public class FrontierGame implements IGame {
     }
 
     private void setupInput() {
-        engine.getInput().registerAction(Actions.FORWARD, new ForwardAction());
+        engine.getInput().registerAction(Actions.FORWARD, new InputAction().addBinding(new KeyBinding(Key.W)));
         engine.getInput().registerAction(Actions.BACK, new InputAction().addBinding(new KeyBinding(Key.S)));
         engine.getInput().registerAction(Actions.LEFT, new InputAction().addBinding(new KeyBinding(Key.A)));
         engine.getInput().registerAction(Actions.RIGHT, new InputAction().addBinding(new KeyBinding(Key.D)));
