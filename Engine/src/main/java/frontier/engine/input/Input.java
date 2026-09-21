@@ -4,68 +4,39 @@ import frontier.engine.application.Window;
 import org.lwjgl.glfw.GLFW;
 
 public class Input {
-    private Window window;
-    private GLFWInput glfwInput;
+    private final Window window;
 
-    private double mouseX;
-    private double mouseY;
-
-    private double mouseDeltaX;
-    private double mouseDeltaY;
-    private double lastMouseX;
-    private double lastMouseY;
-
-    private boolean firstMouse = true;
+    private final GLFWInput glfwInput;
+    private final Mouse mouse;
 
     public Input(Window window) {
         this.window = window;
         glfwInput = new GLFWInput(window.getHandle());
+        mouse = new Mouse(window.getHandle(), glfwInput);
     }
-
-    public boolean isKeyDown(Key key) {
-        return glfwInput.isKeyDown(key);
-    }
-    public boolean isKeyHeld(Key key) { return glfwInput.isKeyHeld(key); }
-    public boolean isKeyUp(Key key) { return glfwInput.isKeyUp(key); }
 
     public void update() {
         glfwInput.update();
-
-        double[] x = new double[1];
-        double[] y = new double[1];
-
-        GLFW.glfwGetCursorPos(window.getHandle(), x, y);
-
-        mouseX = x[0];
-        mouseY = y[0];
-
-        if (firstMouse) {
-            lastMouseX = mouseX;
-            lastMouseY = mouseY;
-            firstMouse = false;
-
-            mouseDeltaX = 0;
-            mouseDeltaY = 0;
-
-            return;
-        }
-
-        mouseDeltaX = mouseX - lastMouseX;
-        mouseDeltaY = mouseY - lastMouseY;
-
-        lastMouseX = mouseX;
-        lastMouseY = mouseY;
-    }
-
-    public float getMouseDeltaX() {
-        return (float) mouseDeltaX;
-    }
-
-    public float getMouseDeltaY() {
-        return (float) mouseDeltaY;
+        mouse.update();
     }
 
     public void endFrame() {
 
+    }
+
+    public boolean isKeyPressed(Key key) {
+        return glfwInput.isKeyPressed(key);
+    }
+
+    public boolean isKeyHeld(Key key) {
+        return glfwInput.isKeyHeld(key);
+    }
+
+    public boolean isKeyReleased(Key key) {
+        return glfwInput.isKeyReleased(key);
+    }
+
+    public Mouse getMouse() {
+        return mouse;
     }
 }

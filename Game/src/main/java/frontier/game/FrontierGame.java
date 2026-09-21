@@ -13,6 +13,7 @@ import frontier.engine.graphics.Texture;
 import frontier.engine.graphics.lighting.LightType;
 
 import frontier.engine.input.Key;
+import frontier.engine.input.MouseButton;
 import frontier.engine.scene.Scene;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -33,6 +34,7 @@ public class FrontierGame implements IGame {
     public void initialize(Engine engine) {
         this.engine = engine;
         engine.getRenderer().setFillColor(.1f, .2f, .1f, 1.0f);
+        engine.getInput().getMouse().setCursorLocked(true);
 
         float[] vertices = {
                 // Front (+Z)
@@ -167,8 +169,8 @@ public class FrontierGame implements IGame {
             engine.getCamera().moveUp(cameraSpeed * deltaTime);
         }
 
-        float mouseX = engine.getInput().getMouseDeltaX();
-        float mouseY = engine.getInput().getMouseDeltaY();
+        float mouseX = engine.getInput().getMouse().getDeltaX();
+        float mouseY = engine.getInput().getMouse().getDeltaY();
         engine.getCamera().rotate(
             mouseY * sensitivity,
             mouseX * sensitivity

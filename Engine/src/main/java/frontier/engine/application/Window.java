@@ -46,13 +46,6 @@ public class Window {
         GLFW.glfwMakeContextCurrent(window);
         GLFW.glfwSwapInterval(1);
         GL.createCapabilities();
-
-        // TODO: Move this to be a toggleable show/hide mouse pointer, and add helper method
-        GLFW.glfwSetInputMode(
-                window,
-                GLFW.GLFW_CURSOR,
-                GLFW.GLFW_CURSOR_DISABLED
-        );
     }
 
     public boolean shouldClose() {
