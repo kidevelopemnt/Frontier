@@ -50,7 +50,7 @@ public class SceneRenderer {
         for (Entity entity : scene.getEntities()) {
             MeshRenderer meshRenderer = entity.getComponent(MeshRenderer.class);
 
-            if (meshRenderer == null) {
+            if (!entity.hasComponent(MeshRenderer.class) || !entity.isEnabled()) {
                 continue;
             }
 
@@ -61,10 +61,8 @@ public class SceneRenderer {
     public Camera findCamera(Scene scene) {
         for (Entity entity : scene.getEntities()) {
 
-            Camera camera = entity.getComponent(Camera.class);
-
-            if (camera != null) {
-                return camera;
+            if (entity.hasComponent(Camera.class) && entity.isEnabled()) {
+                return entity.getComponent(Camera.class);
             }
         }
 
@@ -78,9 +76,9 @@ public class SceneRenderer {
 
         for (Entity entity : scene.getEntities()) {
 
-            if (entity.getComponent(
+            if (entity.hasComponent(
                     LightComponent.class
-            ) != null) {
+            ) && entity.isEnabled()) {
 
                 lights.add(entity);
             }

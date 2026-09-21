@@ -34,6 +34,14 @@ public class LightComponent extends Component {
         return data;
     }
 
+    @Override
+    public void load(Map<String, Object> data) {
+        lightType = LightType.valueOf((String) data.get("lightType"));
+        List<Double> colorData = (List<Double>) data.get("color");
+        color = new Vector3f(colorData.get(0).floatValue(), colorData.get(1).floatValue(), colorData.get(2).floatValue());
+        intensity = ((Double) data.get("intensity")).floatValue();
+    }
+
     public LightType getLightType() {
         return lightType;
     }

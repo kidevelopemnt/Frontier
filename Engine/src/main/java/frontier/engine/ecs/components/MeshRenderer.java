@@ -3,6 +3,7 @@ package frontier.engine.ecs.components;
 import frontier.engine.graphics.Material;
 import frontier.engine.graphics.Mesh;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,9 +15,18 @@ public class MeshRenderer extends Component {
     public Map<String, Object> serialize() {
         Map<String, Object> data = new HashMap<>();
 
-        // TODO: Save mesh renderer
+        data.put("mesh", mesh.getName());
+        data.put("material", material.getName());
 
         return data;
+    }
+
+    @Override
+    public void load(Map<String, Object> data) {
+        mesh = Mesh.registry.get(data.get("mesh"));  // TODO: Replace with ResourceManager
+        material = Material.registry.get(data.get("material"));
+
+        System.out.println("Mesh name " + data.get("mesh") + " Mesh " + mesh);
     }
 
     public Material getMaterial() {

@@ -29,7 +29,6 @@ public class FrontierGame implements IGame {
     @Override
     public void initialize(Engine engine) {
         this.engine = engine;
-        engine.loadScene(new Scene("Test Scene").getFilepath());
         engine.getRenderer().setFillColor(.1f, .2f, .1f, 1.0f);
 
         float[] vertices = {
@@ -81,6 +80,7 @@ public class FrontierGame implements IGame {
         };
 
         Mesh cubeMesh = new Mesh(vertices, indices);
+        cubeMesh.setName("cube");
 
         Texture cubeTexture = new Texture(
                 "textures/crate.jpg"
@@ -90,10 +90,12 @@ public class FrontierGame implements IGame {
                 engine.getRenderer().getDefaultShader(),
                 cubeTexture
         );
+        cubeMaterial.setName("cubeMaterial");
 
+        engine.loadScene(new Scene("Test Scene").getFilepath());
         scene = engine.getActiveScene();
 
-        /*cube = new Entity("cube");
+        /* cube = new Entity("cube");
         MeshRenderer meshRenderer = cube.addComponent(MeshRenderer.class);
         meshRenderer.setMesh(cubeMesh);
         meshRenderer.setMaterial(cubeMaterial);
@@ -126,7 +128,7 @@ public class FrontierGame implements IGame {
         scene.addEntity(cube);
         scene.addEntity(cube2);
         scene.addEntity(sun);
-        scene.addEntity(lamp);*/
+        scene.addEntity(lamp); */
 
         for (Entity entity : scene.getEntities()) {
             if (entity.getName().equals("cube")) {

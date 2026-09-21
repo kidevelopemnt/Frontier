@@ -13,13 +13,18 @@ public class Entity {
     private UUID id;
     private String name;
     private Map<Class<? extends Component>, Component> components = new HashMap<>();
-    // private Scene scene;
+
+    private boolean isEnabled = true;
 
     public Entity (String name) {
         this.id = UUID.randomUUID();
         this.name = name;
 
         components.put(TransformComponent.class, new TransformComponent());
+    }
+
+    public boolean hasComponent(Class<?> type) {
+        return components.get(type) != null;
     }
 
     public <T extends Component> T addComponent(Class<?> c) {
@@ -33,8 +38,15 @@ public class Entity {
         }
     }
 
-    public <T extends Component> T getComponent(Class<T> type) {
-        return type.cast(components.get(type));
+    public void removeComponent(Class<?> c) {
+        if (hasComponent(c)) {
+            getComponent(c).cleanup();
+            components.remove(c);
+        }
+    }
+
+    public <T extends Component> T getComponent(Class<?> type) {
+        return (T) type.cast(components.get(type));
     }
 
     public TransformComponent getTransformComponent() {
@@ -61,6 +73,14 @@ public class Entity {
         this.id = id;
     }
 
+    public boolean isEnabled() {
+        return this.isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
     public void cleanup() {
         for (Component c : components.values()) {
             c.cleanup();
@@ -72,7 +92,7 @@ public class Entity {
 
         data.put("id", id.toString());
         data.put("name", name);
-        // data.put("__TransformComponent", getTransformComponent().serialize());
+        data.put("isEnabled", isEnabled);
 
         for (Component component : components.values()) {
             data.put("__" + component.getClass().getSimpleName(), component.serialize());
