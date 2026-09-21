@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class Input {
     private Window window;
+    private GLFWInput glfwInput;
 
     private double mouseX;
     private double mouseY;
@@ -18,13 +19,18 @@ public class Input {
 
     public Input(Window window) {
         this.window = window;
+        glfwInput = new GLFWInput(window.getHandle());
     }
 
-    public boolean isKeyDown(int key) {
-        return GLFW.glfwGetKey(window.getHandle(), key) == GLFW.GLFW_PRESS;
+    public boolean isKeyDown(Key key) {
+        return glfwInput.isKeyDown(key);
     }
+    public boolean isKeyHeld(Key key) { return glfwInput.isKeyHeld(key); }
+    public boolean isKeyUp(Key key) { return glfwInput.isKeyUp(key); }
 
     public void update() {
+        glfwInput.update();
+
         double[] x = new double[1];
         double[] y = new double[1];
 

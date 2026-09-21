@@ -97,7 +97,6 @@ public class Engine {
         return activeScene.getCamera();
     }
 
-
     public Time getTime() {
         return time;
     }

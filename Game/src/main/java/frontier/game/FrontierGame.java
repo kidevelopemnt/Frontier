@@ -12,6 +12,7 @@ import frontier.engine.graphics.Mesh;
 import frontier.engine.graphics.Texture;
 import frontier.engine.graphics.lighting.LightType;
 
+import frontier.engine.input.Key;
 import frontier.engine.scene.Scene;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -146,23 +147,23 @@ public class FrontierGame implements IGame {
     public void update(float deltaTime) {
         cube.getTransform().rotation.y += 0.5f * deltaTime;
 
-        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_W)) {
+        if (engine.getInput().isKeyHeld(Key.W)) {
             // engine.saveScene();
             engine.getCamera().moveForward(cameraSpeed * deltaTime);
         }
-        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_A)) {
+        if (engine.getInput().isKeyHeld(Key.A)) {
             engine.getCamera().moveLeft(cameraSpeed * deltaTime);
         }
-        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_S)) {
+        if (engine.getInput().isKeyHeld(Key.S)) {
             engine.getCamera().moveBackward(cameraSpeed * deltaTime);
         }
-        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_D)) {
+        if (engine.getInput().isKeyHeld(Key.D)) {
             engine.getCamera().moveRight(cameraSpeed * deltaTime);
         }
-        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_Q)) {
+        if (engine.getInput().isKeyHeld(Key.Q)) {
             engine.getCamera().moveDown(cameraSpeed * deltaTime);
         }
-        if (engine.getInput().isKeyDown(GLFW.GLFW_KEY_E)) {
+        if (engine.getInput().isKeyHeld(Key.E)) {
             engine.getCamera().moveUp(cameraSpeed * deltaTime);
         }
 
