@@ -37,6 +37,15 @@ public class Scene {
         return entities.values();
     }
 
+    public Entity findEntity(String name) {
+        for (Entity entity : getEntities()) {  // TEMPORARY:
+            if (entity.getName().equals("cube")) {
+                return entity;
+            }
+        }
+        return null;
+    }
+
     public Camera getCamera() {
         for (Entity entity : getEntities()) {
             if (entity.hasComponent(Camera.class) && entity.isEnabled()) {

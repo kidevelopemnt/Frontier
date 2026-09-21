@@ -4,11 +4,14 @@ import frontier.engine.Engine;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.Camera;
 import frontier.engine.ecs.components.CameraController;
+import frontier.engine.ecs.components.LightComponent;
+import frontier.engine.ecs.components.MeshRenderer;
 import frontier.engine.game.IGame;
 import frontier.engine.graphics.Material;
 import frontier.engine.graphics.Mesh;
 import frontier.engine.graphics.Texture;
 
+import frontier.engine.graphics.lighting.LightType;
 import frontier.engine.input.ActionRegistry;
 import frontier.engine.input.InputAction;
 import frontier.engine.input.Key;
@@ -16,9 +19,9 @@ import frontier.engine.input.KeyBinding;
 import frontier.engine.scene.Scene;
 import frontier.game.input.Actions;
 import frontier.game.input.ForwardAction;
+import org.joml.Vector3f;
 
 public class FrontierGame implements IGame {
-
     private Engine engine;
 
     private Scene scene;
@@ -32,10 +35,12 @@ public class FrontierGame implements IGame {
         engine.getRenderer().setFillColor(.1f, .2f, .1f, 1.0f);
         engine.getInput().getMouse().setCursorLocked(true);
 
-        engine.getInput().registerAction(Actions.FORWARD, new ForwardAction());
-        engine.getInput().registerAction(Actions.BACK, new InputAction().addBinding(new KeyBinding(Key.S)));
-        engine.getInput().registerAction(Actions.LEFT, new InputAction().addBinding(new KeyBinding(Key.A)));
-        engine.getInput().registerAction(Actions.RIGHT, new InputAction().addBinding(new KeyBinding(Key.D)));
+        setupInput();
+
+        // Once I add an editor, the editor will handle creating scenes
+        // Once I add an editor, I will use the save/load scene methods instead of this
+        scene = engine.createScene("Test Scene");
+        engine.setActiveScene(scene);
 
         float[] vertices = {
                 // Front (+Z)
@@ -98,10 +103,9 @@ public class FrontierGame implements IGame {
         );
         cubeMaterial.setName("cubeMaterial");
 
-        engine.loadScene(new Scene("Test Scene").getFilepath());
-        scene = engine.getActiveScene();
+        // engine.loadScene(new Scene("Test Scene").getFilepath());
 
-        /* cube = new Entity("cube");
+        cube = new Entity("cube");
         MeshRenderer meshRenderer = cube.addComponent(MeshRenderer.class);
         meshRenderer.setMesh(cubeMesh);
         meshRenderer.setMaterial(cubeMaterial);
@@ -134,16 +138,19 @@ public class FrontierGame implements IGame {
         scene.addEntity(cube);
         scene.addEntity(cube2);
         scene.addEntity(sun);
-        scene.addEntity(lamp); */
+        scene.addEntity(lamp);
 
         Camera camera = scene.getCamera();
         camera.getEntity().addComponent(CameraController.class);
 
-        for (Entity entity : scene.getEntities()) {
-            if (entity.getName().equals("cube")) {
-                cube = entity;
-            }
-        }
+       // cube = scene.findEntity("cube");
+    }
+
+    private void setupInput() {
+        engine.getInput().registerAction(Actions.FORWARD, new ForwardAction());
+        engine.getInput().registerAction(Actions.BACK, new InputAction().addBinding(new KeyBinding(Key.S)));
+        engine.getInput().registerAction(Actions.LEFT, new InputAction().addBinding(new KeyBinding(Key.A)));
+        engine.getInput().registerAction(Actions.RIGHT, new InputAction().addBinding(new KeyBinding(Key.D)));
     }
 
     @Override

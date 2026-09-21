@@ -46,6 +46,14 @@ public class Engine {
         logger.logInfo("Engine initialized.");
     }
 
+    public Scene createScene(String name) {
+        return new Scene(name);
+    }
+
+    public void setActiveScene(Scene scene) {
+        activeScene = scene;
+    }
+
     public void loadScene(String filepath) {
         activeScene = new Scene(FilenameUtils.getBaseName(filepath), filepath, false);
         sceneSerializer.load(activeScene, getApp().getProjectDirectory().resolve("src/main/resources/scenes").resolve(filepath));

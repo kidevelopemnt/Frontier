@@ -8,11 +8,11 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Editor" />
             <option value="$PROJECT_DIR$/Engine" />
             <option value="$PROJECT_DIR$/Game" />
           </set>
         </option>
-        <option name="myGradleHome" value="" />
       </GradleProjectSettings>
     </option>
   </component>
