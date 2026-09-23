@@ -2,6 +2,7 @@ package frontier.engine.ecs;
 
 import frontier.engine.ecs.components.Component;
 import frontier.engine.ecs.components.TransformComponent;
+import frontier.engine.ecs.components.physics.Collider;
 import frontier.engine.graphics.Transform;
 import frontier.engine.scene.Scene;
 
@@ -64,6 +65,16 @@ public class Entity {
 
     public Transform getTransform() {
         return getTransformComponent().getTransform();
+    }
+
+    public <T extends Collider> T getCollider() {
+        for (Component c : components.values()) {
+            if (c instanceof Collider) {
+                return (T) c;
+            }
+        }
+
+        return null;
     }
 
     public String getName() {

@@ -3,6 +3,8 @@ package frontier.game.scenes;
 import frontier.engine.Engine;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.*;
+import frontier.engine.ecs.components.physics.BoxCollider;
+import frontier.engine.ecs.components.physics.Collider;
 import frontier.engine.graphics.Material;
 import frontier.engine.graphics.Mesh;
 import frontier.engine.graphics.Texture;
@@ -104,7 +106,7 @@ public class PlaygroundScene {
         MeshRenderer meshRenderer = cube2.addComponent(MeshRenderer.class);
         meshRenderer.setMesh(cubeMesh);
         meshRenderer.setMaterial(cubeMaterial);
-        cube2.addComponent(Clickable.class);
+        cube2.addComponent(BoxCollider.class);
 
         cube2.getTransform().position.x = 5f;
         cube2.getTransform().rotation.y = (float) Math.toRadians(30);

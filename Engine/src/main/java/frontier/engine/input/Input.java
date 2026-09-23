@@ -1,18 +1,21 @@
 package frontier.engine.input;
 
+import frontier.engine.Engine;
 import frontier.engine.application.Window;
-import org.lwjgl.glfw.GLFW;
-
-import java.lang.reflect.InvocationTargetException;
+import frontier.engine.physics.Ray;
+import frontier.engine.physics.RaycastHit;
+import org.joml.Vector3f;
 
 public class Input {
+    private final Engine engine;
     private final Window window;
     private final ActionRegistry actionRegistry;
 
     private final GLFWInput glfwInput;
     private final Mouse mouse;
 
-    public Input(Window window) {
+    public Input(Engine engine, Window window) {
+        this.engine = engine;
         this.window = window;
         actionRegistry = new ActionRegistry(this);
         glfwInput = new GLFWInput(window.getHandle());
@@ -24,7 +27,15 @@ public class Input {
         mouse.update();
 
         if (mouse.isButtonDown(MouseButton.LEFT)) {
-            // Check if any objects with the Clickable component were clicked
+            Vector3f position = engine.getActiveScene().getCamera().getEntity().getTransform().position;
+            Vector3f rotation = engine.getActiveScene().getCamera().getEntity().getTransform().rotation;
+            Ray ray = new Ray(position, rotation, 10000f); // TODO: Don't hardcode
+            RaycastHit hit = engine.getPhysics().raycast(ray);
+            if (hit != null) {
+                System.out.println(hit);
+            } else {
+                System.out.println("Miss");
+            }
         }
     }
 

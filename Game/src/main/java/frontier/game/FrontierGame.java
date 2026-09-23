@@ -17,7 +17,7 @@ public class FrontierGame implements IGame {
     public void initialize(Engine engine) {
         this.engine = engine;
         engine.getRenderer().setFillColor(.1f, .2f, .1f, 1.0f);
-        engine.getInput().getMouse().setCursorLocked(true);
+        engine.getInput().getMouse().setCursorLocked(false);
 
         setupInput();
 

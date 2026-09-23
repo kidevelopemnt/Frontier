@@ -12,6 +12,7 @@ import frontier.engine.graphics.lighting.DirectionalLight;
 import frontier.engine.graphics.lighting.PointLight;
 import frontier.engine.input.ActionRegistry;
 import frontier.engine.input.Input;
+import frontier.engine.physics.Physics;
 import frontier.engine.scene.Scene;
 import frontier.engine.scene.SceneSerializer;
 import org.apache.commons.io.FilenameUtils;
@@ -19,6 +20,7 @@ import org.apache.commons.io.FilenameUtils;
 public class Engine {
     private Logger logger;
     private Input input;
+    private Physics physics;
     private Renderer renderer;
     private SceneRenderer sceneRenderer;
     private Time time;
@@ -33,7 +35,7 @@ public class Engine {
 
     public void initialize(ApplicationConfiguration config) {
         logger = new Logger();
-        input = new Input(application.getMainWindow());
+        input = new Input(this, application.getMainWindow());
         renderer = new Renderer();
         sceneRenderer = new SceneRenderer(renderer);
         sceneSerializer = new SceneSerializer(this);
@@ -52,10 +54,11 @@ public class Engine {
 
     public void setActiveScene(Scene scene) {
         activeScene = scene;
+        physics = new Physics(activeScene);
     }
 
     public void loadScene(String filepath) {
-        activeScene = new Scene(FilenameUtils.getBaseName(filepath), filepath, this, false);
+        setActiveScene(new Scene(FilenameUtils.getBaseName(filepath), filepath, this, false));
         sceneSerializer.load(activeScene, getApp().getProjectDirectory().resolve("src/main/resources/scenes").resolve(filepath));
     }
 
@@ -112,5 +115,9 @@ public class Engine {
 
     public Time getTime() {
         return time;
+    }
+
+    public Physics getPhysics() {
+        return physics;
     }
 }
