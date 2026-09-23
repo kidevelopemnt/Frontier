@@ -6,15 +6,15 @@ import frontier.engine.graphics.Transform;
 import frontier.engine.scene.Scene;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Entity {
     private UUID id;
     private String name;
     private Map<Class<? extends Component>, Component> components = new HashMap<>();
     private Scene scene;
+
+    private List<String> groups = new ArrayList<>();  // Entities can be filtered by groups in Raycasts or other
 
     private boolean isEnabled = true;
 
@@ -116,4 +116,10 @@ public class Entity {
     public Scene getScene() {
         return scene;
     }
+
+    public List<String> getGroups() {
+        return groups;
+    }
+
+    public void addGroup(String group) { groups.add(group); }
 }

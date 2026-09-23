@@ -20,6 +20,8 @@ public class Mouse {
     private boolean firstTime = true;
 
     private boolean isCursorLocked = false;
+    // TODO: Add option to replace cursor with icon (or show icon at center if cursorLocked)
+    // Need to figure out where to do this
 
     public Mouse(long window, GLFWInput glfwInput) {
         this.window = window;

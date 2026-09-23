@@ -22,6 +22,10 @@ public class Input {
     public void update() {
         glfwInput.update();
         mouse.update();
+
+        if (mouse.isButtonDown(MouseButton.LEFT)) {
+            // Check if any objects with the Clickable component were clicked
+        }
     }
 
     public void endFrame() {
