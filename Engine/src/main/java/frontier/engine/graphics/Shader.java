@@ -132,7 +132,6 @@ public class Shader {
         GL20.glUniform1f(location, value);
     }
 
-
     private static String loadShader(String path) {
 
         try (InputStream input = Shader.class

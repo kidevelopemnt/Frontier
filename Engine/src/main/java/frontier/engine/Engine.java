@@ -4,6 +4,7 @@ import frontier.engine.application.Application;
 import frontier.engine.application.ApplicationConfiguration;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.Camera;
+import frontier.engine.graphics.DebugRenderer;
 import frontier.engine.graphics.Renderer;
 import frontier.engine.core.Logger;
 import frontier.engine.core.Time;
@@ -54,7 +55,7 @@ public class Engine {
 
     public void setActiveScene(Scene scene) {
         activeScene = scene;
-        physics = new Physics(activeScene);
+        physics = new Physics(this, activeScene);
     }
 
     public void loadScene(String filepath) {
@@ -84,6 +85,7 @@ public class Engine {
         renderer.beginFrame();
         if (activeScene != null) {
             sceneRenderer.render(activeScene);
+            DebugRenderer.render(activeScene.getCamera(), application.getMainWindow().getSize().x / application.getMainWindow().getSize().y); // TODO: getAspectRatio()
         }
         renderer.endFrame();
     }

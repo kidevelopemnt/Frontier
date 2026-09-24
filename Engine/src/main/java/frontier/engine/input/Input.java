@@ -2,6 +2,7 @@ package frontier.engine.input;
 
 import frontier.engine.Engine;
 import frontier.engine.application.Window;
+import frontier.engine.ecs.components.Camera;
 import frontier.engine.physics.Ray;
 import frontier.engine.physics.RaycastHit;
 import org.joml.Vector3f;
@@ -27,12 +28,19 @@ public class Input {
         mouse.update();
 
         if (mouse.isButtonDown(MouseButton.LEFT)) {
-            Vector3f position = engine.getActiveScene().getCamera().getEntity().getTransform().position;
-            Vector3f rotation = engine.getActiveScene().getCamera().getEntity().getTransform().rotation;
-            Ray ray = new Ray(position, rotation, 10000f); // TODO: Don't hardcode
+            Camera camera = engine.getActiveScene().getCamera();
+
+            Ray ray = camera.getRay(
+                    mouse.getX(),
+                    mouse.getY(),
+                    window.getSize().x,
+                    window.getSize().y
+            );
+
             RaycastHit hit = engine.getPhysics().raycast(ray);
+
             if (hit != null) {
-                System.out.println(hit);
+                System.out.println(hit.getEntity().getName());
             } else {
                 System.out.println("Miss");
             }

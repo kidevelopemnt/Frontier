@@ -109,8 +109,8 @@ public class PlaygroundScene {
         cube2.addComponent(BoxCollider.class);
 
         cube2.getTransform().position.x = 5f;
-        cube2.getTransform().rotation.y = (float) Math.toRadians(30);
-        cube2.getTransform().rotation.x = (float) Math.toRadians(20);
+        // cube2.getTransform().rotation.y = (float) Math.toRadians(30);
+        // cube2.getTransform().rotation.x = (float) Math.toRadians(20);
 
         scene.addEntity(cube2);
     }
@@ -120,8 +120,8 @@ public class PlaygroundScene {
         MeshRenderer meshRenderer = cube.addComponent(MeshRenderer.class);
         meshRenderer.setMesh(cubeMesh);
         meshRenderer.setMaterial(cubeMaterial);
-        cube.getTransform().rotation.y = (float) Math.toRadians(30);
-        cube.getTransform().rotation.x = (float) Math.toRadians(20);
+        // cube.getTransform().rotation.y = (float) Math.toRadians(30);
+        // cube.getTransform().rotation.x = (float) Math.toRadians(20);
 
         cube.addComponent(Spinner.class);
 

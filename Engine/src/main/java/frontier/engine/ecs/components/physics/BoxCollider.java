@@ -1,6 +1,8 @@
 package frontier.engine.ecs.components.physics;
 
+import frontier.engine.graphics.Transform;
 import frontier.engine.physics.RaycastHit;
+import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
 public class BoxCollider extends Collider {
@@ -9,14 +11,31 @@ public class BoxCollider extends Collider {
 
     @Override
     public RaycastHit raycast(Vector3f origin, Vector3f direction, float maxDistance) {
-        Vector3f position = getEntity().getTransform().position;
-        Vector3f halfSize = new Vector3f(size).mul(0.5f);
+        Transform transform = entity.getTransform();
+        Matrix3f inverseRotation = new Matrix3f()
+                .rotateXYZ(
+                        -transform.rotation.x,
+                        -transform.rotation.y,
+                        -transform.rotation.z
+                );
 
-        Vector3f min = new Vector3f(position).sub(halfSize);
-        Vector3f max = new Vector3f(position).add(halfSize);
+        Vector3f localOrigin = new Vector3f(origin)
+                .sub(transform.position)
+                .sub(center);
+
+        Vector3f localDirection = new Vector3f(direction);
+
+        inverseRotation.transform(localOrigin);
+        inverseRotation.transform(localDirection);
+
+        Vector3f halfSize = new Vector3f(size).mul(0.5f);
+        Vector3f min = new Vector3f(halfSize).negate();
+        Vector3f max = new Vector3f(halfSize);
 
         float tMin = 0.0f;
         float tMax = maxDistance;
+        int hitAxis = -1;
+        float hitNormalSign = 0.0f;
 
         // X axis
         if (direction.x == 0.0f) {
@@ -56,6 +75,12 @@ public class BoxCollider extends Collider {
                 t2 = temp;
             }
 
+            if (t1 > tMin) {
+                tMin = t1;
+                hitAxis = 1;
+                hitNormalSign = localDirection.y > 0 ? -1.0f : 1.0f;
+            }
+
             tMin = Math.max(tMin, t1);
             tMax = Math.min(tMax, t2);
 
@@ -79,6 +104,12 @@ public class BoxCollider extends Collider {
                 t2 = temp;
             }
 
+            if (t1 > tMin) {
+                tMin = t1;
+                hitAxis = 2;
+                hitNormalSign = localDirection.z > 0 ? -1.0f : 1.0f;
+            }
+
             tMin = Math.max(tMin, t1);
             tMax = Math.min(tMax, t2);
 
@@ -87,14 +118,43 @@ public class BoxCollider extends Collider {
             }
         }
 
-        Vector3f hitLocation = new Vector3f(direction)
+        Vector3f localHit = new Vector3f(localDirection)
                 .mul(tMin)
-                .add(origin);
+                .add(localOrigin);
+
+        Matrix3f rotation = new Matrix3f()
+                .rotateXYZ(
+                        transform.rotation.x,
+                        transform.rotation.y,
+                        transform.rotation.z
+                );
+
+        Vector3f worldHit = new Vector3f(localHit);
+
+        rotation.transform(worldHit);
+
+        worldHit
+                .add(center)
+                .add(transform.position);
+
+        Vector3f localNormal = new Vector3f();
+
+        switch (hitAxis) {
+            case 0 -> localNormal.x = hitNormalSign;
+            case 1 -> localNormal.y = hitNormalSign;
+            case 2 -> localNormal.z = hitNormalSign;
+        }
+
+        Vector3f worldNormal = new Vector3f(localNormal);
+
+        rotation.transform(worldNormal);
+
+        worldNormal.normalize();
 
         return new RaycastHit(
                 getEntity(),
-                hitLocation,
-                new Vector3f(), // TODO: normal
+                worldHit,
+                worldNormal,
                 tMin
         );
     }

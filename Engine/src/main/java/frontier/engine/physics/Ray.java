@@ -13,8 +13,8 @@ public class Ray {
     private List<String> groupFilter = new ArrayList<>();  // Filter by entity group
 
     public Ray(Vector3f origin, Vector3f direction, float distance) {
-        this.origin = origin;
-        this.direction = direction.normalize();
+        this.origin = new Vector3f(origin);
+        this.direction = new Vector3f(direction).normalize();
         this.distance = distance;
     }
 

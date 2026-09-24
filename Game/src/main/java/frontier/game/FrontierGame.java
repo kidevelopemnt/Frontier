@@ -7,8 +7,11 @@ import frontier.engine.input.Input;
 import frontier.engine.input.InputAction;
 import frontier.engine.input.Key;
 import frontier.engine.input.KeyBinding;
+import frontier.engine.physics.Ray;
+import frontier.engine.physics.RaycastHit;
 import frontier.game.input.Actions;
 import frontier.game.scenes.PlaygroundScene;
+import org.joml.Vector3f;
 
 public class FrontierGame implements IGame {
     private Engine engine;

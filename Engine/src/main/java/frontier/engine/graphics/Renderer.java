@@ -87,7 +87,6 @@ public class Renderer {
         );
     }
 
-
     public void endFrame() {
 
     }

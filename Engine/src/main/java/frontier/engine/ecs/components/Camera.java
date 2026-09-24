@@ -1,8 +1,10 @@
 package frontier.engine.ecs.components;
 
 import frontier.engine.graphics.Transform;
+import frontier.engine.physics.Ray;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,6 +72,39 @@ public class Camera extends Component {
         Vector3f right = getRight();
 
         return right.cross(forward).normalize();
+    }
+
+    public Ray getRay(float mouseX, float mouseY, float screenWidth, float screenHeight) {
+        // Convert mouse coordinates to normalized device coordinates
+        float x = (2.0f * mouseX) / screenWidth - 1.0f;
+        float y = 1.0f - (2.0f * mouseY) / screenHeight;
+
+        Vector4f clipCoords = new Vector4f(x, y, -1.0f, 1.0f);
+
+        // Convert from clip space to view space
+        Matrix4f inverseProjection = getProjectionMatrix(screenWidth/screenHeight).invert(new Matrix4f());
+
+        Vector4f viewCoords = clipCoords.mul(inverseProjection);
+
+        viewCoords.z = -1.0f;
+        viewCoords.w = 0.0f;
+
+        // Convert from view space to world space
+        Matrix4f inverseView = getViewMatrix().invert(new Matrix4f());
+
+        Vector4f worldCoords = viewCoords.mul(inverseView);
+
+        Vector3f direction = new Vector3f(
+                worldCoords.x,
+                worldCoords.y,
+                worldCoords.z
+        ).normalize();
+
+        return new Ray(
+                getEntity().getTransform().position,
+                direction,
+                10000.0f
+        );
     }
 
     public void moveForward(float amount) {
