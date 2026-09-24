@@ -38,7 +38,7 @@ public class BoxCollider extends Collider {
         float hitNormalSign = 0.0f;
 
         // X axis
-        if (direction.x == 0.0f) {
+        if (direction.x <= 0.000001f) {  // Account for floating point error
             if (localOrigin.x < min.x || localOrigin.x > max.x) {
                 return null;
             }
