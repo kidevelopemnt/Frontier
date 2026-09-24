@@ -21,7 +21,7 @@ public class Physics {
         DebugRenderer.drawRay(
                 ray.getOrigin(),
                 ray.getDirection(),
-                ray.getDistance()
+                10.0f
         );
 
         for (Entity entity : scene.getEntities()) {

@@ -39,17 +39,23 @@ public class BoxCollider extends Collider {
 
         // X axis
         if (direction.x == 0.0f) {
-            if (origin.x < min.x || origin.x > max.x) {
+            if (localOrigin.x < min.x || localOrigin.x > max.x) {
                 return null;
             }
         } else {
-            float t1 = (min.x - origin.x) / direction.x;
-            float t2 = (max.x - origin.x) / direction.x;
+            float t1 = (min.x - localOrigin.x) / direction.x;
+            float t2 = (max.x - localOrigin.x) / direction.x;
 
             if (t1 > t2) {
                 float temp = t1;
                 t1 = t2;
                 t2 = temp;
+            }
+
+            if (t1 > tMin) {
+                tMin = t1;
+                hitAxis = 0;
+                hitNormalSign = localDirection.x > 0 ? -1.0f : 1.0f;
             }
 
             tMin = Math.max(tMin, t1);
@@ -62,12 +68,12 @@ public class BoxCollider extends Collider {
 
         // Y axis
         if (direction.y == 0.0f) {
-            if (origin.y < min.y || origin.y > max.y) {
+            if (localOrigin.y < min.y || localOrigin.y > max.y) {
                 return null;
             }
         } else {
-            float t1 = (min.y - origin.y) / direction.y;
-            float t2 = (max.y - origin.y) / direction.y;
+            float t1 = (min.y - localOrigin.y) / direction.y;
+            float t2 = (max.y - localOrigin.y) / direction.y;
 
             if (t1 > t2) {
                 float temp = t1;
@@ -91,12 +97,12 @@ public class BoxCollider extends Collider {
 
         // Z axis
         if (direction.z == 0.0f) {
-            if (origin.z < min.z || origin.z > max.z) {
+            if (localOrigin.z < min.z || localOrigin.z > max.z) {
                 return null;
             }
         } else {
-            float t1 = (min.z - origin.z) / direction.z;
-            float t2 = (max.z - origin.z) / direction.z;
+            float t1 = (min.z - localOrigin.z) / direction.z;
+            float t2 = (max.z - localOrigin.z) / direction.z;
 
             if (t1 > t2) {
                 float temp = t1;

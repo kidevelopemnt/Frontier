@@ -25,8 +25,6 @@ public class MeshRenderer extends Component {
     public void load(Map<String, Object> data) {
         mesh = Mesh.registry.get(data.get("mesh"));  // TODO: Replace with ResourceManager
         material = Material.registry.get(data.get("material"));
-
-        System.out.println("Mesh name " + data.get("mesh") + " Mesh " + mesh);
     }
 
     public Material getMaterial() {

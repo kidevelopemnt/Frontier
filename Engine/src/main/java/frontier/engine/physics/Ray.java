@@ -27,7 +27,7 @@ public class Ray {
     }
 
     public Vector3f getDirection() {
-        return direction;
+        return direction.normalize();
     }
 
     public float getDistance() {

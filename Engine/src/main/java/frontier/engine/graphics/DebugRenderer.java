@@ -3,6 +3,8 @@ package frontier.engine.graphics;
 import frontier.engine.ecs.components.Camera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 import java.sql.Array;
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 public class DebugRenderer {
     private static final Shader shader = new Shader("shaders/line.vert", "shaders/line.frag");
     private static final VertexArray vao = new VertexArray();
-    private static final VertexBuffer vbo = new VertexBuffer(new float[0]);
+    private static VertexBuffer vbo;
 
     private static class DebugLine {
         Vector3f start;
@@ -67,7 +69,6 @@ public class DebugRenderer {
             Matrix4f projection
     ) {
         shader.bind();
-        System.out.println("LINE");
 
         shader.setMatrix4f("view", view);
         shader.setMatrix4f("projection", projection);
@@ -80,20 +81,24 @@ public class DebugRenderer {
                 end.x,   end.y,   end.z
         };
 
+        VertexBuffer vbo = new VertexBuffer(vertices);
+        vao.addPositionBuffer(vbo);
         vao.bind();
-        vbo.bind();
 
-        glBufferData(
-                GL_ARRAY_BUFFER,
-                vertices,
-                GL_DYNAMIC_DRAW
+        GL20.glVertexAttribPointer(
+                0,
+                3,
+                GL11.GL_FLOAT,
+                false,
+                3 * Float.BYTES,
+                0
         );
+
+        GL20.glEnableVertexAttribArray(0);
+        // TODO: Potentially move the above 2 things to be outside of vao or a separate method
 
         glDrawArrays(GL_LINES, 0, 2);
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-
-        shader.delete();
+        // shader.delete();
     }
 }

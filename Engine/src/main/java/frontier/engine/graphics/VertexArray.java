@@ -62,6 +62,22 @@ public class VertexArray {
         GL20.glEnableVertexAttribArray(2);
     }
 
+    public void addPositionBuffer(VertexBuffer vertexBuffer) {
+        bind();
+        vertexBuffer.bind();
+
+        GL20.glVertexAttribPointer(
+                0,
+                3,
+                GL11.GL_FLOAT,
+                false,
+                3 * Float.BYTES,
+                0
+        );
+
+        GL20.glEnableVertexAttribArray(0);
+    }
+
     public void setIndexBuffer(IndexBuffer indexBuffer) {
         // this.indexBuffer = indexBuffer;
         indexBuffer.bind();
