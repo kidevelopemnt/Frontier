@@ -37,7 +37,7 @@ public class Input {
                     window.getSize().y
             );
 
-            RaycastHit hit = engine.getPhysics().raycast(ray);
+            RaycastHit hit = engine.getPhysics().raycast(ray); // FIXME: Sometimes this still fires in the wrong direction
 
             if (hit != null) {
                 System.out.println(hit.getEntity().getName());

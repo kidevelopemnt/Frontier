@@ -19,6 +19,7 @@ public class PlaygroundScene {
 
     Mesh cubeMesh;
     Material cubeMaterial;
+    Material groundMaterial;
 
     public PlaygroundScene(Engine engine) {
         this.engine = engine;
@@ -28,7 +29,7 @@ public class PlaygroundScene {
         scene = engine.createScene("Playground");
 
         createRendererItems();
-        createStationaryCube();
+        createGround();
         createSpinningCube();
         createLights();
         createCamera();
@@ -99,20 +100,31 @@ public class PlaygroundScene {
                 cubeTexture
         );
         cubeMaterial.setName("cubeMaterial");
+
+        Texture groundTexture = new Texture(
+                "textures/ground.jpg"
+        );
+
+        groundMaterial = new Material(
+                engine.getRenderer().getDefaultShader(),
+                groundTexture
+        );
+        groundMaterial.setName("groundMaterial");
     }
 
-    private void createStationaryCube() {
-        Entity cube2 = new Entity("cube2", scene);
-        MeshRenderer meshRenderer = cube2.addComponent(MeshRenderer.class);
+    private void createGround() {
+        Entity ground = new Entity("ground", scene);
+        MeshRenderer meshRenderer = ground.addComponent(MeshRenderer.class);
         meshRenderer.setMesh(cubeMesh);
-        meshRenderer.setMaterial(cubeMaterial);
-        cube2.addComponent(BoxCollider.class);
+        meshRenderer.setMaterial(groundMaterial);
+        ground.addComponent(BoxCollider.class);
 
-        cube2.getTransform().position.x = 5f;
+        ground.getTransform().position.y -= .5f;
+        ground.getTransform().scale = new Vector3f(150, .1f, 150);
         // cube2.getTransform().rotation.y = (float) Math.toRadians(30);
         // cube2.getTransform().rotation.x = (float) Math.toRadians(20);
 
-        scene.addEntity(cube2);
+        scene.addEntity(ground);
     }
 
     private void createSpinningCube() {

@@ -67,7 +67,7 @@ public class BoxCollider extends Collider {
         }
 
         // Y axis
-        if (direction.y == 0.0f) {
+        if (direction.y <= 0.000001f) {  // Account for floating point error
             if (localOrigin.y < min.y || localOrigin.y > max.y) {
                 return null;
             }
@@ -96,7 +96,7 @@ public class BoxCollider extends Collider {
         }
 
         // Z axis
-        if (direction.z == 0.0f) {
+        if (direction.z <= 0.000001f) {  // Account for floating point error
             if (localOrigin.z < min.z || localOrigin.z > max.z) {
                 return null;
             }
