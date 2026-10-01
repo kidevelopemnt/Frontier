@@ -1,4 +1,4 @@
-package frontier.engine.graphics;
+package frontier.engine.assets;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-public class Texture {
+public class Texture implements Asset {
     private int id;
     private int width;
     private int height;

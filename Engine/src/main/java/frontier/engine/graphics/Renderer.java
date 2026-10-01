@@ -2,6 +2,9 @@ package frontier.engine.graphics;
 
 import frontier.engine.Engine;
 import frontier.engine.application.Window;
+import frontier.engine.assets.Material;
+import frontier.engine.assets.Mesh;
+import frontier.engine.assets.Texture;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.Camera;
 import frontier.engine.ecs.components.LightComponent;
@@ -14,6 +17,7 @@ import org.lwjgl.opengl.*;
 public class Renderer {
     private Engine engine;
 
+    private Material defaultMaterial;
     private Shader defaultShader;
     private Vector3f ambientLight = new Vector3f(0.5f, 0.5f, 0.5f);
 
@@ -23,6 +27,7 @@ public class Renderer {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
         defaultShader = new Shader("shaders/basic.vert", "shaders/basic.frag");
+        defaultMaterial = new Material(defaultShader, new Texture("textures/default.png"));
     }
 
     public void beginFrame() {
@@ -30,6 +35,10 @@ public class Renderer {
     }
 
     public void render(Mesh mesh, Material material, Transform transform, Camera camera, Entity directionalLight, Entity pointLight) {
+        if (material == null) {
+            material = defaultMaterial;
+        }
+
         material.bind();
 
         Shader shader = material.getShader();

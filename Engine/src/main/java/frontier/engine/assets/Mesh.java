@@ -1,23 +1,33 @@
-package frontier.engine.graphics;
+package frontier.engine.assets;
 
-import java.nio.file.Path;
+import frontier.engine.graphics.IndexBuffer;
+import frontier.engine.graphics.VertexArray;
+import frontier.engine.graphics.VertexBuffer;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class Mesh {
+public class Mesh implements Asset {
     private String name; // TODO: This is temporary, will replace with resource manager
     public static Map<String, Mesh> registry = new HashMap<>();
+
+    private float[] vertices;
+    private int[] indices;
 
     private VertexBuffer vertexBuffer;
     private IndexBuffer indexBuffer;
     private VertexArray vertexArray;
 
     public Mesh(float[] vertices, int[] indices) {
-        vertexBuffer = new VertexBuffer(vertices);
-        indexBuffer = new IndexBuffer(indices);
+        this.vertices = vertices;
+        this.indices = indices;
 
         vertexArray = new VertexArray();
+
+        vertexBuffer = new VertexBuffer(vertices);
         vertexArray.addVertexBuffer(vertexBuffer);
+
+        indexBuffer = new IndexBuffer(indices);
         vertexArray.setIndexBuffer(indexBuffer);
     }
 
@@ -46,4 +56,7 @@ public class Mesh {
         return name;
     }
 
+    public Mesh copy() {
+        return new Mesh(vertices, indices);
+    }
 }

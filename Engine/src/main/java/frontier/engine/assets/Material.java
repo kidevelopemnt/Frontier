@@ -1,12 +1,12 @@
-package frontier.engine.graphics;
+package frontier.engine.assets;
 
+import frontier.engine.graphics.Shader;
 import org.lwjgl.opengl.GL13;
 
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Material {
+public class Material implements Asset {
     private String name; // TODO: This is temporary, will replace with resource manager
     public static Map<String, Material> registry = new HashMap<>();
 

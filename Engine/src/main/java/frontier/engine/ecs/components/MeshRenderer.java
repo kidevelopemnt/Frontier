@@ -1,9 +1,8 @@
 package frontier.engine.ecs.components;
 
-import frontier.engine.graphics.Material;
-import frontier.engine.graphics.Mesh;
+import frontier.engine.assets.Material;
+import frontier.engine.assets.Mesh;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,17 +1,20 @@
 package frontier.game.scenes;
 
 import frontier.engine.Engine;
+import frontier.engine.assets.Model;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.*;
 import frontier.engine.ecs.components.physics.BoxCollider;
-import frontier.engine.ecs.components.physics.Collider;
-import frontier.engine.graphics.Material;
-import frontier.engine.graphics.Mesh;
-import frontier.engine.graphics.Texture;
+import frontier.engine.assets.Material;
+import frontier.engine.assets.Mesh;
+import frontier.engine.assets.Texture;
 import frontier.engine.graphics.lighting.LightType;
 import frontier.engine.scene.Scene;
 import frontier.game.ecs.Spinner;
 import org.joml.Vector3f;
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 public class PlaygroundScene {
     private final Engine engine;
@@ -121,20 +124,27 @@ public class PlaygroundScene {
 
         ground.getTransform().position.y -= .5f;
         ground.getTransform().scale = new Vector3f(150, .1f, 150);
-        // cube2.getTransform().rotation.y = (float) Math.toRadians(30);
-        // cube2.getTransform().rotation.x = (float) Math.toRadians(20);
 
         scene.addEntity(ground);
     }
 
     private void createSpinningCube() {
+        try {
+            Model character = engine.getAssets().loadModel(Path.of("models/MaleBase.obj"));
+            Entity entity = new Entity("character", scene);
+            MeshRenderer meshRenderer = entity.addComponent(MeshRenderer.class);
+            for (Mesh mesh : character.getMeshes()) {
+                meshRenderer.setMesh(mesh);  // TODO: Handle multiple meshes
+            }
+            scene.addEntity(entity);
+        } catch (IOException e) {
+            engine.getLogger().logError("Failed to load model... " + e);
+        }
+
         Entity cube = new Entity("cube", scene);
         MeshRenderer meshRenderer = cube.addComponent(MeshRenderer.class);
         meshRenderer.setMesh(cubeMesh);
         meshRenderer.setMaterial(cubeMaterial);
-        // cube.getTransform().rotation.y = (float) Math.toRadians(30);
-        // cube.getTransform().rotation.x = (float) Math.toRadians(20);
-
         cube.addComponent(Spinner.class);
 
         scene.addEntity(cube);

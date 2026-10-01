@@ -2,6 +2,7 @@ package frontier.engine;
 
 import frontier.engine.application.Application;
 import frontier.engine.application.ApplicationConfiguration;
+import frontier.engine.assets.AssetManager;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.Camera;
 import frontier.engine.graphics.DebugRenderer;
@@ -19,6 +20,7 @@ import frontier.engine.scene.SceneSerializer;
 import org.apache.commons.io.FilenameUtils;
 
 public class Engine {
+    private AssetManager assetManager;
     private Logger logger;
     private Input input;
     private Physics physics;
@@ -35,6 +37,7 @@ public class Engine {
     }
 
     public void initialize(ApplicationConfiguration config) {
+        assetManager = new AssetManager(this);
         logger = new Logger();
         input = new Input(this, application.getMainWindow());
         renderer = new Renderer();
@@ -98,6 +101,8 @@ public class Engine {
     public Application getApp() {
         return application;
     }
+
+    public AssetManager getAssets() { return assetManager; }
 
     public Logger getLogger() {
         return logger;

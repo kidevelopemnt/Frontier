@@ -9,19 +9,6 @@ public class VertexArray {
 
     public VertexArray() {
         vao = GL30.glGenVertexArrays();
-
-        GL30.glBindVertexArray(vao);
-
-        GL20.glVertexAttribPointer(
-                0,
-                3,
-                GL11.GL_FLOAT,
-                false,
-                5 * Float.BYTES,
-                0
-        );
-
-        GL20.glEnableVertexAttribArray(0);
     }
 
     public void addVertexBuffer(VertexBuffer vertexBuffer) {
@@ -79,7 +66,7 @@ public class VertexArray {
     }
 
     public void setIndexBuffer(IndexBuffer indexBuffer) {
-        // this.indexBuffer = indexBuffer;
+        bind();
         indexBuffer.bind();
     }
 
