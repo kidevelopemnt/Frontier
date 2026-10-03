@@ -111,18 +111,14 @@ public class PlaygroundScene {
 
         planeMesh = new Mesh(planeVertices, planeIndices);
 
-        Texture cubeTexture = new Texture(
-                "textures/crate.jpg"
-        );
+        Texture cubeTexture = engine.getAssets().loadTexture("textures/crate.jpg");
 
         cubeMaterial = new Material(
                 cubeTexture
         );
         cubeMaterial.setName("cubeMaterial");
 
-        Texture groundTexture = new Texture(
-                "textures/ground.jpg"
-        );
+        Texture groundTexture = engine.getAssets().loadTexture("textures/ground.jpg");
 
         groundMaterial = new Material(
                 groundTexture
@@ -145,7 +141,7 @@ public class PlaygroundScene {
 
     private void createSpinningCube() {
         try {
-            Model character = engine.getAssets().loadModel(Path.of("models/MaleBase.obj"));
+            Model character = engine.getAssets().loadModel("models/MaleBase.obj");
             Entity entity = new Entity("character", scene);
             MeshRenderer meshRenderer = entity.addComponent(MeshRenderer.class);
             for (Mesh mesh : character.getMeshes()) {

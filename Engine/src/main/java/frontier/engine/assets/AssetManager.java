@@ -6,38 +6,94 @@ import frontier.engine.assets.importer.ObjImporter;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AssetManager {
-    private Engine engine;
+
+    private final Engine engine;
+
+    private final Map<Path, Texture> textureMap = new HashMap<>();
 
     public AssetManager(Engine engine) {
         this.engine = engine;
     }
 
-    public Model loadModel(Path path) throws IOException {
-        path = engine.getApp().getProjectDirectory().resolve("src/main/resources/").resolve(path);
-        String extension = FilenameUtils.getExtension(path.toString());
+    public Model loadModel(String path) throws IOException {
+        AssetResource resource = resolveResource(path);
 
-        ModelImporter importer;
+        String extension = FilenameUtils.getExtension(path)
+                .toLowerCase();
 
-        switch (extension) {
-            case "obj": {
-                importer = new ObjImporter();
-                break;
+        ModelImporter importer = switch (extension) {
+            case "obj" -> new ObjImporter();
+
+            case "fbx" -> {
+                engine.getLogger().logWarn(
+                        "Loading FBX is not implemented... skipping model."
+                );
+                yield null;
             }
-            case "fbx": {
-                engine.getLogger().logWarn("Load FBX is not implemented... skipping model.");
-                return null;
+
+            default -> {
+                engine.getLogger().logError(
+                        "Invalid model file type: " + extension
+                );
+                yield null;
             }
-            default: {
-                engine.getLogger().logError("Invalid model file type " + extension);
-                return null;
-            }
+        };
+
+        if (importer == null) {
+            return null;
         }
 
-        Model model = importer.loadModel(path);
-        engine.getLogger().logDebug("Imported model " + path);
+        Model model = importer.loadModel(resource);
+
+        engine.getLogger().logDebug(
+                "Imported model " + path
+        );
+
         return model;
+    }
+
+    public Texture loadTexture(String path) {
+        AssetResource resource = resolveResource(path);
+
+        if (resource == null) {
+            return null;
+        }
+
+        return new Texture(resource);
+    }
+
+    private AssetResource resolveResource(String path) {
+        path = path.replace('\\', '/');
+
+        Path projectResource = engine.getApp()
+                .getProjectDirectory()
+                .resolve("src/main/resources")
+                .resolve(path);
+
+        if (Files.exists(projectResource)) {
+            return AssetResource.fromFile(path, projectResource);
+        }
+
+        if (AssetManager.class
+                .getClassLoader()
+                .getResource(path) != null) {
+
+            return AssetResource.fromClasspath(
+                    path,
+                    AssetManager.class.getClassLoader()
+            );
+        }
+
+        engine.getLogger().logError(
+                "Resource not found: " + path
+        );
+
+        return null;
     }
 }

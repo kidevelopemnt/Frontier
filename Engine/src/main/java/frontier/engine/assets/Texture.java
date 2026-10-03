@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.stb.STBImage;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -15,8 +16,8 @@ public class Texture implements Asset {
     private int width;
     private int height;
 
-    public Texture(String path) {
-        ByteBuffer imageData = loadResource(path);
+    public Texture(AssetResource resource) {
+        ByteBuffer imageData = loadResource(resource);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer widthBuffer = stack.mallocInt(1);
@@ -31,7 +32,7 @@ public class Texture implements Asset {
 
             if (image == null) {
                 throw new RuntimeException(
-                        "Failed to load texture " + path + "\n" +
+                        "Failed to load texture" + "\n" +
                         STBImage.stbi_failure_reason()
                 );
             }
@@ -62,17 +63,8 @@ public class Texture implements Asset {
         GL11.glDeleteTextures(id);
     }
 
-    private ByteBuffer loadResource(String path) {
-        try (InputStream input = getClass()
-                .getClassLoader()
-                .getResourceAsStream(path)) {
-
-            if (input == null) {
-                throw new RuntimeException(
-                        "Texture not found: " + path
-                );
-            }
-
+    private ByteBuffer loadResource(AssetResource resource) {
+        try (InputStream input = resource.openStream()) {
             byte[] bytes = input.readAllBytes();
 
             ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length);
@@ -83,7 +75,7 @@ public class Texture implements Asset {
 
         } catch (IOException e) {
             throw new RuntimeException(
-                    "Failed to load texture: " + path,
+                    "Failed to load texture",
                     e
             );
         }

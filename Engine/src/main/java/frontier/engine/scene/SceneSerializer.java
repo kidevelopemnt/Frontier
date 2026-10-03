@@ -24,6 +24,7 @@ public class SceneSerializer {
     }
 
     public void save(Scene scene) {
+        // TODO: Move to use asset manager
         try {
             Path file = engine.getApp().getProjectDirectory().resolve("src/main/resources/scenes").resolve(scene.getFilepath());
             File fileObj = file.toFile();

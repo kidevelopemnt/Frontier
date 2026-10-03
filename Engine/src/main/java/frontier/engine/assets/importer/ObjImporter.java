@@ -1,9 +1,12 @@
 package frontier.engine.assets.importer;
 
+import frontier.engine.assets.AssetResource;
 import frontier.engine.assets.Mesh;
 import frontier.engine.assets.Model;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -13,7 +16,7 @@ import java.util.Map;
 
 public class ObjImporter implements ModelImporter {
     @Override
-    public Model loadModel(Path path) throws IOException {
+    public Model loadModel(AssetResource resource) throws IOException {
 
         List<float[]> positions = new ArrayList<>();
         List<float[]> texCoords = new ArrayList<>();
@@ -24,9 +27,10 @@ public class ObjImporter implements ModelImporter {
 
         Map<VertexKey, Integer> vertexMap = new HashMap<>();
 
-        try (var lines = Files.lines(path)) {
+        try (var lines = new BufferedReader(
+                new InputStreamReader(resource.openStream()))) {
 
-            for (String line : (Iterable<String>) lines::iterator) {
+            for (String line : lines.readAllLines()) {
 
                 line = line.trim();
 

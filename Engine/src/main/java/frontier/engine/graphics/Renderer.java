@@ -14,6 +14,8 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.*;
 
+import java.nio.file.Path;
+
 public class Renderer {
     private Engine engine;
 
@@ -27,7 +29,7 @@ public class Renderer {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
         defaultShader = new Shader("shaders/basic.vert", "shaders/basic.frag");
-        defaultMaterial = new Material(defaultShader, new Texture("textures/default.png"));
+        defaultMaterial = new Material(defaultShader, engine.getAssets().loadTexture("textures/default.png"));
     }
 
     public void beginFrame() {
