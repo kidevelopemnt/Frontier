@@ -7,9 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Material implements Asset {
-    private String name; // TODO: This is temporary, will replace with resource manager
-    public static Map<String, Material> registry = new HashMap<>();
-
     private Shader shader;
     private Texture texture;
 
@@ -45,16 +42,5 @@ public class Material implements Asset {
 
     public void delete() {
         texture.delete();
-    }
-
-    public void setName(String name) {
-        if (this.name != null) {
-            registry.remove(this.name);
-        }
-        this.name = name;
-        registry.put(this.name, this);
-    }
-    public String getName() {
-        return name;
     }
 }

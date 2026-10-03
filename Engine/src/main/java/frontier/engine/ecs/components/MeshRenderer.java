@@ -14,16 +14,17 @@ public class MeshRenderer extends Component {
     public Map<String, Object> serialize() {
         Map<String, Object> data = new HashMap<>();
 
-        data.put("mesh", mesh.getName());
-        data.put("material", material.getName());
+        // data.put("mesh", mesh.getName());
+        // data.put("material", material.getName());
 
         return data;
     }
 
     @Override
     public void load(Map<String, Object> data) {
-        mesh = Mesh.registry.get(data.get("mesh"));  // TODO: Replace with ResourceManager
-        material = Material.registry.get(data.get("material"));
+        // TODO: Revist loading with AssetManager
+        // mesh = Mesh.registry.get(data.get("mesh"));
+        // material = Material.registry.get(data.get("material"));
     }
 
     public Material getMaterial() {

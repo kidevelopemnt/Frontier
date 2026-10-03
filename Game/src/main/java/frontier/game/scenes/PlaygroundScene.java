@@ -107,7 +107,6 @@ public class PlaygroundScene {
         };
 
         cubeMesh = new Mesh(vertices, indices);
-        cubeMesh.setName("cube");
 
         planeMesh = new Mesh(planeVertices, planeIndices);
 
@@ -116,14 +115,12 @@ public class PlaygroundScene {
         cubeMaterial = new Material(
                 cubeTexture
         );
-        cubeMaterial.setName("cubeMaterial");
 
         Texture groundTexture = engine.getAssets().loadTexture("textures/ground.jpg");
 
         groundMaterial = new Material(
                 groundTexture
         );
-        groundMaterial.setName("groundMaterial");
     }
 
     private void createGround() {
