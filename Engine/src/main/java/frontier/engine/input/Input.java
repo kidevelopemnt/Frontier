@@ -3,6 +3,7 @@ package frontier.engine.input;
 import frontier.engine.Engine;
 import frontier.engine.application.Window;
 import frontier.engine.ecs.components.Camera;
+import frontier.engine.events.TriggerEnteredEvent;
 import frontier.engine.physics.Ray;
 import frontier.engine.physics.RaycastHit;
 import org.joml.Vector3f;
@@ -40,9 +41,7 @@ public class Input {
             RaycastHit hit = engine.getPhysics().raycast(ray); // FIXME: Sometimes this still fires in the wrong direction
 
             if (hit != null) {
-                System.out.println(hit.getEntity().getName());
-            } else {
-                System.out.println("Miss");
+                engine.getEventBus().trigger(TriggerEnteredEvent.class);  // TODO: How can I pass more information? Like pass entity and other to TriggerEnteredEvent
             }
         }
     }

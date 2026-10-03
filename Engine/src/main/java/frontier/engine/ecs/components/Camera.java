@@ -100,12 +100,6 @@ public class Camera extends Component {
                 worldCoords.z
         ).normalize();
 
-        System.out.println(
-                "Mouse: " + mouseX + ", " + mouseY +
-                        " | NDC: " + x + ", " + y +
-                        " | Direction: " + direction
-        );
-
         return new Ray(
                 new Vector3f(getEntity().getTransform().position),
                 direction,

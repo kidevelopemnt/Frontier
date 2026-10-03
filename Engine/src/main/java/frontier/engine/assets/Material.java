@@ -18,8 +18,16 @@ public class Material implements Asset {
         this.texture = texture;
     }
 
+    public Material (Texture texture) {
+        this.texture = texture;
+    }
+
     public Shader getShader() {
         return shader;
+    }
+
+    public void setShader(Shader shader) {
+        this.shader = shader;
     }
 
     public Texture getTexture() {

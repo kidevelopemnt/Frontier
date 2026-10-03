@@ -38,6 +38,9 @@ public class Renderer {
         if (material == null) {
             material = defaultMaterial;
         }
+        if (material.getShader() == null) {
+            material.setShader(defaultShader);
+        }
 
         material.bind();
 

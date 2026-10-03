@@ -21,6 +21,7 @@ public class PlaygroundScene {
     private Scene scene;
 
     Mesh cubeMesh;
+    Mesh planeMesh;
     Material cubeMaterial;
     Material groundMaterial;
 
@@ -91,15 +92,28 @@ public class PlaygroundScene {
                 20, 21, 22, 20, 22, 23
         };
 
+        float[] planeVertices = {
+                -0.5f, 0f, -0.5f,  0f, 1f, 0f, 0f, 0f,
+                0.5f, 0f, -0.5f,   0f, 1f, 0f, 1f, 0f,
+                -0.5f, 0f, 0.5f,   0f, 1f, 0f, 0f, 1f,
+                0.5f, 0f, 0.5f,    0f, 1f, 0f, 1f, 1f
+        };
+
+        int[] planeIndices = {
+                0, 2, 1,
+                2, 3, 1
+        };
+
         cubeMesh = new Mesh(vertices, indices);
         cubeMesh.setName("cube");
+
+        planeMesh = new Mesh(planeVertices, planeIndices);
 
         Texture cubeTexture = new Texture(
                 "textures/crate.jpg"
         );
 
         cubeMaterial = new Material(
-                engine.getRenderer().getDefaultShader(),
                 cubeTexture
         );
         cubeMaterial.setName("cubeMaterial");
@@ -109,7 +123,6 @@ public class PlaygroundScene {
         );
 
         groundMaterial = new Material(
-                engine.getRenderer().getDefaultShader(),
                 groundTexture
         );
         groundMaterial.setName("groundMaterial");
@@ -118,12 +131,12 @@ public class PlaygroundScene {
     private void createGround() {
         Entity ground = new Entity("ground", scene);
         MeshRenderer meshRenderer = ground.addComponent(MeshRenderer.class);
-        meshRenderer.setMesh(cubeMesh);
+        meshRenderer.setMesh(planeMesh);
         meshRenderer.setMaterial(groundMaterial);
         ground.addComponent(BoxCollider.class);
 
         ground.getTransform().position.y -= .5f;
-        ground.getTransform().scale = new Vector3f(150, .1f, 150);
+        ground.getTransform().scale = new Vector3f(150, 1f, 150);
 
         scene.addEntity(ground);
     }

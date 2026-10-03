@@ -18,11 +18,14 @@ public class Physics {
     public RaycastHit raycast(Ray ray) {
         RaycastHit closestHit = null;
 
+        /*
+        // DEBUG: Draw  TODO: Add DebugMode flag or toggle
         DebugRenderer.drawRay(
                 ray.getOrigin(),
                 ray.getDirection(),
-                10.0f
+                ray.getDistance()
         );
+        */
 
         for (Entity entity : scene.getEntities()) {
             Collider collider = entity.getCollider();
