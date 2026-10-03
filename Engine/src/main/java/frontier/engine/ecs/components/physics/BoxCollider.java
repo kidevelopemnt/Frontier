@@ -38,13 +38,13 @@ public class BoxCollider extends Collider {
         float hitNormalSign = 0.0f;
 
         // X axis
-        if (direction.x <= 0.000001f) {  // Account for floating point error
+        if (Math.abs(localDirection.x) <= 0.000001f) {  // Account for floating point error
             if (localOrigin.x < min.x || localOrigin.x > max.x) {
                 return null;
             }
         } else {
-            float t1 = (min.x - localOrigin.x) / direction.x;
-            float t2 = (max.x - localOrigin.x) / direction.x;
+            float t1 = (min.x - localOrigin.x) / localDirection.x;
+            float t2 = (max.x - localOrigin.x) / localDirection.x;
 
             if (t1 > t2) {
                 float temp = t1;
@@ -67,13 +67,13 @@ public class BoxCollider extends Collider {
         }
 
         // Y axis
-        if (direction.y <= 0.000001f) {  // Account for floating point error
+        if (Math.abs(localDirection.y) <= 0.000001f) {  // Account for floating point error
             if (localOrigin.y < min.y || localOrigin.y > max.y) {
                 return null;
             }
         } else {
-            float t1 = (min.y - localOrigin.y) / direction.y;
-            float t2 = (max.y - localOrigin.y) / direction.y;
+            float t1 = (min.y - localOrigin.y) / localDirection.y;
+            float t2 = (max.y - localOrigin.y) / localDirection.y;
 
             if (t1 > t2) {
                 float temp = t1;
@@ -96,13 +96,13 @@ public class BoxCollider extends Collider {
         }
 
         // Z axis
-        if (direction.z <= 0.000001f) {  // Account for floating point error
+        if (Math.abs(localDirection.z) <= 0.000001f) {  // Account for floating point error
             if (localOrigin.z < min.z || localOrigin.z > max.z) {
                 return null;
             }
         } else {
-            float t1 = (min.z - localOrigin.z) / direction.z;
-            float t2 = (max.z - localOrigin.z) / direction.z;
+            float t1 = (min.z - localOrigin.z) / localDirection.z;
+            float t2 = (max.z - localOrigin.z) / localDirection.z;
 
             if (t1 > t2) {
                 float temp = t1;

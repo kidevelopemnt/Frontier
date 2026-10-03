@@ -22,7 +22,7 @@ public class Input {
         this.window = window;
         actionRegistry = new ActionRegistry(this);
         glfwInput = new GLFWInput(window.getHandle());
-        mouse = new Mouse(window.getHandle(), glfwInput);
+        mouse = new Mouse(window, glfwInput);
     }
 
     public void update() {
@@ -30,22 +30,45 @@ public class Input {
         mouse.update();
 
         if (mouse.isButtonDown(MouseButton.LEFT)) {
-            Camera camera = engine.getActiveScene().getCamera();
+            Ray ray = getRay();
 
-            Ray ray = camera.getRay(
-                mouse.getX(),
-                mouse.getY(),
-                window.getSize().x,
-                window.getSize().y
+            DebugRenderer.drawRay(
+                    ray.getOrigin(),
+                    ray.getDirection(),
+                    ray.getDistance()
             );
-            DebugRenderer.drawRay(ray.getOrigin(), ray.getDirection(), ray.getDistance());
 
-            RaycastHit hit = engine.getPhysics().raycast(ray); // FIXME: Sometimes this still fires in the wrong direction
-
+            RaycastHit hit = engine.getPhysics().raycast(ray);
             if (hit != null) {
-                engine.getEventBus().trigger(hit.getCollider(), TriggerEnteredEvent.class);
+                engine.getEventBus().trigger(
+                        hit.getCollider(),
+                        TriggerEnteredEvent.class
+                );
             }
         }
+    }
+
+    private Ray getRay() {
+        Camera camera = engine.getActiveScene().getCamera();
+
+        float rayX;
+        float rayY;
+
+        if (mouse.isCursorLocked()) {
+            rayX = window.getSize().x / 2.0f;
+            rayY = window.getSize().y / 2.0f;
+        } else {
+            rayX = mouse.getX();
+            rayY = mouse.getY();
+        }
+
+        Ray ray = camera.getRay(
+                rayX,
+                rayY,
+                window.getSize().x,
+                window.getSize().y
+        );
+        return ray;
     }
 
     public void endFrame() {

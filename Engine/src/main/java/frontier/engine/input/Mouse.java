@@ -1,12 +1,13 @@
 package frontier.engine.input;
 
+import frontier.engine.application.Window;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Mouse {
-    private final long window;
+    private final Window window;
     private GLFWInput glfwInput;
 
     private double x;
@@ -23,7 +24,7 @@ public class Mouse {
     // TODO: Add option to replace cursor with icon (or show icon at center if cursorLocked)
     // Need to figure out where to do this
 
-    public Mouse(long window, GLFWInput glfwInput) {
+    public Mouse(Window window, GLFWInput glfwInput) {
         this.window = window;
         this.glfwInput = glfwInput;
     }
@@ -32,8 +33,7 @@ public class Mouse {
         double[] xBuffer = new double[1];
         double[] yBuffer = new double[1];
 
-        GLFW.glfwGetCursorPos(window, xBuffer, yBuffer);
-
+        GLFW.glfwGetCursorPos(window.getHandle(), xBuffer, yBuffer);
         x = xBuffer[0];
         y = yBuffer[0];
 

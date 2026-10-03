@@ -74,32 +74,39 @@ public class Camera extends Component {
         return right.cross(forward).normalize();
     }
 
-    public Ray getRay(float mouseX, float mouseY, float screenWidth, float screenHeight) {
-        // Convert mouse coordinates to normalized device coordinates
+    public Ray getRay(float mouseX, float mouseY,
+                      float screenWidth, float screenHeight) {
+
+        // Convert mouse coordinates to normalized device coordinates.
         float x = (2.0f * mouseX) / screenWidth - 1.0f;
         float y = 1.0f - (2.0f * mouseY) / screenHeight;
 
+        // Clip space -> view space.
         Vector4f clipCoords = new Vector4f(x, y, -1.0f, 1.0f);
 
-        // Convert from clip space to view space
-        Matrix4f inverseProjection = getProjectionMatrix(screenWidth/screenHeight).invert(new Matrix4f());
+        Matrix4f inverseProjection =
+                getProjectionMatrix(screenWidth / screenHeight)
+                        .invert(new Matrix4f());
 
-        Vector4f viewCoords = clipCoords.mul(inverseProjection);
+        Vector4f viewCoords = new Vector4f(clipCoords);
+        inverseProjection.transform(viewCoords);
 
+        // Convert the near-plane position into a view-space direction.
         viewCoords.z = -1.0f;
         viewCoords.w = 0.0f;
 
-        // Convert from view space to world space
-        Matrix4f inverseView = getViewMatrix().invert(new Matrix4f());
+        // View space -> world space.
+        Matrix4f inverseView =
+                getViewMatrix().invert(new Matrix4f());
 
-        Vector4f worldCoords = viewCoords.mul(inverseView);
+        Vector4f worldCoords = new Vector4f(viewCoords);
+        inverseView.transform(worldCoords);
 
         Vector3f direction = new Vector3f(
                 worldCoords.x,
                 worldCoords.y,
                 worldCoords.z
         ).normalize();
-
 
         return new Ray(
                 new Vector3f(getEntity().getTransform().position),

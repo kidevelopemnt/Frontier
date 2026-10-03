@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL20;
 
 import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.glDrawArrays;
@@ -25,23 +26,36 @@ public class DebugRenderer {
         Vector3f end;
         Vector3f color;
         float width;
+        int lifespan;  // negative numbers indicate infinite
 
-        DebugLine(Vector3f start, Vector3f end, Vector3f color, float width) {
+        DebugLine(Vector3f start, Vector3f end, Vector3f color, float width, int lifespan) {
             this.start = start;
             this.end = end;
             this.color = color;
             this.width = width;
+            this.lifespan = lifespan;
         }
     }
 
     private static final List<DebugLine> lines = new ArrayList<>();
+
+    public static void drawLine(Vector3f start, Vector3f end, Vector3f color, float width, int lifespan) {
+        lines.add(new DebugLine(
+                new Vector3f(start),
+                new Vector3f(end),
+                new Vector3f(color),
+                width,
+                lifespan
+        ));
+    }
 
     public static void drawLine(Vector3f start, Vector3f end, Vector3f color, float width) {
         lines.add(new DebugLine(
                 new Vector3f(start),
                 new Vector3f(end),
                 new Vector3f(color),
-                width
+                width,
+                60  // TODO: Is there a way to get FPS and do 1 second as default?
         ));
     }
 
@@ -55,8 +69,15 @@ public class DebugRenderer {
     }
 
     public static void render(Camera camera, float aspectRatio) {
-        for (DebugLine line : lines) {
+        Iterator<DebugLine> iterator = lines.iterator();
+
+        while (iterator.hasNext()) {
+            DebugLine line = iterator.next();
             renderLine(line.start, line.end, line.color, line.width, camera.getViewMatrix(), camera.getProjectionMatrix(aspectRatio));
+            line.lifespan -= 1;
+            if (line.lifespan == 0) {
+                iterator.remove();
+            }
         }
     }
 
