@@ -100,6 +100,7 @@ public class Camera extends Component {
                 worldCoords.z
         ).normalize();
 
+
         return new Ray(
                 new Vector3f(getEntity().getTransform().position),
                 direction,

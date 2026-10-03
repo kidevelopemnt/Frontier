@@ -159,6 +159,7 @@ public class BoxCollider extends Collider {
 
         return new RaycastHit(
                 getEntity(),
+                this,
                 worldHit,
                 worldNormal,
                 tMin

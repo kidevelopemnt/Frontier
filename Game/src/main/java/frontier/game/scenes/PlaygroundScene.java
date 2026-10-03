@@ -8,6 +8,8 @@ import frontier.engine.ecs.components.physics.BoxCollider;
 import frontier.engine.assets.Material;
 import frontier.engine.assets.Mesh;
 import frontier.engine.assets.Texture;
+import frontier.engine.events.Event;
+import frontier.engine.events.TriggerEnteredEvent;
 import frontier.engine.graphics.lighting.LightType;
 import frontier.engine.scene.Scene;
 import frontier.game.ecs.Spinner;
@@ -160,7 +162,15 @@ public class PlaygroundScene {
         meshRenderer.setMaterial(cubeMaterial);
         cube.addComponent(Spinner.class);
 
+        BoxCollider boxCollider = cube.addComponent(BoxCollider.class);
+        boxCollider.setTrigger(true);
+        engine.getEventBus().subscribe(boxCollider, TriggerEnteredEvent.class, this::spinningCubeClicked);
+
         scene.addEntity(cube);
+    }
+
+    private void spinningCubeClicked(Event e) {
+        System.out.println("Clicked " + e);
     }
 
     private void createLights() {

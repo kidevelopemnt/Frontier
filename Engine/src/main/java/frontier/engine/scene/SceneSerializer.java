@@ -46,7 +46,6 @@ public class SceneSerializer {
         try {
             // Use Jackson's built-in TypeReference map parsing
             Map<String, Object> data = mapper.readValue(path.toFile(), new TypeReference<Map<String, Object>>() {});
-            System.out.println(data);
 
             String sceneName = (String) data.getOrDefault("name", "Unknown Scene");
             List<Map<String, Object>> entitiesData = (List<Map<String, Object>>) data.get("entities");
@@ -87,7 +86,6 @@ public class SceneSerializer {
     }
 
     private void loadComponent(Entity entity, String componentName, Map<?, ?> componentData) {
-        System.out.println(componentName);
         try {
             Class<?> componentClass = Class.forName("frontier.engine.ecs.components." + componentName);
             Component component = entity.addComponent(componentClass);

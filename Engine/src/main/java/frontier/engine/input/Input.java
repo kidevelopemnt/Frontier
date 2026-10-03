@@ -4,6 +4,7 @@ import frontier.engine.Engine;
 import frontier.engine.application.Window;
 import frontier.engine.ecs.components.Camera;
 import frontier.engine.events.TriggerEnteredEvent;
+import frontier.engine.graphics.DebugRenderer;
 import frontier.engine.physics.Ray;
 import frontier.engine.physics.RaycastHit;
 import org.joml.Vector3f;
@@ -32,16 +33,17 @@ public class Input {
             Camera camera = engine.getActiveScene().getCamera();
 
             Ray ray = camera.getRay(
-                    mouse.getX(),
-                    mouse.getY(),
-                    window.getSize().x,
-                    window.getSize().y
+                mouse.getX(),
+                mouse.getY(),
+                window.getSize().x,
+                window.getSize().y
             );
+            DebugRenderer.drawRay(ray.getOrigin(), ray.getDirection(), ray.getDistance());
 
             RaycastHit hit = engine.getPhysics().raycast(ray); // FIXME: Sometimes this still fires in the wrong direction
 
             if (hit != null) {
-                engine.getEventBus().trigger(TriggerEnteredEvent.class);  // TODO: How can I pass more information? Like pass entity and other to TriggerEnteredEvent
+                engine.getEventBus().trigger(hit.getCollider(), TriggerEnteredEvent.class);
             }
         }
     }

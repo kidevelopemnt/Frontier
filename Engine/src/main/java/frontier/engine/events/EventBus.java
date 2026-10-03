@@ -7,17 +7,19 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class EventBus {
-    private final Map<Class<? extends Event>, List<Consumer<Event>>> register = new HashMap<>();
+    private final Map<EventKey, List<Consumer<Event>>> register = new HashMap<>();
 
-    public <T extends Event> void subscribe(Class<T> eventClass, Consumer<Event> callback) {
-        if (register.containsKey(eventClass)) {
-            register.get(eventClass).add(callback);
+    public <T extends Event> void subscribe(Object source, Class<T> eventClass, Consumer<Event> callback) {
+        // TODO: Allow subscribing to no specific source
+        EventKey key = new EventKey(source, eventClass);
+        if (register.containsKey(key)) {
+            register.get(key).add(callback);
         } else {
-            register.put(eventClass, List.of(callback));
+            register.put(key, List.of(callback));
         }
     }
 
-    public <T extends Event> void trigger(Class<T> eventClass) {
+    public <T extends Event> void trigger(Object source, Class<T> eventClass) {
         Event event = null;
         try {
             event = eventClass.getDeclaredConstructor().newInstance();
@@ -25,8 +27,11 @@ public class EventBus {
             throw new RuntimeException(e);
         }
 
-        if (register.containsKey(eventClass)) {
-            for (Consumer<Event> callback : register.get(eventClass)) {
+        EventKey key = new EventKey(source, eventClass);
+
+        event.setSource(source);
+        if (register.containsKey(key)) {
+            for (Consumer<Event> callback : register.get(key)) {
                 callback.accept(event);
             }
         }
