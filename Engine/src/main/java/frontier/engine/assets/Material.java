@@ -45,7 +45,8 @@ public class Material extends Asset {
         shader.setInt("textureSampler", 0);
     }
 
-    public void delete() {
-        texture.delete();
+    @Override
+    public void unload() {
+        texture.unload();
     }
 }

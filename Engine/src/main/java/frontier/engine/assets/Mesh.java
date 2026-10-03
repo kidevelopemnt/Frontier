@@ -41,7 +41,8 @@ public class Mesh extends Asset {
         return indexBuffer.getCount();
     }
 
-    public void delete() {
+    @Override
+    public void unload() {
         vertexArray.delete();
         vertexBuffer.delete();
         indexBuffer.delete();

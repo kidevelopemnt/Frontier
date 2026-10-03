@@ -65,7 +65,8 @@ public class Texture extends Asset {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, glID);
     }
 
-    public void delete() {
+    @Override
+    public void unload() {
         GL11.glDeleteTextures(glID);
     }
 

@@ -10,4 +10,8 @@ public abstract class Asset {
     public AssetID getAssetId() {
         return assetId;
     }
+
+    public void unload() {
+        // Assets do not unload their dependencies
+    };
 }

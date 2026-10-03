@@ -98,6 +98,7 @@ public class Engine {
 
     public void shutdown() {
         renderer.shutdown();
+        assetManager.unloadAll();
         logger.logInfo("Engine shutdown.");
     }
 

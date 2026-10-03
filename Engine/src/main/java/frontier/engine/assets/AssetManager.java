@@ -96,6 +96,36 @@ public class AssetManager {
         return get(new AssetID(id), type);
     }
 
+    public boolean unload(AssetID id) {
+        Asset asset = assets.remove(id);
+
+        if (asset == null) {
+            return false;
+        }
+
+        asset.unload();
+
+        engine.getLogger().logDebug(
+                "Unloaded asset " + id
+        );
+
+        return true;
+    }
+
+    public boolean unload(String id) {
+        return unload(new AssetID(id));
+    }
+
+    public void unloadAll() {
+        for (Asset asset : assets.values()) {
+            asset.unload();
+        }
+
+        assets.clear();
+
+        engine.getLogger().logDebug("Unloaded all assets.");
+    }
+
     @SuppressWarnings("unchecked")
     private <T extends Asset> T getCached(AssetID id, Class<T> type) {
         Asset asset = assets.get(id);
