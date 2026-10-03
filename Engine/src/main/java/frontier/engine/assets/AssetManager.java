@@ -15,13 +15,21 @@ public class AssetManager {
 
     private final Engine engine;
 
-    private final Map<Path, Texture> textureMap = new HashMap<>();
+    private final Map<AssetID, Asset> assets = new HashMap<>();
 
     public AssetManager(Engine engine) {
         this.engine = engine;
     }
 
     public Model loadModel(String path) throws IOException {
+        AssetID id = new AssetID(path);
+
+        Model cached = getCached(id, Model.class);
+
+        if (cached != null) {
+            return cached;
+        }
+
         AssetResource resource = resolveResource(path);
 
         String extension = FilenameUtils.getExtension(path)
@@ -49,7 +57,8 @@ public class AssetManager {
             return null;
         }
 
-        Model model = importer.loadModel(resource);
+        Model model = importer.loadModel(id, resource);
+        assets.put(id, model);
 
         engine.getLogger().logDebug(
                 "Imported model " + path
@@ -59,13 +68,52 @@ public class AssetManager {
     }
 
     public Texture loadTexture(String path) {
+        AssetID id = new AssetID(path);
+        Texture cached = getCached(id, Texture.class);
+
+        if (cached != null) {
+            System.out.println("CACHED");
+            return cached;
+        }
+
         AssetResource resource = resolveResource(path);
 
         if (resource == null) {
             return null;
         }
 
-        return new Texture(resource);
+        Texture texture = new Texture(id, resource);
+        assets.put(id, texture);
+
+        return texture;
+    }
+
+    public <T extends Asset> T get(AssetID id, Class<T> type) {
+        return getCached(id, type);
+    }
+
+    public <T extends Asset> T get(String id, Class<T> type) {
+        return get(new AssetID(id), type);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Asset> T getCached(AssetID id, Class<T> type) {
+        Asset asset = assets.get(id);
+
+        if (asset == null) {
+            return null;
+        }
+
+        if (!type.isInstance(asset)) {
+            throw new IllegalStateException(
+                    "Asset ID " + id + " is already registered as "
+                            + asset.getClass().getSimpleName()
+                            + ", not "
+                            + type.getSimpleName()
+            );
+        }
+
+        return (T) asset;
     }
 
     private AssetResource resolveResource(String path) {

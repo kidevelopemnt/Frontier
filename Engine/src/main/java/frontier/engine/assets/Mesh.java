@@ -7,7 +7,7 @@ import frontier.engine.graphics.VertexBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Mesh implements Asset {
+public class Mesh extends Asset {
     private float[] vertices;
     private int[] indices;
 
@@ -15,7 +15,8 @@ public class Mesh implements Asset {
     private IndexBuffer indexBuffer;
     private VertexArray vertexArray;
 
-    public Mesh(float[] vertices, int[] indices) {
+    public Mesh(AssetID id, float[] vertices, int[] indices) {
+        super(id);
         this.vertices = vertices;
         this.indices = indices;
 
@@ -26,6 +27,10 @@ public class Mesh implements Asset {
 
         indexBuffer = new IndexBuffer(indices);
         vertexArray.setIndexBuffer(indexBuffer);
+    }
+
+    public Mesh(float[] vertices, int[] indices) {
+        this(null, vertices, indices);
     }
 
     public void bind() {

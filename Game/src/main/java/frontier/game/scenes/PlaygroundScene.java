@@ -37,6 +37,7 @@ public class PlaygroundScene {
         createRendererItems();
         createGround();
         createSpinningCube();
+        createOtherObjects();
         createLights();
         createCamera();
     }
@@ -160,6 +161,10 @@ public class PlaygroundScene {
         engine.getEventBus().subscribe(boxCollider, TriggerEnteredEvent.class, this::spinningCubeClicked);
 
         scene.addEntity(cube);
+    }
+
+    private void createOtherObjects() {
+
     }
 
     private void spinningCubeClicked(Event e) {

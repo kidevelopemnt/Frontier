@@ -11,12 +11,14 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-public class Texture implements Asset {
-    private int id;
+public class Texture extends Asset {
+    private int glID;
     private int width;
     private int height;
 
-    public Texture(AssetResource resource) {
+    public Texture(AssetID id, AssetResource resource) {
+        super(id);
+
         ByteBuffer imageData = loadResource(resource);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -40,9 +42,9 @@ public class Texture implements Asset {
             width = widthBuffer.get(0);
             height = heightBuffer.get(0);
 
-            id = GL11.glGenTextures();
+            glID = GL11.glGenTextures();
 
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, glID);
 
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
@@ -55,12 +57,16 @@ public class Texture implements Asset {
         }
     }
 
+    public Texture(AssetResource resource) {
+        this(null, resource);
+    }
+
     public void bind() {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, glID);
     }
 
     public void delete() {
-        GL11.glDeleteTextures(id);
+        GL11.glDeleteTextures(glID);
     }
 
     private ByteBuffer loadResource(AssetResource resource) {

@@ -6,17 +6,22 @@ import org.lwjgl.opengl.GL13;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Material implements Asset {
+public class Material extends Asset {
     private Shader shader;
     private Texture texture;
 
-    public Material (Shader shader, Texture texture) {
+    public Material(AssetID id, Shader shader, Texture texture) {
+        super(id);
         this.shader = shader;
         this.texture = texture;
     }
 
+    public Material (Shader shader, Texture texture) {
+        this(null, shader, texture);
+    }
+
     public Material (Texture texture) {
-        this.texture = texture;
+        this(null, null, texture);
     }
 
     public Shader getShader() {

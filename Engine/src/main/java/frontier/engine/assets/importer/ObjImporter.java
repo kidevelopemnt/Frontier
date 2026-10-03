@@ -1,5 +1,6 @@
 package frontier.engine.assets.importer;
 
+import frontier.engine.assets.AssetID;
 import frontier.engine.assets.AssetResource;
 import frontier.engine.assets.Mesh;
 import frontier.engine.assets.Model;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 public class ObjImporter implements ModelImporter {
     @Override
-    public Model loadModel(AssetResource resource) throws IOException {
+    public Model loadModel(AssetID id, AssetResource resource) throws IOException {
 
         List<float[]> positions = new ArrayList<>();
         List<float[]> texCoords = new ArrayList<>();
@@ -86,7 +87,7 @@ public class ObjImporter implements ModelImporter {
 
         Mesh mesh = new Mesh(vertexArray, indexArray);
 
-        return new Model(List.of(mesh));
+        return new Model(id, List.of(mesh));
     }
 
     private void parseFace(
