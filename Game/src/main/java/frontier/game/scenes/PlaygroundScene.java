@@ -1,13 +1,10 @@
 package frontier.game.scenes;
 
 import frontier.engine.Engine;
-import frontier.engine.assets.Model;
+import frontier.engine.assets.*;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.*;
 import frontier.engine.ecs.components.physics.BoxCollider;
-import frontier.engine.assets.Material;
-import frontier.engine.assets.Mesh;
-import frontier.engine.assets.Texture;
 import frontier.engine.events.Event;
 import frontier.engine.events.TriggerEnteredEvent;
 import frontier.engine.graphics.lighting.LightType;
@@ -17,6 +14,7 @@ import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 public class PlaygroundScene {
     private final Engine engine;
@@ -127,8 +125,8 @@ public class PlaygroundScene {
     private void createGround() {
         Entity ground = new Entity("ground", scene);
         MeshRenderer meshRenderer = ground.addComponent(MeshRenderer.class);
-        meshRenderer.setMesh(planeMesh);
-        meshRenderer.setMaterial(groundMaterial);
+        Model groundModel = new Model(planeMesh, groundMaterial);
+        meshRenderer.setModel(groundModel);
         ground.addComponent(BoxCollider.class);
 
         ground.getTransform().position.y -= .5f;
@@ -142,9 +140,7 @@ public class PlaygroundScene {
             Model character = engine.getAssets().loadModel("models/MaleBase.obj");
             Entity entity = new Entity("character", scene);
             MeshRenderer meshRenderer = entity.addComponent(MeshRenderer.class);
-            for (Mesh mesh : character.getMeshes()) {
-                meshRenderer.setMesh(mesh);  // TODO: Handle multiple meshes
-            }
+            meshRenderer.setModel(character);
             scene.addEntity(entity);
         } catch (IOException e) {
             engine.getLogger().logError("Failed to load model... " + e);
@@ -152,8 +148,8 @@ public class PlaygroundScene {
 
         Entity cube = new Entity("cube", scene);
         MeshRenderer meshRenderer = cube.addComponent(MeshRenderer.class);
-        meshRenderer.setMesh(cubeMesh);
-        meshRenderer.setMaterial(cubeMaterial);
+        Model cubeModel = new Model(cubeMesh, cubeMaterial);
+        meshRenderer.setModel(cubeModel);
         cube.addComponent(Spinner.class);
 
         BoxCollider boxCollider = cube.addComponent(BoxCollider.class);
@@ -164,7 +160,19 @@ public class PlaygroundScene {
     }
 
     private void createOtherObjects() {
+        Entity shapes = new Entity("shapes", scene);
+        MeshRenderer meshRenderer = shapes.addComponent(MeshRenderer.class);
+        try {
+            Model shapesModel = engine.getAssets().loadModel("models/solids.obj");
+            meshRenderer.setModel(shapesModel);
 
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        shapes.getTransform().rotation.x = 90f;
+        shapes.getTransform().position.y += 5f;
+        scene.addEntity(shapes);
     }
 
     private void spinningCubeClicked(Event e) {

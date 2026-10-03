@@ -2,13 +2,13 @@ package frontier.engine.ecs.components;
 
 import frontier.engine.assets.Material;
 import frontier.engine.assets.Mesh;
+import frontier.engine.assets.Model;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MeshRenderer extends Component {
-    private Mesh mesh;
-    private Material material;
+    private Model model;
 
     @Override
     public Map<String, Object> serialize() {
@@ -27,19 +27,11 @@ public class MeshRenderer extends Component {
         // material = Material.registry.get(data.get("material"));
     }
 
-    public Material getMaterial() {
-        return material;
+    public void setModel(Model model) {
+        this.model = model;
     }
 
-    public Mesh getMesh() {
-        return mesh;
-    }
-
-    public void setMaterial(Material material) {
-        this.material = material;
-    }
-
-    public void setMesh(Mesh mesh) {
-        this.mesh = mesh;
+    public Model getModel() {
+        return model;
     }
 }

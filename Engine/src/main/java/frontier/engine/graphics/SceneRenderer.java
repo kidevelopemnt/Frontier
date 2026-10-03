@@ -1,5 +1,6 @@
 package frontier.engine.graphics;
 
+import frontier.engine.assets.ModelMesh;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.Camera;
 import frontier.engine.ecs.components.LightComponent;
@@ -54,7 +55,9 @@ public class SceneRenderer {
                 continue;
             }
 
-            renderer.render(meshRenderer.getMesh(), meshRenderer.getMaterial(), entity.getTransform(), camera, directionalLight, pointLight);
+            for (ModelMesh modelMesh : meshRenderer.getModel().getMeshes()) {
+                renderer.render(modelMesh.getMesh(), modelMesh.getMaterial(), entity.getTransform(), camera, directionalLight, pointLight);
+            }
         }
     }
 

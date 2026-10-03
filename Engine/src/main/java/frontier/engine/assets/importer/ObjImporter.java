@@ -1,21 +1,17 @@
 package frontier.engine.assets.importer;
 
-import frontier.engine.assets.AssetID;
-import frontier.engine.assets.AssetResource;
-import frontier.engine.assets.Mesh;
-import frontier.engine.assets.Model;
+import frontier.engine.assets.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ObjImporter implements ModelImporter {
+
     @Override
     public Model loadModel(AssetID id, AssetResource resource) throws IOException {
 
@@ -23,10 +19,9 @@ public class ObjImporter implements ModelImporter {
         List<float[]> texCoords = new ArrayList<>();
         List<float[]> normals = new ArrayList<>();
 
-        List<Float> vertices = new ArrayList<>();
-        List<Integer> indices = new ArrayList<>();
+        List<ModelMesh> modelMeshes = new ArrayList<>();
 
-        Map<VertexKey, Integer> vertexMap = new HashMap<>();
+        MeshBuilder currentMesh = new MeshBuilder();
 
         try (var lines = new BufferedReader(
                 new InputStreamReader(resource.openStream()))) {
@@ -65,29 +60,61 @@ public class ObjImporter implements ModelImporter {
                             positions,
                             texCoords,
                             normals,
-                            vertices,
-                            indices,
-                            vertexMap
+                            currentMesh
                     );
+
+                    case "o", "g" -> {
+
+                        // Finish the current mesh.
+                        addMesh(currentMesh, modelMeshes);
+
+                        // Start a new mesh.
+                        currentMesh = new MeshBuilder();
+                    }
                 }
             }
         }
 
-        float[] vertexArray = new float[vertices.size()];
+        // Finish the final mesh.
+        addMesh(currentMesh, modelMeshes);
 
-        for (int i = 0; i < vertices.size(); i++) {
-            vertexArray[i] = vertices.get(i);
+        return new Model(
+                id,
+                modelMeshes
+        );
+    }
+
+    private void addMesh(
+            MeshBuilder builder,
+            List<ModelMesh> modelMeshes) {
+
+        if (builder.indices.isEmpty()) {
+            return;
         }
 
-        int[] indexArray = new int[indices.size()];
+        float[] vertexArray = new float[builder.vertices.size()];
 
-        for (int i = 0; i < indices.size(); i++) {
-            indexArray[i] = indices.get(i);
+        for (int i = 0; i < builder.vertices.size(); i++) {
+            vertexArray[i] = builder.vertices.get(i);
         }
 
-        Mesh mesh = new Mesh(vertexArray, indexArray);
+        int[] indexArray = new int[builder.indices.size()];
 
-        return new Model(id, List.of(mesh));
+        for (int i = 0; i < builder.indices.size(); i++) {
+            indexArray[i] = builder.indices.get(i);
+        }
+
+        Mesh mesh = new Mesh(
+                vertexArray,
+                indexArray
+        );
+
+        ModelMesh modelMesh = new ModelMesh(
+                mesh,
+                null
+        );
+
+        modelMeshes.add(modelMesh);
     }
 
     private void parseFace(
@@ -95,9 +122,7 @@ public class ObjImporter implements ModelImporter {
             List<float[]> positions,
             List<float[]> texCoords,
             List<float[]> normals,
-            List<Float> vertices,
-            List<Integer> indices,
-            Map<VertexKey, Integer> vertexMap) {
+            MeshBuilder mesh) {
 
         List<Integer> faceIndices = new ArrayList<>();
 
@@ -133,20 +158,24 @@ public class ObjImporter implements ModelImporter {
                     normalIndex
             );
 
-            Integer vertexIndex = vertexMap.get(key);
+            Integer vertexIndex = mesh.vertexMap.get(key);
 
             if (vertexIndex == null) {
 
-                vertexIndex = vertices.size() / 8;
+                vertexIndex = mesh.vertices.size() / 8;
 
                 addVertex(
                         positions.get(positionIndex),
-                        texCoordIndex >= 0 ? texCoords.get(texCoordIndex) : null,
-                        normalIndex >= 0 ? normals.get(normalIndex) : null,
-                        vertices
+                        texCoordIndex >= 0
+                                ? texCoords.get(texCoordIndex)
+                                : null,
+                        normalIndex >= 0
+                                ? normals.get(normalIndex)
+                                : null,
+                        mesh.vertices
                 );
 
-                vertexMap.put(key, vertexIndex);
+                mesh.vertexMap.put(key, vertexIndex);
             }
 
             faceIndices.add(vertexIndex);
@@ -155,9 +184,9 @@ public class ObjImporter implements ModelImporter {
         // Triangulate the face.
         for (int i = 1; i < faceIndices.size() - 1; i++) {
 
-            indices.add(faceIndices.get(0));
-            indices.add(faceIndices.get(i));
-            indices.add(faceIndices.get(i + 1));
+            mesh.indices.add(faceIndices.get(0));
+            mesh.indices.add(faceIndices.get(i));
+            mesh.indices.add(faceIndices.get(i + 1));
         }
     }
 
@@ -204,5 +233,12 @@ public class ObjImporter implements ModelImporter {
 
         // OBJ supports negative indices.
         return size + index;
+    }
+
+    private static class MeshBuilder {
+
+        private final List<Float> vertices = new ArrayList<>();
+        private final List<Integer> indices = new ArrayList<>();
+        private final Map<VertexKey, Integer> vertexMap = new HashMap<>();
     }
 }
