@@ -10,21 +10,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class AssetManager {
 
     private final Engine engine;
 
-    private final Map<AssetID, Asset> assets = new HashMap<>();
+    private final Map<AssetID, Asset> assetById = new HashMap<>();
+    private final Map<String, AssetID> idByPath = new HashMap<>();
 
     public AssetManager(Engine engine) {
         this.engine = engine;
     }
 
     public Model loadModel(String path) throws IOException {
-        AssetID id = new AssetID(path);
-
-        Model cached = getCached(id, Model.class);
+        Model cached = getCached(path, Model.class);
 
         if (cached != null) {
             return cached;
@@ -57,8 +57,10 @@ public class AssetManager {
             return null;
         }
 
+        AssetID id = new AssetID();
         Model model = importer.loadModel(id, resource);
-        assets.put(id, model);
+        assetById.put(id, model);
+        idByPath.put(path, id);
 
         engine.getLogger().logDebug(
                 "Imported model " + path
@@ -68,11 +70,9 @@ public class AssetManager {
     }
 
     public Texture loadTexture(String path) {
-        AssetID id = new AssetID(path);
-        Texture cached = getCached(id, Texture.class);
+        Texture cached = getCached(path, Texture.class);
 
         if (cached != null) {
-            System.out.println("CACHED");
             return cached;
         }
 
@@ -82,8 +82,10 @@ public class AssetManager {
             return null;
         }
 
+        AssetID id = new AssetID();
         Texture texture = new Texture(id, resource);
-        assets.put(id, texture);
+        assetById.put(id, texture);
+        idByPath.put(path, id);
 
         return texture;
     }
@@ -92,12 +94,12 @@ public class AssetManager {
         return getCached(id, type);
     }
 
-    public <T extends Asset> T get(String id, Class<T> type) {
-        return get(new AssetID(id), type);
+    public <T extends Asset> T get(String path, Class<T> type) {
+        return get(path, type);
     }
 
     public boolean unload(AssetID id) {
-        Asset asset = assets.remove(id);
+        Asset asset = assetById.remove(id);
 
         if (asset == null) {
             return false;
@@ -112,23 +114,26 @@ public class AssetManager {
         return true;
     }
 
-    public boolean unload(String id) {
-        return unload(new AssetID(id));
+    public boolean unload(String path) {
+        AssetID id = idByPath.get(path);
+        idByPath.remove(path);
+        return unload(id);
     }
 
     public void unloadAll() {
-        for (Asset asset : assets.values()) {
+        for (Asset asset : assetById.values()) {
             asset.unload();
         }
 
-        assets.clear();
+        assetById.clear();
+        idByPath.clear();
 
         engine.getLogger().logDebug("Unloaded all assets.");
     }
 
     @SuppressWarnings("unchecked")
     private <T extends Asset> T getCached(AssetID id, Class<T> type) {
-        Asset asset = assets.get(id);
+        Asset asset = assetById.get(id);
 
         if (asset == null) {
             return null;
@@ -136,7 +141,7 @@ public class AssetManager {
 
         if (!type.isInstance(asset)) {
             throw new IllegalStateException(
-                    "Asset ID " + id + " is already registered as "
+                    "Asset ID " + id.toString() + " is already registered as "
                             + asset.getClass().getSimpleName()
                             + ", not "
                             + type.getSimpleName()
@@ -144,6 +149,11 @@ public class AssetManager {
         }
 
         return (T) asset;
+    }
+
+    private <T extends Asset> T getCached(String path, Class<T> type) {
+        AssetID id = idByPath.get(path);
+        return getCached(id, type);
     }
 
     private AssetResource resolveResource(String path) {

@@ -1,16 +1,21 @@
 package frontier.engine.assets;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public final class AssetID {
-    private final String value;
+    private final UUID uuid;
 
-    public AssetID(String value) {
-        this.value = Objects.requireNonNull(value);
+    public AssetID(UUID uuid) {
+        this.uuid = uuid;
     }
 
-    public String getValue() {
-        return value;
+    public AssetID() {
+        this(UUID.randomUUID());
+    }
+
+    public UUID get() {
+        return uuid;
     }
 
     @Override
@@ -24,16 +29,16 @@ public final class AssetID {
         }
 
         AssetID assetId = (AssetID) o;
-        return value.equals(assetId.value);
+        return uuid.equals(assetId.get());
     }
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return uuid.hashCode();
     }
 
     @Override
     public String toString() {
-        return value;
+        return uuid.toString();
     }
 }
