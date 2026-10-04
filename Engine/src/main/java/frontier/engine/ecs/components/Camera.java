@@ -17,12 +17,12 @@ public class Camera extends Component {
         return data;
     }
 
-    public Matrix4f getViewMatrix() {
+    /* public Matrix4f getViewMatrix() {
         return getEntity()
                 .getTransform()
                 .getWorldMatrix()
                 .invert(new Matrix4f());
-    }
+    } */
 
     public Matrix4f getProjectionMatrix(float aspectRatio) {
         return new Matrix4f().perspective(
@@ -31,6 +31,29 @@ public class Camera extends Component {
             0.1f,  // near clipping plane
             100.0f  // Far clipping plane
         );
+    }
+
+    public Matrix4f getViewMatrix() {
+        Transform transform = getEntity().getTransform();
+        Matrix4f cameraWorldMatrix = new Matrix4f();
+
+        // 1. If the camera has a parent (e.g., attached to a vehicle/player node),
+        // inherit the parent's world matrix first.
+        if (transform.getParent() != null) {
+            cameraWorldMatrix.set(transform.getParent().getWorldMatrix());
+        }
+
+        // 2. Build the camera's local transformations using YXZ order to lock out Roll (Z)
+        cameraWorldMatrix.translate(transform.position)
+                .rotateYXZ(
+                        (float) Math.toRadians(transform.rotation.y),
+                        (float) Math.toRadians(transform.rotation.x),
+                        0f // Explicitly force Roll to 0
+                )
+                .scale(transform.scale);
+
+        // 3. Invert it to get the final view space matrix for your shader
+        return cameraWorldMatrix.invert(new Matrix4f());
     }
 
     public Ray getRay(float mouseX, float mouseY,

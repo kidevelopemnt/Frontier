@@ -2,77 +2,80 @@ package frontier.engine.ecs.components;
 
 import frontier.engine.Engine;
 import frontier.engine.ecs.Entity;
+import frontier.engine.graphics.Transform;
 import frontier.engine.input.Key;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.Map;
 
 public class CameraController extends Component {
-    private float sensitivity = 0.1f;
+    private float sensitivity = 5f;
 
     private float pitch = 20f;
-    private float yaw = 0f;
 
-    private float distance = -5f;
-    private float height = 2f;
+    private float distance = 10f;
 
-    private float pitchLimit = 89f;
+    private float pitchMax = 0f;
+    private float pitchMin = -70f;
 
     private Entity lookAtTarget;
     private Entity followTarget;
 
-    public void update(float deltaTime) {
+    /* public void update(float deltaTime) {
         Engine engine = getEngine();
 
-        float mouseX = engine.getInput().getMouse().getDeltaX();
         float mouseY = engine.getInput().getMouse().getDeltaY();
-
-        yaw -= mouseX * sensitivity * deltaTime;
         pitch -= mouseY * sensitivity * deltaTime;
 
-        pitch = Math.max(
-                -pitchLimit,
-                Math.min(pitchLimit, pitch)
-        );
+        if (pitch > pitchLimit) pitch = pitchLimit;
+        if (pitch < -pitchLimit) pitch = -pitchLimit;
 
-        if (followTarget != null) {
-            updateOrbit();
-        }
-    }
+        float totalAngle = lookAtTarget.getTransform().rotation.y;
+        float horizontalDistance = (float) (-distance * Math.cos(Math.toRadians(pitch)));
+        float verticalDistance = (float) (distance * Math.sin(Math.toRadians(pitch)));
 
-    private void updateOrbit() {
-        Vector3f targetPosition =
-                followTarget.getTransform().getWorldPosition();
+        float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(totalAngle)));
+        float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(totalAngle)));
 
-        float yawRadians = (float) Math.toRadians(yaw);
-        float pitchRadians = (float) Math.toRadians(pitch);
+        // Set final camera position
+        entity.getTransform().position.x = followTarget.getTransform().position.x - offsetX;
+        entity.getTransform().position.y = followTarget.getTransform().position.y - verticalDistance;
+        entity.getTransform().position.z = followTarget.getTransform().position.z - offsetZ;
 
-        float horizontalDistance =
-                distance * (float) Math.cos(pitchRadians);
+        entity.getTransform().setRotation(pitch, totalAngle, 0f);
+    } */
 
-        float verticalDistance =
-                distance * (float) Math.sin(pitchRadians);
+    public void update(float deltaTime) {
+        Engine engine = getEngine();
+        float mouseY = engine.getInput().getMouse().getDeltaY();
 
-        float x =
-                (float) Math.sin(yawRadians) * horizontalDistance;
+        pitch -= mouseY * sensitivity * deltaTime;
+        if (pitch > pitchMax) pitch = pitchMax;
+        if (pitch < pitchMin) pitch = pitchMin;
 
-        float z =
-                (float) Math.cos(yawRadians) * horizontalDistance;
+        float totalAngle = lookAtTarget.getTransform().rotation.y;
+        float horizontalDistance = (float) (-distance * Math.cos(Math.toRadians(pitch)));
+        float verticalDistance = (float) (distance * Math.sin(Math.toRadians(pitch)));
 
-        Vector3f cameraPosition = new Vector3f(
-                targetPosition.x - x,
-                targetPosition.y + height + verticalDistance,
-                targetPosition.z - z
-        );
+        float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(totalAngle)));
+        float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(totalAngle)));
 
-        entity.getTransform().setWorldPosition(cameraPosition);
+        // Set position
+        Transform camTransform = entity.getTransform();
+        camTransform.position.x = followTarget.getTransform().position.x - offsetX;
+        camTransform.position.y = followTarget.getTransform().position.y - verticalDistance;
+        camTransform.position.z = followTarget.getTransform().position.z - offsetZ;
 
-        entity.getTransform().lookAt(targetPosition);
+        // Store raw degrees safely
+        camTransform.rotation.x = pitch;
+        camTransform.rotation.y = totalAngle; // 180 flips it to face target
+        camTransform.rotation.z = 0f;
     }
 
     @Override
     public Map<String, Object> serialize() {
-        return Map.of("sensitivity", sensitivity, "distance", distance, "height", height);
+        return Map.of("sensitivity", sensitivity, "distance", distance);
     }
 
     public void setLookAtTarget(Entity target) {

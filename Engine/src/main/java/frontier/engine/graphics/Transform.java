@@ -96,6 +96,12 @@ public class Transform {
         );
     }
 
+    public void setRotation(float pitch, float yaw, float roll) {
+        rotation.x = pitch;
+        rotation.y = yaw;
+        rotation.z = roll;
+    }
+
     public void lookAt(Vector3f target) {
         Vector3f direction = target.sub(getWorldPosition(), new Vector3f()).normalize();
 

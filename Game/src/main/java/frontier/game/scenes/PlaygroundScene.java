@@ -213,5 +213,6 @@ public class PlaygroundScene {
         Camera camera = scene.getCamera();
         CameraController cc = camera.getEntity().addComponent(CameraController.class);
         cc.setFollowTarget(player);
+        cc.setLookAtTarget(player);
     }
 }
