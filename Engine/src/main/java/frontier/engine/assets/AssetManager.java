@@ -36,7 +36,7 @@ public class AssetManager {
                 .toLowerCase();
 
         ModelImporter importer = switch (extension) {
-            case "obj" -> new ObjImporter();
+            case "obj" -> new ObjImporter(this, engine.getRenderer().getDefaultShader());
 
             case "fbx" -> {
                 engine.getLogger().logWarn(
@@ -171,7 +171,6 @@ public class AssetManager {
         engine.getLogger().logError(
                 "Resource not found: " + path
         );
-
         return null;
     }
 }

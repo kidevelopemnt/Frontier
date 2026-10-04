@@ -50,6 +50,7 @@ public class Engine {
 
         logger.setLogMode(config.logMode);
         logger.setLogFile(config.logFile);
+        logger.setMinLogLevel(config.logLevel);
 
         renderer.initialize(this);
         logger.logInfo("Engine initialized.");

@@ -14,7 +14,9 @@ import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class PlaygroundScene {
     private final Engine engine;
@@ -35,7 +37,7 @@ public class PlaygroundScene {
         createRendererItems();
         createGround();
         createSpinningCube();
-        createOtherObjects();
+        createTrees();
         createLights();
         createCamera();
     }
@@ -137,7 +139,7 @@ public class PlaygroundScene {
 
     private void createSpinningCube() {
         try {
-            Model character = engine.getAssets().loadModel("models/MaleBase.obj");
+            Model character = engine.getAssets().loadModel("models/Realistic_man_Bake.obj");
             Entity entity = new Entity("character", scene);
             MeshRenderer meshRenderer = entity.addComponent(MeshRenderer.class);
             meshRenderer.setModel(character);
@@ -159,20 +161,27 @@ public class PlaygroundScene {
         scene.addEntity(cube);
     }
 
-    private void createOtherObjects() {
-        Entity shapes = new Entity("shapes", scene);
-        MeshRenderer meshRenderer = shapes.addComponent(MeshRenderer.class);
-        try {
-            Model shapesModel = engine.getAssets().loadModel("models/solids.obj");
-            meshRenderer.setModel(shapesModel);
+    private void createTrees() {
+        final List<String> trees = List.of("models/trees/Bark___0.obj", "models/trees/Bark___1.obj", "models/trees/Bark___S.obj");
+        Random rand = new Random();
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        for (int i = 0; i < 50; i++) {
+            Entity tree = new Entity("tree", scene);
+            MeshRenderer meshRenderer = tree.addComponent(MeshRenderer.class);
+
+            try {
+                meshRenderer.setModel(engine.getAssets().loadModel(trees.get(rand.nextInt(trees.size()))));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            tree.getTransform().position.x = rand.nextInt(-50, 50);
+            tree.getTransform().position.y = 0;
+            tree.getTransform().position.z = rand.nextInt(-50, 50);
+            tree.getTransform().rotation.y = rand.nextFloat(360f);
+
+            scene.addEntity(tree);
         }
-
-        shapes.getTransform().rotation.x = 90f;
-        shapes.getTransform().position.y += 5f;
-        scene.addEntity(shapes);
     }
 
     private void spinningCubeClicked(Event e) {

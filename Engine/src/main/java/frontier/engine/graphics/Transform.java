@@ -11,7 +11,7 @@ public class Transform {
     public Matrix4f getMatrix() {
         return new Matrix4f()
             .translate(position)
-            .rotateXYZ(rotation.x, rotation.y, rotation.z)
+            .rotateXYZ((float) Math.toRadians(rotation.x), (float) Math.toRadians(rotation.y), (float) Math.toRadians(rotation.z))
             .scale(scale)
         ;
     }
