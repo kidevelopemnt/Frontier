@@ -9,12 +9,11 @@ import frontier.engine.events.Event;
 import frontier.engine.events.TriggerEnteredEvent;
 import frontier.engine.graphics.lighting.LightType;
 import frontier.engine.scene.Scene;
+import frontier.game.ecs.ThirdPersonPlayerController;
 import frontier.game.ecs.Spinner;
 import org.joml.Vector3f;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -37,7 +36,7 @@ public class PlaygroundScene {
         createRendererItems();
         createGround();
         createSpinningCube();
-        createTrees();
+        // createTrees();
         createLights();
         createCamera();
     }
@@ -143,6 +142,7 @@ public class PlaygroundScene {
             Entity entity = new Entity("character", scene);
             MeshRenderer meshRenderer = entity.addComponent(MeshRenderer.class);
             meshRenderer.setModel(character);
+            ThirdPersonPlayerController pc = entity.addComponent(ThirdPersonPlayerController.class);
             scene.addEntity(entity);
         } catch (IOException e) {
             engine.getLogger().logError("Failed to load model... " + e);
@@ -209,6 +209,6 @@ public class PlaygroundScene {
 
     private void createCamera() {
         Camera camera = scene.getCamera();
-        camera.getEntity().addComponent(CameraController.class);
+        // camera.getEntity().addComponent(CameraController.class);
     }
 }

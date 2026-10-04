@@ -1,4 +1,4 @@
-# Blender 4.0.0 MTL File: 'Realistic man_Bake.blend'
+# Blender 5.2.2 LTS MTL File: 'None'
 # www.blender.org
 
 newmtl Chachi_Momma_Pants
@@ -9,9 +9,9 @@ Ni 1.450000
 illum 2
 map_Kd ../textures/Chachi_Momma_Pants_Diffuse.jpg
 map_Ns ../textures/Chachi_Momma_Pants_roughness.jpg
-map_refl textures/Chachi_Momma_Pants_metallic.jpg
+map_refl ../textures/Chachi_Momma_Pants_metallic.jpg
 map_d ../textures/Chachi_Momma_Pants_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Chachi_Momma_Pants_Normal.jpg
+map_Bump -bm 1.000000 ../textures/Chachi_Momma_Pants_Normal.jpg
 
 newmtl Hair_Transparency
 Ka 1.000000 1.000000 1.000000
@@ -21,7 +21,7 @@ illum 2
 map_Kd ../textures/Hair_Transparency_Diffuse.png
 map_Ks ../textures/Hair_Transparency_Specular.png
 map_Ns ../textures/Scalp_Transparency_roughness.png
-map_refl textures/Scalp_Transparency_metallic.png
+map_refl ../textures/Scalp_Transparency_metallic.png
 map_d ../textures/Hair_Transparency_Opacity.jpg
 
 newmtl Jacket
@@ -32,9 +32,9 @@ Ni 1.450000
 illum 2
 map_Kd ../textures/Jacket_Diffuse.jpg
 map_Ns ../textures/Jacket_roughness.jpg
-map_refl textures/Jacket_metallic.jpg
+map_refl ../textures/Jacket_metallic.jpg
 map_d ../textures/Jacket_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Jacket_Normal.jpg
+map_Bump -bm 1.000000 ../textures/Jacket_Normal.jpg
 
 newmtl Scalp_Transparency
 Ka 1.000000 1.000000 1.000000
@@ -44,7 +44,7 @@ Ni 1.450000
 illum 2
 map_Kd ../textures/Scalp_Transparency_Diffuse.jpg
 map_Ns ../textures/Scalp_Transparency_roughness.png
-map_refl textures/Scalp_Transparency_metallic.png
+map_refl ../textures/Scalp_Transparency_metallic.png
 map_d ../textures/Scalp_Transparency_Opacity.jpg
 
 newmtl Sneaker
@@ -55,9 +55,9 @@ Ni 1.450000
 illum 2
 map_Kd ../textures/Sneaker_Diffuse.jpg
 map_Ns ../textures/Sneaker_roughness.jpg
-map_refl textures/Sneaker_metallic.jpg
+map_refl ../textures/Sneaker_metallic.jpg
 map_d ../textures/Sneaker_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Sneaker_Normal.jpg
+map_Bump -bm 1.000000 ../textures/Sneaker_Normal.jpg
 
 newmtl Std_Cornea_L
 Ns 250.000000
@@ -68,7 +68,7 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd ../textures/Std_Cornea_R_Diffuse.png
-map_Bump -bm 1.000000 textures/Std_Upper_Teeth_MicroN.png
+map_Bump -bm 1.000000 ../textures/Std_Upper_Teeth_MicroN.png
 
 newmtl Std_Cornea_R
 Ns 250.000000
@@ -79,7 +79,7 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd ../textures/Std_Cornea_R_Diffuse.png
-map_Bump -bm 1.000000 textures/Std_Upper_Teeth_MicroN.png
+map_Bump -bm 1.000000 ../textures/Std_Upper_Teeth_MicroN.png
 
 newmtl Std_Eye_L
 Ka 1.000000 1.000000 1.000000
@@ -89,9 +89,9 @@ Ni 1.450000
 illum 2
 map_Kd ../textures/Std_Eye_L_Diffuse.jpg
 map_Ns ../textures/Std_Eye_R_roughness.jpg
-map_refl textures/Std_Upper_Teeth_metallic.jpg
+map_refl ../textures/Std_Upper_Teeth_metallic.jpg
 map_d ../textures/Std_Eye_L_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Std_Eye_L_Normal.png
+map_Bump -bm 1.000000 ../textures/Std_Eye_L_Normal.png
 
 newmtl Std_Eye_Occlusion_L
 Ns 0.000000
@@ -121,9 +121,9 @@ Ni 1.450000
 illum 2
 map_Kd ../textures/Std_Eye_R_Diffuse.jpg
 map_Ns ../textures/Std_Eye_R_roughness.jpg
-map_refl textures/Std_Upper_Teeth_metallic.jpg
+map_refl ../textures/Std_Upper_Teeth_metallic.jpg
 map_d ../textures/Std_Eye_R_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Std_Eye_R_Normal.png
+map_Bump -bm 1.000000 ../textures/Std_Eye_R_Normal.png
 
 newmtl Std_Eyelash
 Ka 1.000000 1.000000 1.000000
@@ -133,9 +133,9 @@ Ni 1.450000
 illum 2
 map_Kd ../textures/Std_Eyelash_Diffuse.jpg
 map_Ns ../textures/Std_Eyelash_roughness.jpg
-map_refl textures/Std_Eyelash_metallic.jpg
+map_refl ../textures/Std_Eyelash_metallic.jpg
 map_d ../textures/Std_Eyelash_Opacity.jpg
-map_Bump -bm 1.000000 textures/Std_Eyelash_Normal.png
+map_Bump -bm 1.000000 ../textures/Std_Eyelash_Normal.png
 
 newmtl Std_Lower_Teeth
 Ns 250.000000
@@ -145,9 +145,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 illum 2
 map_Kd ../textures/Std_Lower_Teeth_Diffuse.jpg
-map_refl textures/Std_Upper_Teeth_metallic.jpg
+map_refl ../textures/Std_Upper_Teeth_metallic.jpg
 map_d ../textures/Std_Lower_Teeth_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Std_Lower_Teeth_Normal.png
+map_Bump -bm 1.000000 ../textures/Std_Lower_Teeth_Normal.png
 
 newmtl Std_Nails
 Ka 1.000000 1.000000 1.000000
@@ -158,7 +158,7 @@ illum 2
 map_Kd ../textures/Std_Nails_Diffuse.jpg
 map_Ns ../textures/Std_Nails_roughness.jpg
 map_d ../textures/Std_Nails_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Std_Nails_Normal.png
+map_Bump -bm 1.000000 ../textures/Std_Nails_Normal.png
 
 newmtl Std_Skin_Arm
 Ns 250.000000
@@ -169,7 +169,7 @@ Ni 1.450000
 illum 2
 map_Kd ../textures/Std_Skin_Arm_Diffuse.jpg
 map_d ../textures/Std_Skin_Arm_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Std_Skin_Arm_Normal.png
+map_Bump -bm 1.000000 ../textures/Std_Skin_Arm_Normal.png
 
 newmtl Std_Skin_Body
 Ns 250.000000
@@ -179,9 +179,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 illum 2
 map_Kd ../textures/Std_Skin_Body_Diffuse.jpg
-map_refl textures/Std_Skin_Body_metallic.jpg
+map_refl ../textures/Std_Skin_Body_metallic.jpg
 map_d ../textures/Std_Skin_Body_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Std_Skin_Body_Normal.png
+map_Bump -bm 1.000000 ../textures/Std_Skin_Body_Normal.png
 
 newmtl Std_Skin_Head
 Ns 250.000000
@@ -191,9 +191,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 illum 2
 map_Kd ../textures/Std_Skin_Head_Diffuse.jpg
-map_refl textures/Std_Skin_Head_metallic.jpg
+map_refl ../textures/Std_Skin_Head_metallic.jpg
 map_d ../textures/Std_Skin_Head_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Std_Skin_Head_Normal.png
+map_Bump -bm 1.000000 ../textures/Std_Skin_Head_Normal.png
 
 newmtl Std_Skin_Leg
 Ns 250.000000
@@ -203,9 +203,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 illum 2
 map_Kd ../textures/Std_Skin_Leg_Diffuse.jpg
-map_refl textures/Std_Skin_Leg_metallic.jpg
+map_refl ../textures/Std_Skin_Leg_metallic.jpg
 map_d ../textures/Std_Skin_Leg_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Std_Skin_Leg_Normal.png
+map_Bump -bm 1.000000 ../textures/Std_Skin_Leg_Normal.png
 
 newmtl Std_Tearline_L
 Ns 722.500000
@@ -235,9 +235,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 illum 2
 map_Kd ../textures/Std_Tongue_Diffuse.png
-map_refl textures/Std_Tongue_metallic.png
+map_refl ../textures/Std_Tongue_metallic.png
 map_d ../textures/Std_Tongue_Diffuse.png
-map_Bump -bm 1.000000 textures/Std_Tongue_Normal.png
+map_Bump -bm 1.000000 ../textures/Std_Tongue_Normal.png
 
 newmtl Std_Upper_Teeth
 Ns 250.000000
@@ -247,9 +247,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 illum 2
 map_Kd ../textures/Std_Upper_Teeth_Diffuse.jpg
-map_refl textures/Std_Upper_Teeth_metallic.jpg
+map_refl ../textures/Std_Upper_Teeth_metallic.jpg
 map_d ../textures/Std_Upper_Teeth_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Std_Upper_Teeth_Normal.png
+map_Bump -bm 1.000000 ../textures/Std_Upper_Teeth_Normal.png
 
 newmtl Vest
 Ka 1.000000 1.000000 1.000000
@@ -259,6 +259,6 @@ Ni 1.450000
 illum 2
 map_Kd ../textures/Vest_Diffuse.jpg
 map_Ns ../textures/Vest_roughness.jpg
-map_refl textures/Vest_metallic.jpg
+map_refl ../textures/Vest_metallic.jpg
 map_d ../textures/Vest_Diffuse.jpg
-map_Bump -bm 1.000000 textures/Vest_Normal.jpg
+map_Bump -bm 1.000000 ../textures/Vest_Normal.jpg

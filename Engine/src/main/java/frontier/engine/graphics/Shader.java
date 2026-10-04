@@ -105,7 +105,7 @@ public class Shader {
         int location = GL20.glGetUniformLocation(shaderProgram, name);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer buffer = stack.mallocFloat(16);
+            FloatBuffer buffer = stack.mallocFloat(9);
 
             matrix.get(buffer);
 

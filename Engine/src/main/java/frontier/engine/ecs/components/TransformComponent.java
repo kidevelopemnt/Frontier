@@ -19,6 +19,10 @@ public class TransformComponent extends Component {
         transform = new Transform();
     }
 
+    public Transform getTransform() {
+        return transform;
+    }
+
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = new HashMap<>();
@@ -45,6 +49,7 @@ public class TransformComponent extends Component {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void load(Map<String, Object> data) {
         ArrayList<Double> position = (ArrayList<Double>) data.get("position");
         transform.position = new Vector3f(position.get(0).floatValue(), position.get(1).floatValue(), position.get(2).floatValue());
@@ -52,37 +57,5 @@ public class TransformComponent extends Component {
         transform.rotation = new Vector3f(rotation.get(0).floatValue(), rotation.get(1).floatValue(), rotation.get(2).floatValue());
         ArrayList<Double> scale = (ArrayList<Double>) data.get("scale");
         transform.scale = new Vector3f(scale.get(0).floatValue(), scale.get(1).floatValue(), scale.get(2).floatValue());
-    }
-
-    public Matrix4f getMatrix() {
-        return transform.getMatrix();
-    }
-
-    public void setPosition(Vector3f position) {
-        transform.position = position;
-    }
-
-    public Vector3f getPosition() {
-        return transform.position;
-    }
-
-    public void setRotation(Vector3f rotation) {
-        transform.rotation = rotation;
-    }
-
-    public Vector3f getRotation() {
-        return transform.rotation;
-    }
-
-    public void setScale(Vector3f scale) {
-        transform.scale = scale;
-    }
-
-    public Vector3f getScale() {
-        return transform.scale;
-    }
-
-    public Transform getTransform() {
-        return transform;
     }
 }

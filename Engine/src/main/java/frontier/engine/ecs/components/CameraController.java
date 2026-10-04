@@ -6,8 +6,9 @@ import frontier.engine.input.Key;
 import java.util.Map;
 
 public class CameraController extends Component {
-    public float cameraSpeed = 5.0f;
-    public float sensitivity = 0.0025f;
+    private float cameraSpeed = 5.0f;
+    private float sensitivity = 0.0025f;
+    private float limit = (float) Math.toRadians(89.0);
 
     public void update(float deltaTime) {
         Engine engine = getEngine();
@@ -33,9 +34,10 @@ public class CameraController extends Component {
 
         float mouseX = engine.getInput().getMouse().getDeltaX();
         float mouseY = engine.getInput().getMouse().getDeltaY();
-        engine.getCamera().rotate(
+        entity.getTransform().rotate(
                 mouseY * sensitivity,
-                mouseX * sensitivity
+                mouseX * sensitivity,
+                limit
         );
     }
 

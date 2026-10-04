@@ -15,6 +15,9 @@ public class Entity {
     private Map<Class<? extends Component>, Component> components = new HashMap<>();
     private Scene scene;
 
+    private Entity parent;
+    private List<Entity> children = new ArrayList<>();
+
     private List<String> groups = new ArrayList<>();  // Entities can be filtered by groups in Raycasts or other
 
     private boolean isEnabled = true;
@@ -33,6 +36,99 @@ public class Entity {
         }
     }
 
+    public void setParent(Entity parent) {
+        if (this.parent == parent) {
+            return;
+        }
+
+        // Prevent an entity from becoming its own parent.
+        if (parent == this) {
+            throw new IllegalArgumentException(
+                    "An entity cannot be its own parent."
+            );
+        }
+
+        // Prevent circular hierarchies.
+        if (parent != null && isAncestorOf(parent)) {
+            throw new IllegalArgumentException(
+                    "Cannot create a circular entity hierarchy."
+            );
+        }
+
+        // Remove from current parent.
+        if (this.parent != null) {
+            this.parent.children.remove(this);
+        }
+
+        this.parent = parent;
+
+        // Add to new parent.
+        if (this.parent != null && !this.parent.children.contains(this)) {
+            this.parent.children.add(this);
+        }
+
+        updateTransformParent();
+    }
+
+    private boolean isDescendantOf(Entity entity) {
+        Entity current = this;
+
+        while (current != null) {
+            if (current == entity) {
+                return true;
+            }
+
+            current = current.parent;
+        }
+
+        return false;
+    }
+
+    private boolean isAncestorOf(Entity entity) {
+        Entity current = entity;
+
+        while (current != null) {
+            if (current == this) {
+                return true;
+            }
+
+            current = current.parent;
+        }
+
+        return false;
+    }
+
+    private void updateTransformParent() {
+        TransformComponent transform = getComponent(TransformComponent.class);
+
+        if (transform == null) {
+            return;
+        }
+
+        if (parent == null) {
+            transform.getTransform().setParent(null);
+            return;
+        }
+
+        TransformComponent parentTransform =
+                parent.getComponent(TransformComponent.class);
+
+        if (parentTransform == null) {
+            transform.getTransform().setParent(null);
+            return;
+        }
+
+        transform.getTransform().setParent(parentTransform.getTransform());
+    }
+
+    public Entity getParent() {
+        return parent;
+    }
+
+    public List<Entity> getChildren() {
+        return children;
+    }
+
     public boolean hasComponent(Class<?> type) {
         return components.get(type) != null;
     }
@@ -41,6 +137,7 @@ public class Entity {
         try {
             Component component = (Component) c.getDeclaredConstructor().newInstance();
             component.setEntity(this);
+            component.initialize();
             components.put((Class<? extends Component>) c, component);
             return (T) c.cast(component);
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {

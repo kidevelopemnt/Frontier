@@ -47,7 +47,7 @@ public class Renderer {
         material.bind();
 
         Shader shader = material.getShader();
-        Matrix4f model = transform.getMatrix();
+        Matrix4f model = transform.getWorldMatrix();
 
         shader.setMatrix4f("model", model);
         shader.setMatrix4f("view", camera.getViewMatrix());
