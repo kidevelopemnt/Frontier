@@ -1,39 +1,32 @@
 package frontier.engine.assets;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public final class AssetID {
-    private final String value;
+    private final UUID uuid;
+
+    public AssetID(UUID uuid) {
+        this.uuid = Objects.requireNonNull(uuid);
+    }
 
     public AssetID(String value) {
-        this.value = Objects.requireNonNull(value);
+        this(UUID.fromString(Objects.requireNonNull(value)));
     }
 
-    public String getValue() {
-        return value;
+    public static AssetID generate() {
+        return new AssetID(UUID.randomUUID());
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
+    public UUID getUUID() { return uuid; }
+    public String getValue() { return uuid.toString(); }
 
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        AssetID assetId = (AssetID) o;
-        return value.equals(assetId.value);
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return uuid.equals(((AssetID) o).uuid);
     }
 
-    @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return value;
-    }
+    @Override public int hashCode() { return uuid.hashCode(); }
+    @Override public String toString() { return uuid.toString(); }
 }
