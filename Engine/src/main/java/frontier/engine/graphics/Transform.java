@@ -48,6 +48,16 @@ public class Transform {
                 .getScale(new Vector3f());
     }
 
+    public void setWorldPosition(Vector3f pos) {
+        if (getParent() != null) {
+            // Transform the target world position into the parent's local space
+            Matrix4f parentInverse = getParent().getWorldMatrix().invert(new Matrix4f());
+            position = parentInverse.transformPosition(pos, new Vector3f());
+        } else {
+            position = pos;
+        }
+    }
+
     public Vector3f getForward() {
         Vector3f forward = new Vector3f(0, 0, -1);
 
@@ -77,12 +87,28 @@ public class Transform {
         rotation.y -= yaw;
     }
 
-    public void rotate(float pitch, float yaw, float xLimit) {
+    public void rotate(float pitch, float yaw, float pitchLimit) {
         rotate(pitch, yaw);
 
         rotation.x = Math.max(
-                -xLimit,
-                Math.min(xLimit, rotation.x)
+                -pitchLimit,
+                Math.min(pitchLimit, rotation.x)
         );
+    }
+
+    public void lookAt(Vector3f target) {
+        Vector3f direction = target.sub(getWorldPosition(), new Vector3f()).normalize();
+
+        float yaw = (float) Math.toDegrees(
+                Math.atan2(-direction.x, -direction.z)
+        );
+
+        float pitch = (float) Math.toDegrees(
+                Math.asin(direction.y)
+        );
+
+        rotation.x = pitch;
+        rotation.y = yaw;
+        rotation.z = 0f;
     }
 }

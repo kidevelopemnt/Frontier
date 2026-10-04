@@ -1,48 +1,85 @@
 package frontier.engine.ecs.components;
 
 import frontier.engine.Engine;
+import frontier.engine.ecs.Entity;
 import frontier.engine.input.Key;
+import org.joml.Vector3f;
 
 import java.util.Map;
 
 public class CameraController extends Component {
-    private float cameraSpeed = 5.0f;
-    private float sensitivity = 0.0025f;
-    private float limit = (float) Math.toRadians(89.0);
+    private float sensitivity = 0.1f;
+
+    private float pitch = 20f;
+    private float yaw = 0f;
+
+    private float distance = -5f;
+    private float height = 2f;
+
+    private float pitchLimit = 89f;
+
+    private Entity lookAtTarget;
+    private Entity followTarget;
 
     public void update(float deltaTime) {
         Engine engine = getEngine();
 
-        if (engine.getInput().isKeyHeld(Key.W)) {
-            engine.getCamera().moveForward(cameraSpeed * deltaTime);
-        }
-        if (engine.getInput().isKeyHeld(Key.A)) {
-            engine.getCamera().moveLeft(cameraSpeed * deltaTime);
-        }
-        if (engine.getInput().isKeyHeld(Key.S)) {
-            engine.getCamera().moveBackward(cameraSpeed * deltaTime);
-        }
-        if (engine.getInput().isKeyHeld(Key.D)) {
-            engine.getCamera().moveRight(cameraSpeed * deltaTime);
-        }
-        if (engine.getInput().isKeyHeld(Key.Q)) {
-            engine.getCamera().moveDown(cameraSpeed * deltaTime);
-        }
-        if (engine.getInput().isKeyHeld(Key.E)) {
-            engine.getCamera().moveUp(cameraSpeed * deltaTime);
-        }
-
         float mouseX = engine.getInput().getMouse().getDeltaX();
         float mouseY = engine.getInput().getMouse().getDeltaY();
-        entity.getTransform().rotate(
-                mouseY * sensitivity,
-                mouseX * sensitivity,
-                limit
+
+        yaw -= mouseX * sensitivity * deltaTime;
+        pitch -= mouseY * sensitivity * deltaTime;
+
+        pitch = Math.max(
+                -pitchLimit,
+                Math.min(pitchLimit, pitch)
         );
+
+        if (followTarget != null) {
+            updateOrbit();
+        }
+    }
+
+    private void updateOrbit() {
+        Vector3f targetPosition =
+                followTarget.getTransform().getWorldPosition();
+
+        float yawRadians = (float) Math.toRadians(yaw);
+        float pitchRadians = (float) Math.toRadians(pitch);
+
+        float horizontalDistance =
+                distance * (float) Math.cos(pitchRadians);
+
+        float verticalDistance =
+                distance * (float) Math.sin(pitchRadians);
+
+        float x =
+                (float) Math.sin(yawRadians) * horizontalDistance;
+
+        float z =
+                (float) Math.cos(yawRadians) * horizontalDistance;
+
+        Vector3f cameraPosition = new Vector3f(
+                targetPosition.x - x,
+                targetPosition.y + height + verticalDistance,
+                targetPosition.z - z
+        );
+
+        entity.getTransform().setWorldPosition(cameraPosition);
+
+        entity.getTransform().lookAt(targetPosition);
     }
 
     @Override
     public Map<String, Object> serialize() {
-        return Map.of("cameraSpeed", cameraSpeed, "sensitivity", sensitivity);
+        return Map.of("sensitivity", sensitivity, "distance", distance, "height", height);
+    }
+
+    public void setLookAtTarget(Entity target) {
+        lookAtTarget = target;
+    }
+
+    public void setFollowTarget(Entity target) {
+        followTarget = target;
     }
 }

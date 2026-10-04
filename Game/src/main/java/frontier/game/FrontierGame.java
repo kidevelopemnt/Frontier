@@ -40,11 +40,13 @@ public class FrontierGame implements IGame {
 
     @Override
     public void update(float deltaTime) {
-
+        if (engine.getInput().isKeyDown(Key.ESCAPE)) {
+            shutdown();
+        }
     }
 
     @Override
     public void shutdown() {
-
+        engine.shutdown();
     }
 }

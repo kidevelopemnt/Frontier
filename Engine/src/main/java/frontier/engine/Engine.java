@@ -100,7 +100,9 @@ public class Engine {
     public void shutdown() {
         renderer.shutdown();
         assetManager.unloadAll();
+        application.getMainWindow().destroy();
         logger.logInfo("Engine shutdown.");
+        System.exit(0);
     }
 
     public Application getApp() {

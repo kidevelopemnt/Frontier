@@ -9,7 +9,7 @@ import frontier.engine.events.Event;
 import frontier.engine.events.TriggerEnteredEvent;
 import frontier.engine.graphics.lighting.LightType;
 import frontier.engine.scene.Scene;
-import frontier.game.ecs.ThirdPersonPlayerController;
+import frontier.game.ecs.PlayerController;
 import frontier.game.ecs.Spinner;
 import org.joml.Vector3f;
 
@@ -26,6 +26,8 @@ public class PlaygroundScene {
     Material cubeMaterial;
     Material groundMaterial;
 
+    private Entity player;
+
     public PlaygroundScene(Engine engine) {
         this.engine = engine;
     }
@@ -36,7 +38,7 @@ public class PlaygroundScene {
         createRendererItems();
         createGround();
         createSpinningCube();
-        // createTrees();
+        createTrees();
         createLights();
         createCamera();
     }
@@ -139,11 +141,11 @@ public class PlaygroundScene {
     private void createSpinningCube() {
         try {
             Model character = engine.getAssets().loadModel("models/Realistic_man_Bake.obj");
-            Entity entity = new Entity("character", scene);
-            MeshRenderer meshRenderer = entity.addComponent(MeshRenderer.class);
+            player = new Entity("character", scene);
+            MeshRenderer meshRenderer = player.addComponent(MeshRenderer.class);
             meshRenderer.setModel(character);
-            ThirdPersonPlayerController pc = entity.addComponent(ThirdPersonPlayerController.class);
-            scene.addEntity(entity);
+            PlayerController pc = player.addComponent(PlayerController.class);
+            scene.addEntity(player);
         } catch (IOException e) {
             engine.getLogger().logError("Failed to load model... " + e);
         }
@@ -209,6 +211,7 @@ public class PlaygroundScene {
 
     private void createCamera() {
         Camera camera = scene.getCamera();
-        // camera.getEntity().addComponent(CameraController.class);
+        CameraController cc = camera.getEntity().addComponent(CameraController.class);
+        cc.setFollowTarget(player);
     }
 }

@@ -52,12 +52,9 @@ public class Window {
         return GLFW.glfwWindowShouldClose(window);
     }
 
+
     public void update() {
         GLFW.glfwPollEvents();
-
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_W) == 1) {
-
-        }
     }
 
     public void draw() {
