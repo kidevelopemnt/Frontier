@@ -6,15 +6,15 @@ import frontier.engine.assets.importer.ObjImporter;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class AssetManager {
-
     private final Engine engine;
-
     private final Map<AssetID, Asset> assets = new HashMap<>();
 
     public AssetManager(Engine engine) {
@@ -22,69 +22,45 @@ public class AssetManager {
     }
 
     public Model loadModel(String path) throws IOException {
-        AssetID id = new AssetID(path);
-
-        Model cached = getCached(id, Model.class);
-
-        if (cached != null) {
-            return cached;
-        }
-
         AssetResource resource = resolveResource(path);
+        if (resource == null) return null;
 
-        String extension = FilenameUtils.getExtension(path)
-                .toLowerCase();
+        AssetID id = getAssetID(resource);
+        Model cached = getCached(id, Model.class);
+        if (cached != null) return cached;
+
+        String extension = FilenameUtils.getExtension(path).toLowerCase();
 
         ModelImporter importer = switch (extension) {
             case "obj" -> new ObjImporter(this, engine.getRenderer().getDefaultShader());
-
             case "fbx" -> {
-                engine.getLogger().logWarn(
-                        "Loading FBX is not implemented... skipping model."
-                );
+                engine.getLogger().logWarn("Loading FBX is not implemented... skipping model.");
                 yield null;
             }
-
             default -> {
-                engine.getLogger().logError(
-                        "Invalid model file type: " + extension
-                );
+                engine.getLogger().logError("Invalid model file type: " + extension);
                 yield null;
             }
         };
 
-        if (importer == null) {
-            return null;
-        }
+        if (importer == null) return null;
 
         Model model = importer.loadModel(id, resource);
         assets.put(id, model);
-
-        engine.getLogger().logDebug(
-                "Imported model " + path
-        );
-
+        engine.getLogger().logDebug("Imported model " + path);
         return model;
     }
 
     public Texture loadTexture(String path) {
-        AssetID id = new AssetID(path);
-        Texture cached = getCached(id, Texture.class);
-
-        if (cached != null) {
-            System.out.println("CACHED");
-            return cached;
-        }
-
         AssetResource resource = resolveResource(path);
+        if (resource == null) return null;
 
-        if (resource == null) {
-            return null;
-        }
+        AssetID id = getAssetID(resource);
+        Texture cached = getCached(id, Texture.class);
+        if (cached != null) return cached;
 
         Texture texture = new Texture(id, resource);
         assets.put(id, texture);
-
         return texture;
     }
 
@@ -98,17 +74,10 @@ public class AssetManager {
 
     public boolean unload(AssetID id) {
         Asset asset = assets.remove(id);
-
-        if (asset == null) {
-            return false;
-        }
+        if (asset == null) return false;
 
         asset.unload();
-
-        engine.getLogger().logDebug(
-                "Unloaded asset " + id
-        );
-
+        engine.getLogger().logDebug("Unloaded asset " + id);
         return true;
     }
 
@@ -117,40 +86,47 @@ public class AssetManager {
     }
 
     public void unloadAll() {
-        for (Asset asset : assets.values()) {
-            asset.unload();
-        }
-
+        for (Asset asset : assets.values()) asset.unload();
         assets.clear();
-
         engine.getLogger().logDebug("Unloaded all assets.");
     }
 
     @SuppressWarnings("unchecked")
     private <T extends Asset> T getCached(AssetID id, Class<T> type) {
         Asset asset = assets.get(id);
-
-        if (asset == null) {
-            return null;
-        }
+        if (asset == null) return null;
 
         if (!type.isInstance(asset)) {
             throw new IllegalStateException(
                     "Asset ID " + id + " is already registered as "
-                            + asset.getClass().getSimpleName()
-                            + ", not "
-                            + type.getSimpleName()
+                            + asset.getClass().getSimpleName() + ", not " + type.getSimpleName()
             );
         }
-
         return (T) asset;
+    }
+
+    private AssetID getAssetID(AssetResource resource) {
+        if (resource.isFile()) {
+            try {
+                return engine.getAssetDatabase().getOrCreateId(resource.getFile());
+            } catch (IOException e) {
+                throw new IllegalStateException(
+                        "Failed to read asset metadata for " + resource.getPath(), e
+                );
+            }
+        }
+
+        // Packaged engine/classpath assets do not have writable .meta files.
+        // Their ID is deterministic for the lifetime of the asset path.
+        return new AssetID(UUID.nameUUIDFromBytes(
+                ("classpath:" + resource.getPath()).getBytes(StandardCharsets.UTF_8)
+        ));
     }
 
     private AssetResource resolveResource(String path) {
         path = path.replace('\\', '/');
 
-        Path projectResource = engine.getApp()
-                .getProjectDirectory()
+        Path projectResource = engine.getApp().getProjectDirectory()
                 .resolve("src/main/resources")
                 .resolve(path);
 
@@ -158,19 +134,11 @@ public class AssetManager {
             return AssetResource.fromFile(path, projectResource);
         }
 
-        if (AssetManager.class
-                .getClassLoader()
-                .getResource(path) != null) {
-
-            return AssetResource.fromClasspath(
-                    path,
-                    AssetManager.class.getClassLoader()
-            );
+        if (AssetManager.class.getClassLoader().getResource(path) != null) {
+            return AssetResource.fromClasspath(path, AssetManager.class.getClassLoader());
         }
 
-        engine.getLogger().logError(
-                "Resource not found: " + path
-        );
+        engine.getLogger().logError("Resource not found: " + path);
         return null;
     }
 }

@@ -2,8 +2,8 @@ package frontier.engine;
 
 import frontier.engine.application.Application;
 import frontier.engine.application.ApplicationConfiguration;
+import frontier.engine.assets.AssetDatabase;
 import frontier.engine.assets.AssetManager;
-import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.Camera;
 import frontier.engine.events.EventBus;
 import frontier.engine.graphics.DebugRenderer;
@@ -11,16 +11,16 @@ import frontier.engine.graphics.Renderer;
 import frontier.engine.core.Logger;
 import frontier.engine.core.Time;
 import frontier.engine.graphics.SceneRenderer;
-import frontier.engine.graphics.lighting.DirectionalLight;
-import frontier.engine.graphics.lighting.PointLight;
-import frontier.engine.input.ActionRegistry;
 import frontier.engine.input.Input;
 import frontier.engine.physics.Physics;
 import frontier.engine.scene.Scene;
 import frontier.engine.scene.SceneSerializer;
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.IOException;
+
 public class Engine {
+    private AssetDatabase assetDatabase;
     private AssetManager assetManager;
     private EventBus eventBus;
     private Logger logger;
@@ -34,23 +34,34 @@ public class Engine {
     private SceneSerializer sceneSerializer;
     private Scene activeScene;
 
-    public Engine (Application application) {
+    public Engine(Application application) {
         this.application = application;
     }
 
     public void initialize(ApplicationConfiguration config) {
-        assetManager = new AssetManager(this);
         eventBus = new EventBus();
-        input = new Input(this, application.getMainWindow());
         logger = new Logger();
-        renderer = new Renderer();
-        sceneRenderer = new SceneRenderer(renderer);
-        sceneSerializer = new SceneSerializer(this);
-        time = new Time();
 
         logger.setLogMode(config.logMode);
         logger.setLogFile(config.logFile);
         logger.setMinLogLevel(config.logLevel);
+
+        assetDatabase = new AssetDatabase(
+                application.getProjectDirectory().resolve("src/main/resources")
+        );
+
+        try {
+            assetDatabase.refresh();
+        } catch (IOException e) {
+            logger.logError("Failed to refresh asset database: " + e.getMessage());
+        }
+
+        assetManager = new AssetManager(this);
+        input = new Input(this, application.getMainWindow());
+        renderer = new Renderer();
+        sceneRenderer = new SceneRenderer(renderer);
+        sceneSerializer = new SceneSerializer(this);
+        time = new Time();
 
         renderer.initialize(this);
         logger.logInfo("Engine initialized.");
@@ -67,7 +78,8 @@ public class Engine {
 
     public void loadScene(String filepath) {
         setActiveScene(new Scene(FilenameUtils.getBaseName(filepath), filepath, this, false));
-        sceneSerializer.load(activeScene, getApp().getProjectDirectory().resolve("src/main/resources/scenes").resolve(filepath));
+        sceneSerializer.load(activeScene,
+                getApp().getProjectDirectory().resolve("src/main/resources/scenes").resolve(filepath));
     }
 
     public void saveScene() {
@@ -81,7 +93,6 @@ public class Engine {
     public void update(double deltaTime) {
         input.update();
         activeScene.update((float) deltaTime);
-        // Game.update();
     }
 
     public void endFrame() {
@@ -92,7 +103,9 @@ public class Engine {
         renderer.beginFrame();
         if (activeScene != null) {
             sceneRenderer.render(activeScene);
-            DebugRenderer.render(activeScene.getCamera(), application.getMainWindow().getSize().x / application.getMainWindow().getSize().y); // TODO: getAspectRatio()
+            DebugRenderer.render(activeScene.getCamera(),
+                    application.getMainWindow().getSize().x /
+                            application.getMainWindow().getSize().y);
         }
         renderer.endFrame();
     }
@@ -103,35 +116,14 @@ public class Engine {
         logger.logInfo("Engine shutdown.");
     }
 
-    public Application getApp() {
-        return application;
-    }
-
+    public Application getApp() { return application; }
+    public AssetDatabase getAssetDatabase() { return assetDatabase; }
     public AssetManager getAssets() { return assetManager; }
-
     public EventBus getEventBus() { return eventBus; }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    public Input getInput() {
-        return input;
-    }
-
-    public Renderer getRenderer() {
-        return renderer;
-    }
-
-    public Camera getCamera() {
-        return activeScene.getCamera();
-    }
-
-    public Time getTime() {
-        return time;
-    }
-
-    public Physics getPhysics() {
-        return physics;
-    }
+    public Logger getLogger() { return logger; }
+    public Input getInput() { return input; }
+    public Renderer getRenderer() { return renderer; }
+    public Camera getCamera() { return activeScene.getCamera(); }
+    public Time getTime() { return time; }
+    public Physics getPhysics() { return physics; }
 }
