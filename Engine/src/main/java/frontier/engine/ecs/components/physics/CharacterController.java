@@ -8,7 +8,7 @@ import java.util.Map;
 public class CharacterController extends Component {
     private float moveSpeed = 5.0f;
     private float jumpVelocity = 5.0f;
-    private float gravity = -1f;
+    private float gravity = -9.8f;
     private Vector3f moveDirection = new Vector3f();
 
     private final Vector3f velocity = new Vector3f();

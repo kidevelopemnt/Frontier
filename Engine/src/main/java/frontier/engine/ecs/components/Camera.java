@@ -33,31 +33,34 @@ public class Camera extends Component {
         );
     }
 
-    public Matrix4f getViewMatrix() {
+    public Matrix4f getViewMatrix(float alpha) {
         Transform transform = getEntity().getTransform();
+
+        Vector3f position = transform.getInterpolatedPosition(alpha);
+        Vector3f rotation = transform.getInterpolatedRotation(alpha);
+
         Matrix4f cameraWorldMatrix = new Matrix4f();
 
-        // 1. If the camera has a parent (e.g., attached to a vehicle/player node),
-        // inherit the parent's world matrix first.
         if (transform.getParent() != null) {
-            cameraWorldMatrix.set(transform.getParent().getWorldMatrix());
+            cameraWorldMatrix.set(
+                    transform.getParent().getWorldMatrix()
+            );
         }
 
-        // 2. Build the camera's local transformations using YXZ order to lock out Roll (Z)
-        cameraWorldMatrix.translate(transform.position)
+        cameraWorldMatrix
+                .translate(position)
                 .rotateYXZ(
-                        (float) Math.toRadians(transform.rotation.y),
-                        (float) Math.toRadians(transform.rotation.x),
-                        0f // Explicitly force Roll to 0
+                        (float) Math.toRadians(rotation.y),
+                        (float) Math.toRadians(rotation.x),
+                        0f
                 )
                 .scale(transform.scale);
 
-        // 3. Invert it to get the final view space matrix for your shader
         return cameraWorldMatrix.invert(new Matrix4f());
     }
 
     public Ray getRay(float mouseX, float mouseY,
-                      float screenWidth, float screenHeight) {
+                      float screenWidth, float screenHeight, float alpha) {
 
         // Convert mouse coordinates to normalized device coordinates.
         float x = (2.0f * mouseX) / screenWidth - 1.0f;
@@ -78,8 +81,7 @@ public class Camera extends Component {
         viewCoords.w = 0.0f;
 
         // View space -> world space.
-        Matrix4f inverseView =
-                getViewMatrix().invert(new Matrix4f());
+        Matrix4f inverseView = getViewMatrix(alpha).invert(new Matrix4f());
 
         Vector4f worldCoords = new Vector4f(viewCoords);
         inverseView.transform(worldCoords);

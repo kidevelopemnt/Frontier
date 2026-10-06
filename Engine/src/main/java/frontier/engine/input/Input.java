@@ -25,12 +25,12 @@ public class Input {
         mouse = new Mouse(window, glfwInput);
     }
 
-    public void update() {
+    public void update(float alpha) {
         glfwInput.update();
         mouse.update();
 
         if (mouse.isButtonDown(MouseButton.LEFT) && engine.getActiveScene() != null) {
-            Ray ray = getRay();
+            Ray ray = getRay(alpha);
 
             DebugRenderer.drawRay(
                     ray.getOrigin(),
@@ -48,7 +48,7 @@ public class Input {
         }
     }
 
-    private Ray getRay() {
+    private Ray getRay(float alpha) {
         Camera camera = engine.getActiveScene().getCamera();
 
         float rayX;
@@ -66,7 +66,8 @@ public class Input {
                 rayX,
                 rayY,
                 window.getSize().x,
-                window.getSize().y
+                window.getSize().y,
+                alpha
         );
         return ray;
     }

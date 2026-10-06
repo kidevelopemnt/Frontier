@@ -80,6 +80,54 @@ public class CameraController extends Component {
         }
     }
 
+    public Vector3f getRenderPosition(float alpha) {
+        if (target == null) {
+            return entity.getTransform().getInterpolatedPosition(alpha);
+        }
+
+        Transform targetTransform = target.getTransform();
+
+        Vector3f targetPosition =
+                targetTransform.getInterpolatedPosition(alpha);
+
+        Vector3f targetRotation =
+                targetTransform.getInterpolatedRotation(alpha);
+
+        float totalAngle = targetRotation.y;
+
+        float horizontalDistance =
+                (float) (-distance * Math.cos(Math.toRadians(pitch)));
+
+        float verticalDistance =
+                (float) (distance * Math.sin(Math.toRadians(pitch)));
+
+        float offsetX =
+                (float) (horizontalDistance *
+                        Math.sin(Math.toRadians(totalAngle)));
+
+        float offsetZ =
+                (float) (horizontalDistance *
+                        Math.cos(Math.toRadians(totalAngle)));
+
+        return new Vector3f(
+                targetPosition.x - offsetX,
+                targetPosition.y - verticalDistance,
+                targetPosition.z - offsetZ
+        );
+    }
+
+    public Vector3f getRenderRotation(float alpha) {
+        if (target == null) {
+            return entity.getTransform().getInterpolatedRotation(alpha);
+        }
+
+        return new Vector3f(
+                pitch,
+                target.getTransform().getInterpolatedRotation(alpha).y,
+                0f
+        );
+    }
+
     @Override
     public Map<String, Object> serialize() {
         return Map.of("sensitivity", sensitivity, "distance", distance);

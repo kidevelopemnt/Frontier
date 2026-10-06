@@ -48,13 +48,18 @@ public class Renderer {
 
         Shader shader = material.getShader();
         Vector3f interpPos = transform.getInterpolatedPosition(alpha);
+        Vector3f interpRot = transform.getInterpolatedRotation(alpha);
         Matrix4f model = new Matrix4f()
                 .translation(interpPos)
-                .rotateXYZ(transform.rotation.x, transform.rotation.y, transform.rotation.z)
+                .rotateXYZ(
+                        (float) Math.toRadians(interpRot.x),
+                        (float) Math.toRadians(interpRot.y),
+                        (float) Math.toRadians(interpRot.z)
+                )
                 .scale(transform.scale);
 
         shader.setMatrix4f("model", model);
-        shader.setMatrix4f("view", camera.getViewMatrix());
+        shader.setMatrix4f("view", camera.getViewMatrix(alpha));
         Window mainWindow = engine.getApp().getMainWindow();
         Vector2f winSize = mainWindow.getSize();
         shader.setMatrix4f(

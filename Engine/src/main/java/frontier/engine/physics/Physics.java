@@ -38,7 +38,7 @@ public class Physics {
         physicsAccumulator += deltaTime;
 
         while (physicsAccumulator >= FIXED_TIME_STEP) {
-            savePreviousPositions();  // Stop jittery motion
+            savePreviousTransforms();  // Stop jittery motion
             simulate(FIXED_TIME_STEP);
             physicsAccumulator -= FIXED_TIME_STEP;
         }
@@ -303,15 +303,14 @@ public class Physics {
         }
     }
 
-    private void savePreviousPositions() {
+    private void savePreviousTransforms() {
         for (Entity entity : scene.getEntities()) {
             if (!entity.isEnabled()) {
                 continue;
             }
 
-            entity.getTransform().previousPosition.set(
-                    entity.getTransform().position
-            );
+            entity.getTransform().previousPosition.set(entity.getTransform().position);
+            entity.getTransform().previousRotation.set(entity.getTransform().rotation);
         }
     }
 

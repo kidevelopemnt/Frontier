@@ -46,6 +46,7 @@ public class Scene {
 
     public void addEntity(Entity entity) {
         entities.put(entity.getID(), entity);
+        entity.getTransform().syncPreviousTransform();
     }
 
     public Collection<Entity> getEntities() {

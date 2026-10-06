@@ -163,12 +163,12 @@ public class DebugRenderer {
         );
     }
 
-    public static void render(Camera camera, float aspectRatio) {
+    public static void render(Camera camera, float aspectRatio, float alpha) {
         Iterator<DebugLine> iterator = lines.iterator();
 
         while (iterator.hasNext()) {
             DebugLine line = iterator.next();
-            renderLine(line.start, line.end, line.color, line.width, camera.getViewMatrix(), camera.getProjectionMatrix(aspectRatio));
+            renderLine(line.start, line.end, line.color, line.width, camera.getViewMatrix(alpha), camera.getProjectionMatrix(aspectRatio));
             line.lifespan -= 1;
             if (line.lifespan == 0) {
                 iterator.remove();

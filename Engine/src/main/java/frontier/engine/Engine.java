@@ -80,7 +80,8 @@ public class Engine {
     }
 
     public void update(float deltaTime) {
-        input.update();
+        float alpha = physics.getPhysicsAccumulator() / physics.getFixedTimeStep();
+        input.update(alpha);
         if (activeScene != null) {
             activeScene.update(deltaTime);
         }
@@ -96,7 +97,7 @@ public class Engine {
         renderer.beginFrame();
         if (activeScene != null) {
             sceneRenderer.render(activeScene, alpha);
-            DebugRenderer.render(activeScene.getCamera(), application.getMainWindow().getSize().x / application.getMainWindow().getSize().y); // TODO: getAspectRatio()
+            DebugRenderer.render(activeScene.getCamera(), application.getMainWindow().getSize().x / application.getMainWindow().getSize().y, alpha); // TODO: getAspectRatio()
         }
         renderer.endFrame();
     }

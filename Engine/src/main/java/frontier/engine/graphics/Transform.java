@@ -9,6 +9,7 @@ public class Transform {
     public Vector3f scale = new Vector3f(1, 1, 1);
 
     public Vector3f previousPosition = new Vector3f(position);
+    public Vector3f previousRotation = new Vector3f(rotation);
 
     private Transform parent;
 
@@ -62,6 +63,15 @@ public class Transform {
 
     public Vector3f getInterpolatedPosition(float alpha) {
         return new Vector3f(previousPosition).lerp(position, alpha);
+    }
+
+    public Vector3f getInterpolatedRotation(float alpha) {
+        return new Vector3f(previousRotation).lerp(rotation, alpha);
+    }
+
+    public void syncPreviousTransform() {
+        previousPosition.set(position);
+        previousRotation.set(rotation);
     }
 
     public Vector3f getForward() {
