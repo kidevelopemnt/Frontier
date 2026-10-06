@@ -28,10 +28,11 @@ public class FrontierGame implements IGame {
         // Once I add an editor, the editor will handle creating scenes
         // Once I add an editor, I will use the save/load scene methods instead of this
 
-        // PlaygroundScene scene = new PlaygroundScene(engine);
-        // scene.initialize();
+        PlaygroundScene scene = new PlaygroundScene(engine);
+        scene.initialize();
 
-        PhysicsTestScene scene = new PhysicsTestScene(engine);
+        // PhysicsTestScene scene = new PhysicsTestScene(engine);
+
         engine.setActiveScene(scene.getScene());
     }
 

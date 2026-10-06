@@ -84,7 +84,7 @@ public class Engine {
         if (activeScene != null) {
             activeScene.update(deltaTime);
         }
-        physics.update();
+        physics.update(deltaTime);
         eventBus.trigger(null, UpdateEvent.class, deltaTime);
     }
 

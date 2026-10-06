@@ -5,6 +5,7 @@ import frontier.engine.assets.*;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.*;
 import frontier.engine.ecs.components.physics.BoxCollider;
+import frontier.engine.ecs.components.physics.CharacterController;
 import frontier.engine.events.Event;
 import frontier.engine.events.TriggerEnteredEvent;
 import frontier.engine.graphics.lighting.LightType;
@@ -37,6 +38,7 @@ public class PlaygroundScene {
 
         createRendererItems();
         createGround();
+        createPlayer();
         createSpinningCube();
         createTrees();
         createLights();
@@ -138,18 +140,31 @@ public class PlaygroundScene {
         scene.addEntity(ground);
     }
 
-    private void createSpinningCube() {
+    private void createPlayer() {
+        player = new Entity("Player", scene);
+
+        player.addComponent(BoxCollider.class);
+        CharacterController cc = player.addComponent(CharacterController.class);
+        cc.setMoveDirection(new Vector3f(1f, 0, 0));
+
+        MeshRenderer playerRenderer =
+                player.addComponent(MeshRenderer.class);
+
         try {
-            Model character = engine.getAssets().loadModel("models/Realistic_man_Bake.obj");
-            player = new Entity("character", scene);
-            MeshRenderer meshRenderer = player.addComponent(MeshRenderer.class);
-            meshRenderer.setModel(character);
-            PlayerController pc = player.addComponent(PlayerController.class);
-            scene.addEntity(player);
+            playerRenderer.setModel(
+                    engine.getAssets()
+                            .loadModel("models/Realistic_man_Bake.obj")
+            );
         } catch (IOException e) {
-            engine.getLogger().logError("Failed to load model... " + e);
+            throw new RuntimeException(e);
         }
 
+        player.getTransform().position.set(5, 20, 5);
+
+        scene.addEntity(player);
+    }
+
+    private void createSpinningCube() {
         Entity cube = new Entity("cube", scene);
         MeshRenderer meshRenderer = cube.addComponent(MeshRenderer.class);
         Model cubeModel = new Model(cubeMesh, cubeMaterial);

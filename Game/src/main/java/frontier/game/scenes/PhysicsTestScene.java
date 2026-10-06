@@ -8,6 +8,7 @@ import frontier.engine.ecs.components.CameraController;
 import frontier.engine.ecs.components.LightComponent;
 import frontier.engine.ecs.components.MeshRenderer;
 import frontier.engine.ecs.components.physics.BoxCollider;
+import frontier.engine.ecs.components.physics.RigidBody;
 import frontier.engine.events.Event;
 import frontier.engine.events.UpdateEvent;
 import frontier.engine.graphics.lighting.LightType;
@@ -21,8 +22,8 @@ public class PhysicsTestScene {
     private Engine engine;
     private Scene scene;
 
-    private float groundLength = 25f;
-    private float groundWidth = 25f;
+    private float groundLength = 20f;
+    private float groundWidth = 30f;
     private float groundHeight = 0.1f;
 
     private Material boxMaterial;
@@ -40,7 +41,7 @@ public class PhysicsTestScene {
         );
 
         scene.getCamera().getEntity().getTransform().rotation.set(
-                25, 145, 0
+                25, 0, 0
         );
         scene.getCamera().getEntity().addComponent(CameraController.class);
 
@@ -58,9 +59,111 @@ public class PhysicsTestScene {
         ground.getTransform().scale.set(groundWidth, groundHeight, groundLength);
         scene.addEntity(ground);
 
-        Entity box1 = createBox("Box 1", new Vector3f(0, 3, 0));
-        Entity box2 = createBox("Box 2", new Vector3f(3, 0.25f, 0));  // Intersecting the ground
-        Entity box3 = createBox("Box 3", new Vector3f(0, 3.5f, 0));   // Intersecting box 1
+        // Test 1: Equal mass, no bounce
+        /* createBox(
+                "No Bounce A",
+                new Vector3f(0, 1, 0),
+                1.0f,
+                0.0f,
+                0.5f,
+                0.3f,
+                new Vector3f(2, 0, 0)
+        );
+
+        createBox(
+                "No Bounce B",
+                new Vector3f(4, 1, 0),
+                1.0f,
+                0.0f,
+                new Vector3f(-2, 0, 0)
+        );
+
+
+        // Test 2: Equal mass, full bounce
+        createBox(
+                "Bounce A",
+                new Vector3f(0, 1, 6),
+                1.0f,
+                1.0f,
+                new Vector3f(2, 0, 0)
+        );
+
+        createBox(
+                "Bounce B",
+                new Vector3f(4, 1, 6),
+                1.0f,
+                1.0f,
+                new Vector3f(-2, 0, 0)
+        );
+
+
+        // Test 3: Different masses
+        createBox(
+                "Light",
+                new Vector3f(0, 1, 12),
+                1.0f,
+                1.0f,
+                new Vector3f(4, 0, 0)
+        );
+
+        createBox(
+                "Heavy",
+                new Vector3f(4, 1, 12),
+                10.0f,
+                1.0f,
+                new Vector3f(-1, 0, 0)
+        ); */
+
+        // Friction tests
+        createBox(
+                "No Friction",
+                new Vector3f(2, 1, 6),
+                1.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                new Vector3f(5, 0, 0)
+        );
+
+        createBox(
+                "Low Friction",
+                new Vector3f(2, 1, 9),
+                1.0f,
+                0.0f,
+                0.2f,
+                0.1f,
+                new Vector3f(5, 0, 0)
+        );
+
+        createBox(
+                "Medium Friction",
+                new Vector3f(2, 1, 12),
+                1.0f,
+                0.0f,
+                0.5f,
+                0.3f,
+                new Vector3f(5, 0, 0)
+        );
+
+        createBox(
+                "High Friction",
+                new Vector3f(2, 1, 15),
+                1.0f,
+                0.0f,
+                0.9f,
+                0.7f,
+                new Vector3f(5, 0, 0)
+        );
+
+        createBox(
+                "Static Friction",
+                new Vector3f(2, 1, 18),
+                1.0f,
+                0.0f,
+                0.8f,
+                0.5f,
+                new Vector3f(0.5f, 0, 0)
+        );
 
         createLights();
 
@@ -86,19 +189,37 @@ public class PhysicsTestScene {
         scene.addEntity(lamp);
     }
 
-    private Entity createBox(String name, Vector3f position) {
+    private Entity createBox(
+            String name,
+            Vector3f position,
+            float mass,
+            float restitution,
+            float staticFriction,
+            float dynamicFriction,
+            Vector3f velocity
+    ) {
         Entity entity = new Entity(name, scene);
+
         entity.addComponent(BoxCollider.class);
+
+        RigidBody rigidBody = entity.addComponent(RigidBody.class);
+        rigidBody.setMass(mass);
+        rigidBody.setRestitution(restitution);
+        rigidBody.setStaticFriction(staticFriction);
+        rigidBody.setDynamicFriction(dynamicFriction);
+        rigidBody.setVelocity(velocity);
+
         MeshRenderer mr = entity.addComponent(MeshRenderer.class);
+
         try {
             mr.setModel(engine.getAssets().loadModel("models/cube.obj"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         mr.setMaterial(boxMaterial);
 
         entity.getTransform().position.set(position);
-
         scene.addEntity(entity);
 
         return entity;

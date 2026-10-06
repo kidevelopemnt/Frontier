@@ -43,9 +43,9 @@ public class Application {
             engine.getTime().update(deltaTime);
 
             mainWindow.update();
+            engine.render();
             engine.update(deltaTime);
             game.update(deltaTime);
-            engine.render();
             mainWindow.draw();
             engine.endFrame();
         }
