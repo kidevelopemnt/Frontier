@@ -36,8 +36,19 @@ public class Camera extends Component {
     public Matrix4f getViewMatrix(float alpha) {
         Transform transform = getEntity().getTransform();
 
-        Vector3f position = transform.getInterpolatedPosition(alpha);
-        Vector3f rotation = transform.getInterpolatedRotation(alpha);
+        CameraController controller =
+                getEntity().getComponent(CameraController.class);
+
+        Vector3f position;
+        Vector3f rotation;
+
+        if (controller != null) {
+            position = controller.getRenderPosition(alpha);
+            rotation = controller.getRenderRotation(alpha);
+        } else {
+            position = transform.getInterpolatedPosition(alpha);
+            rotation = transform.getInterpolatedRotation(alpha);
+        }
 
         Matrix4f cameraWorldMatrix = new Matrix4f();
 
@@ -92,8 +103,18 @@ public class Camera extends Component {
                 worldCoords.z
         ).normalize();
 
+        Vector3f origin;
+
+        CameraController controller = entity.getComponent(CameraController.class);
+
+        if (controller != null) {
+            origin = controller.getRenderPosition(alpha);
+        } else {
+            origin = entity.getTransform().getInterpolatedPosition(alpha);
+        }
+
         return new Ray(
-                new Vector3f(getEntity().getTransform().getWorldPosition()),
+                origin,
                 direction,
                 10000.0f
         );

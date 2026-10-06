@@ -21,30 +21,6 @@ public class CameraController extends Component {
 
     private Entity target;
 
-    /* public void update(float deltaTime) {
-        Engine engine = getEngine();
-
-        float mouseY = engine.getInput().getMouse().getDeltaY();
-        pitch -= mouseY * sensitivity * deltaTime;
-
-        if (pitch > pitchLimit) pitch = pitchLimit;
-        if (pitch < -pitchLimit) pitch = -pitchLimit;
-
-        float totalAngle = lookAtTarget.getTransform().rotation.y;
-        float horizontalDistance = (float) (-distance * Math.cos(Math.toRadians(pitch)));
-        float verticalDistance = (float) (distance * Math.sin(Math.toRadians(pitch)));
-
-        float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(totalAngle)));
-        float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(totalAngle)));
-
-        // Set final camera position
-        entity.getTransform().position.x = followTarget.getTransform().position.x - offsetX;
-        entity.getTransform().position.y = followTarget.getTransform().position.y - verticalDistance;
-        entity.getTransform().position.z = followTarget.getTransform().position.z - offsetZ;
-
-        entity.getTransform().setRotation(pitch, totalAngle, 0f);
-    } */
-
     public void update(float deltaTime) {
         Engine engine = getEngine();
         float mouseX = engine.getInput().getMouse().getDeltaX();
@@ -54,25 +30,7 @@ public class CameraController extends Component {
         if (pitch > pitchMax) pitch = pitchMax;
         if (pitch < pitchMin) pitch = pitchMin;
 
-        if (target != null) {
-            float totalAngle = target.getTransform().rotation.y;
-            float horizontalDistance = (float) (-distance * Math.cos(Math.toRadians(pitch)));
-            float verticalDistance = (float) (distance * Math.sin(Math.toRadians(pitch)));
-
-            float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(totalAngle)));
-            float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(totalAngle)));
-
-            // Set position
-            Transform camTransform = entity.getTransform();
-            camTransform.position.x = target.getTransform().position.x - offsetX;
-            camTransform.position.y = target.getTransform().position.y - verticalDistance;
-            camTransform.position.z = target.getTransform().position.z - offsetZ;
-
-            // Store raw degrees safely
-            camTransform.rotation.x = pitch;
-            camTransform.rotation.y = totalAngle; // 180 flips it to face target
-            camTransform.rotation.z = 0f;
-        } else {
+        if (target == null) {
             Transform camTransform = entity.getTransform();
             camTransform.rotation.x = pitch;
             camTransform.rotation.y -= mouseX * sensitivity * deltaTime;
@@ -102,12 +60,16 @@ public class CameraController extends Component {
                 (float) (distance * Math.sin(Math.toRadians(pitch)));
 
         float offsetX =
-                (float) (horizontalDistance *
-                        Math.sin(Math.toRadians(totalAngle)));
+                (float) (
+                        horizontalDistance *
+                                Math.sin(Math.toRadians(totalAngle))
+                );
 
         float offsetZ =
-                (float) (horizontalDistance *
-                        Math.cos(Math.toRadians(totalAngle)));
+                (float) (
+                        horizontalDistance *
+                                Math.cos(Math.toRadians(totalAngle))
+                );
 
         return new Vector3f(
                 targetPosition.x - offsetX,
@@ -121,9 +83,12 @@ public class CameraController extends Component {
             return entity.getTransform().getInterpolatedRotation(alpha);
         }
 
+        Vector3f targetRotation =
+                target.getTransform().getInterpolatedRotation(alpha);
+
         return new Vector3f(
                 pitch,
-                target.getTransform().getInterpolatedRotation(alpha).y,
+                targetRotation.y,
                 0f
         );
     }
