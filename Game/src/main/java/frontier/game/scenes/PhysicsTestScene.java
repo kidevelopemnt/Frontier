@@ -48,7 +48,7 @@ public class PhysicsTestScene {
         ground.addComponent(BoxCollider.class);
         MeshRenderer meshRenderer = ground.addComponent(MeshRenderer.class);
         try {
-            meshRenderer.setModel(engine.getAssets().loadModel("models/cube.obj"));
+            meshRenderer.setModel(engine.getAssets().loadModel("models/cube.obj").copy());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -89,13 +89,13 @@ public class PhysicsTestScene {
     private Entity createBox(String name, Vector3f position) {
         Entity entity = new Entity(name, scene);
         entity.addComponent(BoxCollider.class);
-        MeshRenderer meshRenderer = entity.addComponent(MeshRenderer.class);
+        MeshRenderer mr = entity.addComponent(MeshRenderer.class);
         try {
-            meshRenderer.setModel(engine.getAssets().loadModel("models/cube.obj"));
+            mr.setModel(engine.getAssets().loadModel("models/cube.obj"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        meshRenderer.setMaterial(boxMaterial);
+        mr.setMaterial(boxMaterial);
 
         entity.getTransform().position.set(position);
 

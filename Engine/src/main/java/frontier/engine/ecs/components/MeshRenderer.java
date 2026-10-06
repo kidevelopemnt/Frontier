@@ -12,6 +12,8 @@ import java.util.Map;
 public class MeshRenderer extends Component {
     private Model model;
 
+    private final Map<ModelMesh, Material> materialOverrides = new HashMap<>();
+
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = new HashMap<>();
@@ -35,7 +37,7 @@ public class MeshRenderer extends Component {
 
     public void setMaterial(Material material, List<ModelMesh> meshes) {
         for (ModelMesh mm : meshes) {
-            mm.setMaterial(material);
+            materialOverrides.put(mm, material);
         }
     }
 
@@ -45,5 +47,13 @@ public class MeshRenderer extends Component {
 
     public Model getModel() {
         return model;
+    }
+
+    public Material getMaterial(ModelMesh modelMesh) {
+        if (materialOverrides.containsKey(modelMesh)) {
+            return materialOverrides.get(modelMesh);
+        }
+
+        return modelMesh.getMaterial();
     }
 }

@@ -1,9 +1,8 @@
 package frontier.engine.assets;
 
 public class ModelMesh {
-
     private final Mesh mesh;
-    private Material material;
+    private final Material material;
 
     public ModelMesh(Mesh mesh, Material material) {
         this.mesh = mesh;
@@ -16,10 +15,6 @@ public class ModelMesh {
 
     public Material getMaterial() {
         return material;
-    }
-
-    public void setMaterial(Material material) {
-        this.material = material;
     }
 
 }

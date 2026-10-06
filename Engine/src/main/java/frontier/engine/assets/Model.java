@@ -27,4 +27,8 @@ public class Model extends Asset {
     public List<ModelMesh> getMeshes() {
         return Collections.unmodifiableList(meshes);
     }
+
+    public Model copy() {
+        return new Model(new AssetID(), meshes);
+    }
 }
