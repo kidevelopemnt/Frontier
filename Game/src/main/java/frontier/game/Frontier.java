@@ -8,10 +8,10 @@ import java.nio.file.Paths;
 
 public class Frontier {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         ApplicationConfiguration appConfig = new ApplicationConfiguration();
         appConfig.logMode = Logger.LogMode.CONSOLE;
-        appConfig.logLevel = Logger.LogLevel.DEBUG;
+        appConfig.logLevel = Logger.LogLevel.ERROR;
         // appConfig.logFile = "log.txt";
 
         // TODO: This path is currently a placeholder for while I have Intellij open at the Frontier directory

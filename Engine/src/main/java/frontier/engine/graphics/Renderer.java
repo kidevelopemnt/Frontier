@@ -60,33 +60,37 @@ public class Renderer {
 
         shader.setVector3f("ambientLight", ambientLight);
 
-        LightComponent directionalLC = directionalLight.getComponent(LightComponent.class);
-        LightComponent pointLC = pointLight.getComponent(LightComponent.class);
+        // TODO: Handle lighting from scenes
+        if (directionalLight != null) {
+            LightComponent directionalLC = directionalLight.getComponent(LightComponent.class);
+            shader.setVector3f(
+                    "lightDirection",
+                    directionalLight.getTransform().rotation
+            );
 
-        shader.setVector3f(
-                "lightDirection",
-                directionalLight.getTransform().rotation
-        );
+            shader.setVector3f(
+                    "directionalLight",
+                    directionalLC.getColorWithIntensity()
+            );
+        }
 
-        shader.setVector3f(
-                "directionalLight",
-                directionalLC.getColorWithIntensity()
-        );
+        if (pointLight != null) {
+            LightComponent pointLC = pointLight.getComponent(LightComponent.class);
+            shader.setVector3f(
+                    "pointLightPosition",
+                    pointLight.getTransform().position
+            );
 
-        shader.setVector3f(
-                "pointLightPosition",
-                pointLight.getTransform().position
-        );
+            shader.setVector3f(
+                    "pointLightColor",
+                    pointLC.getColor()
+            );
 
-        shader.setVector3f(
-                "pointLightColor",
-                pointLC.getColor()
-        );
-
-        shader.setFloat(
-                "pointLightIntensity",
-                pointLC.getIntensity()
-        );
+            shader.setFloat(
+                    "pointLightIntensity",
+                    pointLC.getIntensity()
+            );
+        }
 
         Matrix3f normalMatrix = new Matrix3f(model).invert().transpose();
         shader.setMatrix3f("normalMatrix", normalMatrix);

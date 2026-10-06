@@ -12,6 +12,8 @@ public class Scene {
     private Map<UUID, Entity> entities = new HashMap<>();
     private Engine engine;
 
+    private List<Entity> destroyQueue = new ArrayList<>();
+
     public Scene(String name, String filepath, Engine engine, boolean addCamera) {
         this.name = name;
         this.filepath = filepath;
@@ -35,6 +37,10 @@ public class Scene {
     public void update(float deltaTime) {
         for (Entity e : entities.values()) {
             e.update(deltaTime);
+        }
+
+        if (!destroyQueue.isEmpty()) {
+            destroyEntities();
         }
     }
 
@@ -66,8 +72,17 @@ public class Scene {
     }
 
     public void destroyEntity(Entity entity) {
-        entity.cleanup();
-        entities.remove(entity.getID());
+        if (!destroyQueue.contains(entity)) {
+            destroyQueue.add(entity);
+        }
+    }
+
+    private void destroyEntities() {
+        for (Entity entity : destroyQueue) {
+            entity.cleanup();
+            entities.remove(entity.getID());
+        }
+        destroyQueue.clear();
     }
 
     public Map<String, Object> serialize() {

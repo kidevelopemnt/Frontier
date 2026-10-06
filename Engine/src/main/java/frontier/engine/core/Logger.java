@@ -47,7 +47,7 @@ public class Logger {
     }
 
     private void log(String message, LogLevel logLevel) {
-        if (minLogLevel.compareTo(logLevel) > 0) {
+        if (minLogLevel.compareTo(logLevel) < 0) {
             return;
         }
 

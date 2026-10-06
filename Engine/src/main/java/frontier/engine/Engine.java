@@ -80,7 +80,9 @@ public class Engine {
 
     public void update(double deltaTime) {
         input.update();
-        activeScene.update((float) deltaTime);
+        if (activeScene != null) {
+            activeScene.update((float) deltaTime);
+        }
         // Game.update();
     }
 

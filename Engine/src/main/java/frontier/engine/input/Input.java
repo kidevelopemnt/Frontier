@@ -29,7 +29,7 @@ public class Input {
         glfwInput.update();
         mouse.update();
 
-        if (mouse.isButtonDown(MouseButton.LEFT)) {
+        if (mouse.isButtonDown(MouseButton.LEFT) && engine.getActiveScene() != null) {
             Ray ray = getRay();
 
             DebugRenderer.drawRay(
