@@ -8,6 +8,7 @@ import frontier.engine.ecs.components.physics.BoxCollider;
 import frontier.engine.ecs.components.physics.CharacterController;
 import frontier.engine.events.Event;
 import frontier.engine.events.TriggerEnteredEvent;
+import frontier.engine.graphics.DebugRenderer;
 import frontier.engine.graphics.lighting.LightType;
 import frontier.engine.scene.Scene;
 import frontier.game.ecs.PlayerController;
@@ -143,7 +144,9 @@ public class PlaygroundScene {
     private void createPlayer() {
         player = new Entity("Player", scene);
 
-        player.addComponent(BoxCollider.class);
+        BoxCollider collider = player.addComponent(BoxCollider.class);
+        collider.getCenter().set(0, 0.5f, 0);
+
         CharacterController cc = player.addComponent(CharacterController.class);
         cc.setMoveDirection(new Vector3f(1f, 0, 0));
 

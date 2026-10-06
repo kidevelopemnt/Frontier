@@ -39,6 +39,101 @@ public class DebugRenderer {
 
     private static final List<DebugLine> lines = new ArrayList<>();
 
+    public static void drawBox(Vector3f center, Vector3f size, Vector3f color, float width, int lifespan) {
+        Vector3f halfSize = new Vector3f(size).mul(0.5f);
+
+        float minX = center.x - halfSize.x;
+        float maxX = center.x + halfSize.x;
+        float minY = center.y - halfSize.y;
+        float maxY = center.y + halfSize.y;
+        float minZ = center.z - halfSize.z;
+        float maxZ = center.z + halfSize.z;
+
+        // Bottom
+        drawLine(
+                new Vector3f(minX, minY, minZ),
+                new Vector3f(maxX, minY, minZ),
+                color, width, lifespan
+        );
+
+        drawLine(
+                new Vector3f(maxX, minY, minZ),
+                new Vector3f(maxX, minY, maxZ),
+                color, width, lifespan
+        );
+
+        drawLine(
+                new Vector3f(maxX, minY, maxZ),
+                new Vector3f(minX, minY, maxZ),
+                color, width, lifespan
+        );
+
+        drawLine(
+                new Vector3f(minX, minY, maxZ),
+                new Vector3f(minX, minY, minZ),
+                color, width, lifespan
+        );
+
+        // Top
+        drawLine(
+                new Vector3f(minX, maxY, minZ),
+                new Vector3f(maxX, maxY, minZ),
+                color, width, lifespan
+        );
+
+        drawLine(
+                new Vector3f(maxX, maxY, minZ),
+                new Vector3f(maxX, maxY, maxZ),
+                color, width, lifespan
+        );
+
+        drawLine(
+                new Vector3f(maxX, maxY, maxZ),
+                new Vector3f(minX, maxY, maxZ),
+                color, width, lifespan
+        );
+
+        drawLine(
+                new Vector3f(minX, maxY, maxZ),
+                new Vector3f(minX, maxY, minZ),
+                color, width, lifespan
+        );
+
+        // Vertical edges
+        drawLine(
+                new Vector3f(minX, minY, minZ),
+                new Vector3f(minX, maxY, minZ),
+                color, width, lifespan
+        );
+
+        drawLine(
+                new Vector3f(maxX, minY, minZ),
+                new Vector3f(maxX, maxY, minZ),
+                color, width, lifespan
+        );
+
+        drawLine(
+                new Vector3f(maxX, minY, maxZ),
+                new Vector3f(maxX, maxY, maxZ),
+                color, width, lifespan
+        );
+
+        drawLine(
+                new Vector3f(minX, minY, maxZ),
+                new Vector3f(minX, maxY, maxZ),
+                color, width, lifespan
+        );
+    }
+
+    public static void drawBox(
+            Vector3f center,
+            Vector3f size,
+            Vector3f color,
+            float width
+    ) {
+        drawBox(center, size, color, width, 60);
+    }
+
     public static void drawLine(Vector3f start, Vector3f end, Vector3f color, float width, int lifespan) {
         lines.add(new DebugLine(
                 new Vector3f(start),

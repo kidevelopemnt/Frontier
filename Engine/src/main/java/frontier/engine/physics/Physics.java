@@ -2,6 +2,7 @@ package frontier.engine.physics;
 
 import frontier.engine.Engine;
 import frontier.engine.ecs.Entity;
+import frontier.engine.ecs.components.physics.BoxCollider;
 import frontier.engine.ecs.components.physics.CharacterController;
 import frontier.engine.ecs.components.physics.Collider;
 import frontier.engine.ecs.components.physics.RigidBody;
@@ -68,6 +69,18 @@ public class Physics {
                     deltaTime,
                     controller.getVelocity()
             );
+
+            /*  TODO: Debug draw toggle
+            BoxCollider collider = entity.getComponent(BoxCollider.class);
+            DebugRenderer.drawBox(
+                    entity.getTransform().position,
+                    collider.getWorldSize(),
+                    new Vector3f(0, 1, 0),
+                    2.0f,
+                    1
+            );
+            */
+
         }
 
         // Apply rigidbody forces
