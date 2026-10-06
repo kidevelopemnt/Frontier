@@ -8,6 +8,8 @@ public class Transform {
     public Vector3f rotation = new Vector3f(0, 0, 0);
     public Vector3f scale = new Vector3f(1, 1, 1);
 
+    public Vector3f previousPosition = new Vector3f(position);
+
     private Transform parent;
 
     public void setParent(Transform parent) {
@@ -56,6 +58,10 @@ public class Transform {
         } else {
             position = pos;
         }
+    }
+
+    public Vector3f getInterpolatedPosition(float alpha) {
+        return new Vector3f(previousPosition).lerp(position, alpha);
     }
 
     public Vector3f getForward() {

@@ -24,7 +24,6 @@ public class Physics {
     private final List<CollisionResult> collisions = new ArrayList<>();
 
     private static final float FIXED_TIME_STEP = 1.0f / 60.0f;
-    private static final float COLLISION_SKIN = 0.001f;
     private float physicsAccumulator = 0.0f;
     private float maxVelocity = Float.POSITIVE_INFINITY;
 
@@ -39,6 +38,7 @@ public class Physics {
         physicsAccumulator += deltaTime;
 
         while (physicsAccumulator >= FIXED_TIME_STEP) {
+            savePreviousPositions();  // Stop jittery motion
             simulate(FIXED_TIME_STEP);
             physicsAccumulator -= FIXED_TIME_STEP;
         }
@@ -137,12 +137,6 @@ public class Physics {
                 CollisionResult result = collisionDetector.detect(a, b);
 
                 if (result != null) {
-                    System.out.println(
-                            "COLLISION: "
-                                    + a.getEntity().getName()
-                                    + " <-> "
-                                    + b.getEntity().getName()
-                    );
                     collisions.add(result);
 
                     Entity entityA = result.getColliderA().getEntity();
@@ -290,17 +284,6 @@ public class Physics {
             normal.negate();
         }
 
-        System.out.println(
-                "Character collision: normal=" + normal +
-                        " penetration=" + collision.getPenetration() +
-                        " velocity=" + controller.getVelocity()
-        );
-
-        System.out.println(
-                "Character position=" +
-                        characterEntity.getTransform().position
-        );
-
         Vector3f correction = new Vector3f(normal).mul(collision.getPenetration());
         characterEntity.getTransform().position.add(correction);
 
@@ -317,6 +300,18 @@ public class Physics {
                 // Prevents gravity from continuing to accumulate downward velocity while standing on the ground.
                 controller.getVelocity().y = 0.0f;
             }
+        }
+    }
+
+    private void savePreviousPositions() {
+        for (Entity entity : scene.getEntities()) {
+            if (!entity.isEnabled()) {
+                continue;
+            }
+
+            entity.getTransform().previousPosition.set(
+                    entity.getTransform().position
+            );
         }
     }
 
@@ -399,5 +394,13 @@ public class Physics {
 
     public void setGravity(Vector3f gravity) {
         this.gravity.set(gravity);
+    }
+
+    public float getPhysicsAccumulator() {
+        return physicsAccumulator;
+    }
+
+    public float getFixedTimeStep() {
+        return FIXED_TIME_STEP;
     }
 }

@@ -18,7 +18,7 @@ public class SceneRenderer {
         this.renderer = renderer;
     }
 
-    public void render(Scene scene) {
+    public void render(Scene scene, float alpha) {
         Entity directionalLight = null; // TODO: Temporary
         Entity pointLight = null;
 
@@ -58,7 +58,7 @@ public class SceneRenderer {
 
             for (ModelMesh modelMesh : meshRenderer.getModel().getMeshes()) {
                 Material mat = meshRenderer.getMaterial(modelMesh);
-                renderer.render(modelMesh.getMesh(), mat, entity.getTransform(), camera, directionalLight, pointLight);
+                renderer.render(modelMesh.getMesh(), mat, entity.getTransform(), camera, directionalLight, pointLight, alpha);
             }
         }
     }

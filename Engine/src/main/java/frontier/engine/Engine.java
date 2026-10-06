@@ -92,10 +92,10 @@ public class Engine {
         input.endFrame();
     }
 
-    public void render() {
+    public void render(float alpha) {
         renderer.beginFrame();
         if (activeScene != null) {
-            sceneRenderer.render(activeScene);
+            sceneRenderer.render(activeScene, alpha);
             DebugRenderer.render(activeScene.getCamera(), application.getMainWindow().getSize().x / application.getMainWindow().getSize().y); // TODO: getAspectRatio()
         }
         renderer.endFrame();

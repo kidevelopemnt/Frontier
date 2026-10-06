@@ -36,7 +36,7 @@ public class Renderer {
         clear();
     }
 
-    public void render(Mesh mesh, Material material, Transform transform, Camera camera, Entity directionalLight, Entity pointLight) {
+    public void render(Mesh mesh, Material material, Transform transform, Camera camera, Entity directionalLight, Entity pointLight, float alpha) {
         if (material == null) {
             material = defaultMaterial;
         }
@@ -47,7 +47,11 @@ public class Renderer {
         material.bind();
 
         Shader shader = material.getShader();
-        Matrix4f model = transform.getWorldMatrix();
+        Vector3f interpPos = transform.getInterpolatedPosition(alpha);
+        Matrix4f model = new Matrix4f()
+                .translation(interpPos)
+                .rotateXYZ(transform.rotation.x, transform.rotation.y, transform.rotation.z)
+                .scale(transform.scale);
 
         shader.setMatrix4f("model", model);
         shader.setMatrix4f("view", camera.getViewMatrix());

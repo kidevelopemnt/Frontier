@@ -43,9 +43,13 @@ public class Application {
             engine.getTime().update(deltaTime);
 
             mainWindow.update();
-            engine.render();
+
             engine.update(deltaTime);
             game.update(deltaTime);
+
+            float alpha = engine.getPhysics().getPhysicsAccumulator() / engine.getPhysics().getFixedTimeStep();
+            engine.render(alpha);
+
             mainWindow.draw();
             engine.endFrame();
         }
