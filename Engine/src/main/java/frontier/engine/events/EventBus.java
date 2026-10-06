@@ -19,7 +19,7 @@ public class EventBus {
         }
     }
 
-    public <T extends Event> void trigger(Object source, Class<T> eventClass) {
+    public <T extends Event> void trigger(Object source, Class<T> eventClass, Object context) {
         Event event = null;
         try {
             event = eventClass.getDeclaredConstructor().newInstance();
@@ -30,10 +30,15 @@ public class EventBus {
         EventKey key = new EventKey(source, eventClass);
 
         event.setSource(source);
+        event.setContext(context);
         if (register.containsKey(key)) {
             for (Consumer<Event> callback : register.get(key)) {
                 callback.accept(event);
             }
         }
+    }
+
+    public <T extends Event> void trigger(Object source, Class<T> eventClass) {
+        trigger(source, eventClass, null);
     }
 }

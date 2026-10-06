@@ -6,6 +6,7 @@ import frontier.engine.assets.AssetManager;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.Camera;
 import frontier.engine.events.EventBus;
+import frontier.engine.events.UpdateEvent;
 import frontier.engine.graphics.DebugRenderer;
 import frontier.engine.graphics.Renderer;
 import frontier.engine.core.Logger;
@@ -78,12 +79,12 @@ public class Engine {
         return activeScene;
     }
 
-    public void update(double deltaTime) {
+    public void update(float deltaTime) {
         input.update();
         if (activeScene != null) {
-            activeScene.update((float) deltaTime);
+            activeScene.update(deltaTime);
         }
-        // Game.update();
+        eventBus.trigger(null, UpdateEvent.class, deltaTime);
     }
 
     public void endFrame() {
