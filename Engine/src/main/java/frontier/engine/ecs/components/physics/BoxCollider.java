@@ -6,9 +6,6 @@ import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
 public class BoxCollider extends Collider {
-    private Vector3f size = new Vector3f(1, 1, 1);
-    private Vector3f center = new Vector3f(0, 0, 0);
-
     @Override
     public RaycastHit raycast(Vector3f origin, Vector3f direction, float maxDistance) {
         Transform transform = entity.getTransform();

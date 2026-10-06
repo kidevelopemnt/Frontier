@@ -32,6 +32,10 @@ public class AssetManager {
 
         AssetResource resource = resolveResource(path);
 
+        if (resource == null) {
+            return null;
+        }
+
         String extension = FilenameUtils.getExtension(path)
                 .toLowerCase();
 

@@ -10,6 +10,7 @@ import frontier.engine.input.KeyBinding;
 import frontier.engine.physics.Ray;
 import frontier.engine.physics.RaycastHit;
 import frontier.game.input.Actions;
+import frontier.game.scenes.PhysicsTestScene;
 import frontier.game.scenes.PlaygroundScene;
 import org.joml.Vector3f;
 
@@ -26,9 +27,12 @@ public class FrontierGame implements IGame {
 
         // Once I add an editor, the editor will handle creating scenes
         // Once I add an editor, I will use the save/load scene methods instead of this
-        PlaygroundScene playground = new PlaygroundScene(engine);
-        playground.initialize();
-        engine.setActiveScene(playground.getScene());
+
+        // PlaygroundScene scene = new PlaygroundScene(engine);
+        // scene.initialize();
+
+        PhysicsTestScene scene = new PhysicsTestScene(engine);
+        engine.setActiveScene(scene.getScene());
     }
 
     private void setupInput() {

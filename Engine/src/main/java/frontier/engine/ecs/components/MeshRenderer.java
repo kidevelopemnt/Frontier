@@ -3,8 +3,10 @@ package frontier.engine.ecs.components;
 import frontier.engine.assets.Material;
 import frontier.engine.assets.Mesh;
 import frontier.engine.assets.Model;
+import frontier.engine.assets.ModelMesh;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MeshRenderer extends Component {
@@ -29,6 +31,16 @@ public class MeshRenderer extends Component {
 
     public void setModel(Model model) {
         this.model = model;
+    }
+
+    public void setMaterial(Material material, List<ModelMesh> meshes) {
+        for (ModelMesh mm : meshes) {
+            mm.setMaterial(material);
+        }
+    }
+
+    public void setMaterial(Material material) {
+        setMaterial(material, model.getMeshes());
     }
 
     public Model getModel() {
