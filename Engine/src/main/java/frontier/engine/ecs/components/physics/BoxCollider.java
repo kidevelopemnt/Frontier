@@ -12,23 +12,27 @@ public class BoxCollider extends Collider {
     @Override
     public RaycastHit raycast(Vector3f origin, Vector3f direction, float maxDistance) {
         Transform transform = entity.getTransform();
-        Matrix3f inverseRotation = new Matrix3f()
+
+        Matrix3f rotation = new Matrix3f()
                 .rotateXYZ(
-                        -transform.rotation.x,
-                        -transform.rotation.y,
-                        -transform.rotation.z
+                        (float) Math.toRadians(transform.rotation.x),
+                        (float) Math.toRadians(transform.rotation.y),
+                        (float) Math.toRadians(transform.rotation.z)
                 );
 
+        Matrix3f inverseRotation = new Matrix3f(rotation).invert();
+
+        Vector3f worldCenter = getWorldCenter();
+
         Vector3f localOrigin = new Vector3f(origin)
-                .sub(transform.position)
-                .sub(center);
+                .sub(worldCenter);
 
         Vector3f localDirection = new Vector3f(direction);
 
         inverseRotation.transform(localOrigin);
         inverseRotation.transform(localDirection);
 
-        Vector3f halfSize = new Vector3f(size).mul(0.5f);
+        Vector3f halfSize = getWorldHalfSize();
         Vector3f min = new Vector3f(halfSize).negate();
         Vector3f max = new Vector3f(halfSize);
 
@@ -37,14 +41,22 @@ public class BoxCollider extends Collider {
         int hitAxis = -1;
         float hitNormalSign = 0.0f;
 
-        // X axis
-        if (Math.abs(localDirection.x) <= 0.000001f) {  // Account for floating point error
-            if (localOrigin.x < min.x || localOrigin.x > max.x) {
-                return null;
+        float[] originValues = {localOrigin.x, localOrigin.y, localOrigin.z};
+        float[] directionValues = {localDirection.x, localDirection.y, localDirection.z};
+        float[] minValues = {min.x, min.y, min.z};
+        float[] maxValues = {max.x, max.y, max.z};
+
+        for (int axis = 0; axis < 3; axis++) {
+            if (Math.abs(directionValues[axis]) <= 0.000001f) {
+                if (originValues[axis] < minValues[axis] ||
+                        originValues[axis] > maxValues[axis]) {
+                    return null;
+                }
+                continue;
             }
-        } else {
-            float t1 = (min.x - localOrigin.x) / localDirection.x;
-            float t2 = (max.x - localOrigin.x) / localDirection.x;
+
+            float t1 = (minValues[axis] - originValues[axis]) / directionValues[axis];
+            float t2 = (maxValues[axis] - originValues[axis]) / directionValues[axis];
 
             if (t1 > t2) {
                 float temp = t1;
@@ -54,8 +66,8 @@ public class BoxCollider extends Collider {
 
             if (t1 > tMin) {
                 tMin = t1;
-                hitAxis = 0;
-                hitNormalSign = localDirection.x > 0 ? -1.0f : 1.0f;
+                hitAxis = axis;
+                hitNormalSign = directionValues[axis] > 0 ? -1.0f : 1.0f;
             }
 
             tMin = Math.max(tMin, t1);
@@ -66,85 +78,20 @@ public class BoxCollider extends Collider {
             }
         }
 
-        // Y axis
-        if (Math.abs(localDirection.y) <= 0.000001f) {  // Account for floating point error
-            if (localOrigin.y < min.y || localOrigin.y > max.y) {
-                return null;
-            }
-        } else {
-            float t1 = (min.y - localOrigin.y) / localDirection.y;
-            float t2 = (max.y - localOrigin.y) / localDirection.y;
-
-            if (t1 > t2) {
-                float temp = t1;
-                t1 = t2;
-                t2 = temp;
-            }
-
-            if (t1 > tMin) {
-                tMin = t1;
-                hitAxis = 1;
-                hitNormalSign = localDirection.y > 0 ? -1.0f : 1.0f;
-            }
-
-            tMin = Math.max(tMin, t1);
-            tMax = Math.min(tMax, t2);
-
-            if (tMin > tMax) {
-                return null;
-            }
-        }
-
-        // Z axis
-        if (Math.abs(localDirection.z) <= 0.000001f) {  // Account for floating point error
-            if (localOrigin.z < min.z || localOrigin.z > max.z) {
-                return null;
-            }
-        } else {
-            float t1 = (min.z - localOrigin.z) / localDirection.z;
-            float t2 = (max.z - localOrigin.z) / localDirection.z;
-
-            if (t1 > t2) {
-                float temp = t1;
-                t1 = t2;
-                t2 = temp;
-            }
-
-            if (t1 > tMin) {
-                tMin = t1;
-                hitAxis = 2;
-                hitNormalSign = localDirection.z > 0 ? -1.0f : 1.0f;
-            }
-
-            tMin = Math.max(tMin, t1);
-            tMax = Math.min(tMax, t2);
-
-            if (tMin > tMax) {
-                return null;
-            }
+        if (hitAxis == -1) {
+            hitAxis = 0;
+            hitNormalSign = localDirection.x > 0 ? -1.0f : 1.0f;
         }
 
         Vector3f localHit = new Vector3f(localDirection)
                 .mul(tMin)
                 .add(localOrigin);
 
-        Matrix3f rotation = new Matrix3f()
-                .rotateXYZ(
-                        transform.rotation.x,
-                        transform.rotation.y,
-                        transform.rotation.z
-                );
-
         Vector3f worldHit = new Vector3f(localHit);
-
         rotation.transform(worldHit);
-
-        worldHit
-                .add(center)
-                .add(transform.position);
+        worldHit.add(worldCenter);
 
         Vector3f localNormal = new Vector3f();
-
         switch (hitAxis) {
             case 0 -> localNormal.x = hitNormalSign;
             case 1 -> localNormal.y = hitNormalSign;
@@ -152,9 +99,7 @@ public class BoxCollider extends Collider {
         }
 
         Vector3f worldNormal = new Vector3f(localNormal);
-
         rotation.transform(worldNormal);
-
         worldNormal.normalize();
 
         return new RaycastHit(
@@ -164,6 +109,30 @@ public class BoxCollider extends Collider {
                 worldNormal,
                 tMin
         );
+    }
+
+    @Override
+    public Vector3f getWorldCenter() {
+        Transform transform = entity.getTransform();
+
+        Vector3f worldCenter = new Vector3f(center)
+                .mul(transform.getWorldScale());
+
+        transform.getWorldMatrix().transformPosition(
+                new Vector3f(center),
+                worldCenter
+        );
+
+        return worldCenter;
+    }
+
+    @Override
+    public Vector3f getWorldSize() {
+        return new Vector3f(size).mul(entity.getTransform().getWorldScale());
+    }
+
+    public Vector3f getWorldHalfSize() {
+        return getWorldSize().mul(0.5f);
     }
 
     public Vector3f getSize() {
@@ -179,6 +148,6 @@ public class BoxCollider extends Collider {
     }
 
     public void setCenter(Vector3f center) {
-        this.center = center;
+        this.center.set(center);
     }
 }
