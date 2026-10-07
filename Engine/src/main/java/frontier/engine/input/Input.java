@@ -3,11 +3,10 @@ package frontier.engine.input;
 import frontier.engine.Engine;
 import frontier.engine.application.Window;
 import frontier.engine.ecs.components.Camera;
-import frontier.engine.events.TriggerEnteredEvent;
+import frontier.engine.events.OnTriggerEntered;
 import frontier.engine.graphics.DebugRenderer;
 import frontier.engine.physics.Ray;
 import frontier.engine.physics.RaycastHit;
-import org.joml.Vector3f;
 
 public class Input {
     private final Engine engine;
@@ -42,7 +41,7 @@ public class Input {
             if (hit != null) {
                 engine.getEventBus().trigger(
                         hit.getCollider(),
-                        TriggerEnteredEvent.class
+                        OnTriggerEntered.class
                 );
             }
         }

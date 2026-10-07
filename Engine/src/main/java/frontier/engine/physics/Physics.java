@@ -6,6 +6,9 @@ import frontier.engine.ecs.components.physics.BoxCollider;
 import frontier.engine.ecs.components.physics.CharacterController;
 import frontier.engine.ecs.components.physics.Collider;
 import frontier.engine.ecs.components.physics.RigidBody;
+import frontier.engine.events.Event;
+import frontier.engine.events.OnCollisionEntered;
+import frontier.engine.events.OnTriggerEntered;
 import frontier.engine.graphics.DebugRenderer;
 import frontier.engine.scene.Scene;
 import org.joml.Vector3f;
@@ -141,6 +144,17 @@ public class Physics {
 
                     Entity entityA = result.getColliderA().getEntity();
                     Entity entityB = result.getColliderB().getEntity();
+
+                    if (result.isTrigger()) {
+                        engine.getEventBus().trigger(entityA, OnTriggerEntered.class, result);
+                        engine.getEventBus().trigger(entityB, OnTriggerEntered.class, result);
+                        continue;
+
+                    }
+
+                    // Only apply physics if it is not a trigger collision
+                    engine.getEventBus().trigger(entityA, OnCollisionEntered.class, result);
+                    engine.getEventBus().trigger(entityB, OnCollisionEntered.class, result);
 
                     boolean characterA = entityA.hasComponent(CharacterController.class);
                     boolean characterB = entityB.hasComponent(CharacterController.class);

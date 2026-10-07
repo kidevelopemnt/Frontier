@@ -1,6 +1,7 @@
 package frontier.engine.events;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +13,10 @@ public class EventBus {
     public <T extends Event> void subscribe(Object source, Class<T> eventClass, Consumer<Event> callback) {
         // TODO: Allow subscribing to no specific source
         EventKey key = new EventKey(source, eventClass);
-        if (register.containsKey(key)) {
-            register.get(key).add(callback);
-        } else {
-            register.put(key, List.of(callback));
+        if (!register.containsKey(key)) {
+            register.put(key, new ArrayList<>());
         }
+        register.get(key).add(callback);
     }
 
     public <T extends Event> void trigger(Object source, Class<T> eventClass, Object context) {

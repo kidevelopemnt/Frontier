@@ -9,6 +9,8 @@ public class CollisionResult {
     private final Vector3f normal;  // Normal points of Collider A toward Collider B
     private final float penetration;
 
+    private boolean isTrigger;
+
     public CollisionResult(
             Collider colliderA,
             Collider colliderB,
@@ -35,5 +37,11 @@ public class CollisionResult {
 
     public float getPenetration() {
         return penetration;
+    }
+
+    public boolean isTrigger() { return isTrigger; }
+
+    public void setIsTrigger(boolean value) {
+        isTrigger = value;
     }
 }

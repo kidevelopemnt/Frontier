@@ -7,11 +7,9 @@ import frontier.engine.ecs.components.*;
 import frontier.engine.ecs.components.physics.BoxCollider;
 import frontier.engine.ecs.components.physics.CharacterController;
 import frontier.engine.events.Event;
-import frontier.engine.events.TriggerEnteredEvent;
-import frontier.engine.graphics.DebugRenderer;
+import frontier.engine.events.OnTriggerEntered;
 import frontier.engine.graphics.lighting.LightType;
 import frontier.engine.scene.Scene;
-import frontier.game.ecs.PlayerController;
 import frontier.game.ecs.Spinner;
 import org.joml.Vector3f;
 
@@ -176,7 +174,7 @@ public class PlaygroundScene {
 
         BoxCollider boxCollider = cube.addComponent(BoxCollider.class);
         boxCollider.setTrigger(true);
-        engine.getEventBus().subscribe(boxCollider, TriggerEnteredEvent.class, this::spinningCubeClicked);
+        engine.getEventBus().subscribe(boxCollider, OnTriggerEntered.class, this::spinningCubeClicked);
 
         scene.addEntity(cube);
     }

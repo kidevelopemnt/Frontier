@@ -6,11 +6,21 @@ import org.joml.Vector3f;
 
 public class CollisionDetector {
     public CollisionResult detect(Collider a, Collider b) {
+        CollisionResult result = null;
+
         if (a instanceof BoxCollider boxA && b instanceof BoxCollider boxB) {
-            return detectBoxBox(boxA, boxB);
+            result = detectBoxBox(boxA, boxB);
         }
 
-        return null;
+        if (result == null) {
+            return result;
+        }
+
+        if (result.getColliderA().isTrigger() || result.getColliderB().isTrigger()) {
+            result.setIsTrigger(true);
+        }
+
+        return result;
     }
 
     private CollisionResult detectBoxBox(BoxCollider a, BoxCollider b) {
