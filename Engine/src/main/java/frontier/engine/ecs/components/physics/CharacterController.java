@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 import java.util.Map;
 
 public class CharacterController extends Component {
-    private float mouseSensitivity = 5f;
     private float moveSpeed = 5.0f;
     private float jumpVelocity = 5.0f;
     private float gravity = -9.8f;
@@ -16,13 +15,6 @@ public class CharacterController extends Component {
 
     private boolean grounded;
     private float groundNormalThreshold = 0.7f;
-
-    @Override
-    public void update(float deltaTime) {
-        float mouseX = getEngine().getInput().getMouse().getDeltaX();
-
-        entity.getTransform().rotate(0f, mouseX * mouseSensitivity * deltaTime);
-    }
 
     public void applyGravity(float deltaTime) {
         if (!grounded) {

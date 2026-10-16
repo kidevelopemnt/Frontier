@@ -56,6 +56,13 @@ public class PlaygroundScene {
         float deltaTime = (float) event.getContext();
 
         CharacterController cc = player.getComponent(CharacterController.class);
+        CameraController camc = scene.getCamera().getEntity().getComponent(CameraController.class);
+
+        // TODO: Put this in camera controller or some other class that makes more sense
+        if (camc != null) {
+            float mouseX = engine.getInput().getMouse().getDeltaX();
+            player.getTransform().rotate(0f, mouseX * camc.getSensitivity() * deltaTime);
+        }
 
         Vector3f direction = new Vector3f();
 

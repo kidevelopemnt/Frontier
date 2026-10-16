@@ -93,6 +93,10 @@ public class CameraController extends Component {
         );
     }
 
+    public float getSensitivity() {
+        return sensitivity;
+    }
+
     @Override
     public Map<String, Object> serialize() {
         return Map.of("sensitivity", sensitivity, "distance", distance);
