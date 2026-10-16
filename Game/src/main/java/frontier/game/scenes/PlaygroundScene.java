@@ -57,24 +57,23 @@ public class PlaygroundScene {
 
         CharacterController cc = player.getComponent(CharacterController.class);
 
-        float xDir = 0f;
-        float zDir = 0f;
+        Vector3f direction = new Vector3f();
 
         if (engine.getInput().isHeld(Actions.FORWARD)) {
-            zDir -= 1f;
+            direction.add(player.getTransform().getForward());
         }
         if (engine.getInput().isHeld(Actions.BACK)) {
-            zDir += 1f;
+            direction.sub(player.getTransform().getForward());
         }
 
         if (engine.getInput().isHeld(Actions.RIGHT)) {
-            xDir += 1f;
+            direction.add(player.getTransform().getRight());
         }
         if (engine.getInput().isHeld(Actions.LEFT)) {
-            xDir -= 1f;
+            direction.sub(player.getTransform().getRight());
         }
 
-        cc.setMoveDirection(new Vector3f(xDir, 0f, zDir));
+        cc.setMoveDirection(direction);
     }
 
     private void createRendererItems() {
