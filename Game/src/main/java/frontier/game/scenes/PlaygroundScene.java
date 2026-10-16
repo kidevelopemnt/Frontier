@@ -8,9 +8,11 @@ import frontier.engine.ecs.components.physics.BoxCollider;
 import frontier.engine.ecs.components.physics.CharacterController;
 import frontier.engine.events.Event;
 import frontier.engine.events.OnTriggerEntered;
+import frontier.engine.events.UpdateEvent;
 import frontier.engine.graphics.lighting.LightType;
 import frontier.engine.scene.Scene;
 import frontier.game.ecs.Spinner;
+import frontier.game.input.Actions;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -42,10 +44,37 @@ public class PlaygroundScene {
         createTrees();
         createLights();
         createCamera();
+
+        engine.getEventBus().subscribe(null, UpdateEvent.class, this::update);
     }
 
     public Scene getScene() {
         return scene;
+    }
+
+    private void update(Event event) {
+        float deltaTime = (float) event.getContext();
+
+        CharacterController cc = player.getComponent(CharacterController.class);
+
+        float xDir = 0f;
+        float zDir = 0f;
+
+        if (engine.getInput().isHeld(Actions.FORWARD)) {
+            zDir -= 1f;
+        }
+        if (engine.getInput().isHeld(Actions.BACK)) {
+            zDir += 1f;
+        }
+
+        if (engine.getInput().isHeld(Actions.RIGHT)) {
+            xDir += 1f;
+        }
+        if (engine.getInput().isHeld(Actions.LEFT)) {
+            xDir -= 1f;
+        }
+
+        cc.setMoveDirection(new Vector3f(xDir, 0f, zDir));
     }
 
     private void createRendererItems() {
@@ -146,7 +175,8 @@ public class PlaygroundScene {
         collider.getCenter().set(0, 0.5f, 0);
 
         CharacterController cc = player.addComponent(CharacterController.class);
-        cc.setMoveDirection(new Vector3f(1f, 0, 0));
+        cc.getMoveDirection().x += 1;
+        cc.setMoveDirection(new Vector3f(1f, 0, 1f));
 
         MeshRenderer playerRenderer =
                 player.addComponent(MeshRenderer.class);
