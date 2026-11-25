@@ -1,9 +1,9 @@
+
 package frontier.game.scenes;
 
 import frontier.engine.Engine;
 import frontier.engine.assets.Material;
 import frontier.engine.ecs.Entity;
-import frontier.engine.ecs.components.Camera;
 import frontier.engine.ecs.components.CameraController;
 import frontier.engine.ecs.components.LightComponent;
 import frontier.engine.ecs.components.MeshRenderer;
@@ -16,15 +16,14 @@ import frontier.engine.scene.Scene;
 import org.joml.Vector3f;
 
 import java.io.IOException;
-import java.util.Random;
 
 public class PhysicsTestScene {
-    private Engine engine;
-    private Scene scene;
+    private final Engine engine;
+    private final Scene scene;
 
-    private float groundLength = 20f;
-    private float groundWidth = 30f;
-    private float groundHeight = 0.1f;
+    private final float groundLength = 20f;
+    private final float groundWidth = 30f;
+    private final float groundHeight = 0.1f;
 
     private Material boxMaterial;
     private Material groundMaterial;
@@ -33,161 +32,192 @@ public class PhysicsTestScene {
         this.engine = engine;
         scene = engine.createScene("Physics Test Scene");
 
-        boxMaterial = new Material(engine.getAssets().loadTexture("textures/crate.jpg"));
-        groundMaterial = new Material(engine.getAssets().loadTexture("textures/ground.jpg"));
-
-        scene.getCamera().getEntity().getTransform().position.set(
-                8, 6, 12
+        boxMaterial = new Material(
+                engine.getAssets().loadTexture("textures/crate.jpg")
         );
 
-        scene.getCamera().getEntity().getTransform().rotation.set(
-                25, 0, 0
+        groundMaterial = new Material(
+                engine.getAssets().loadTexture("textures/ground.jpg")
         );
+    }
+
+    public void initialize() {
+        scene.getCamera().getEntity().getTransform().position.set(8, 6, 12);
+        scene.getCamera().getEntity().getTransform().rotation.set(25, 0, 0);
         scene.getCamera().getEntity().addComponent(CameraController.class);
 
-        Entity ground = new Entity("Ground", scene);
-        ground.addComponent(BoxCollider.class);
-        MeshRenderer meshRenderer = ground.addComponent(MeshRenderer.class);
-        try {
-            meshRenderer.setModel(engine.getAssets().loadModel("models/cube.obj").copy());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        meshRenderer.setMaterial(groundMaterial);
+        createGround();
 
-        ground.getTransform().position.set(groundWidth/2, -groundHeight / 2f, groundLength/2);
-        ground.getTransform().scale.set(groundWidth, groundHeight, groundLength);
-        scene.addEntity(ground);
+        // Positional correction tests
+        createFallingBoxTest();
+        createBoxStackTest();
+        createUnevenStackTest();
 
-        // Test 1: Equal mass, no bounce
-        /* createBox(
-                "No Bounce A",
-                new Vector3f(0, 1, 0),
-                1.0f,
-                0.0f,
-                0.5f,
-                0.3f,
-                new Vector3f(2, 0, 0)
-        );
+        // Future collision resolution tests
+        // createWallCollisionTest();
+        // createMultipleContactTest();
 
-        createBox(
-                "No Bounce B",
-                new Vector3f(4, 1, 0),
-                1.0f,
-                0.0f,
-                new Vector3f(-2, 0, 0)
-        );
+        // Future restitution tests
+        // createNoBounceTest();
+        // createFullBounceTest();
+        // createDifferentMassBounceTest();
 
-
-        // Test 2: Equal mass, full bounce
-        createBox(
-                "Bounce A",
-                new Vector3f(0, 1, 6),
-                1.0f,
-                1.0f,
-                new Vector3f(2, 0, 0)
-        );
-
-        createBox(
-                "Bounce B",
-                new Vector3f(4, 1, 6),
-                1.0f,
-                1.0f,
-                new Vector3f(-2, 0, 0)
-        );
-
-
-        // Test 3: Different masses
-        createBox(
-                "Light",
-                new Vector3f(0, 1, 12),
-                1.0f,
-                1.0f,
-                new Vector3f(4, 0, 0)
-        );
-
-        createBox(
-                "Heavy",
-                new Vector3f(4, 1, 12),
-                10.0f,
-                1.0f,
-                new Vector3f(-1, 0, 0)
-        ); */
-
-        // Friction tests
-        createBox(
-                "No Friction",
-                new Vector3f(2, 1, 6),
-                1.0f,
-                0.0f,
-                0.0f,
-                0.0f,
-                new Vector3f(5, 0, 0)
-        );
-
-        createBox(
-                "Low Friction",
-                new Vector3f(2, 1, 9),
-                1.0f,
-                0.0f,
-                0.2f,
-                0.1f,
-                new Vector3f(5, 0, 0)
-        );
-
-        createBox(
-                "Medium Friction",
-                new Vector3f(2, 1, 12),
-                1.0f,
-                0.0f,
-                0.5f,
-                0.3f,
-                new Vector3f(5, 0, 0)
-        );
-
-        createBox(
-                "High Friction",
-                new Vector3f(2, 1, 15),
-                1.0f,
-                0.0f,
-                0.9f,
-                0.7f,
-                new Vector3f(5, 0, 0)
-        );
-
-        createBox(
-                "Static Friction",
-                new Vector3f(2, 1, 18),
-                1.0f,
-                0.0f,
-                0.8f,
-                0.5f,
-                new Vector3f(0.5f, 0, 0)
-        );
+        // Future friction tests
+        // createFrictionTests();
+        // createStaticFrictionTest();
 
         createLights();
 
-        engine.getEventBus().subscribe(null, UpdateEvent.class, this::update);
+        engine.getEventBus().subscribe(
+                null,
+                UpdateEvent.class,
+                this::update
+        );
     }
 
-    private void createLights() {
-        Entity sun = new Entity("sun", scene);
-        sun.getTransform().rotation = new Vector3f(-1, -1, -1);
-        LightComponent sunLight = sun.addComponent(LightComponent.class);
-        sunLight.setLightType(LightType.DIRECTIONAL);
-        sunLight.setColor(new Vector3f(1, 1, 1));
-        sunLight.setIntensity(1.0f);
+    private void createGround() {
+        Entity ground = new Entity("Ground", scene);
+        ground.addComponent(BoxCollider.class);
 
-        Entity lamp = new Entity("lamp", scene);
-        lamp.getTransform().position = new Vector3f(2, 1, 2);
-        LightComponent lampLight = lamp.addComponent(LightComponent.class);
-        lampLight.setLightType(LightType.POINT);
-        lampLight.setColor(new Vector3f(1, 0, 0));
-        lampLight.setIntensity(2.0f);
+        MeshRenderer meshRenderer = ground.addComponent(MeshRenderer.class);
 
-        scene.addEntity(sun);
-        scene.addEntity(lamp);
+        try {
+            meshRenderer.setModel(
+                    engine.getAssets().loadModel("models/cube.obj").copy()
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        meshRenderer.setMaterial(groundMaterial);
+
+        ground.getTransform().position.set(
+                groundWidth / 2,
+                -groundHeight / 2f,
+                groundLength / 2
+        );
+
+        ground.getTransform().scale.set(
+                groundWidth,
+                groundHeight,
+                groundLength
+        );
+
+        scene.addEntity(ground);
     }
+
+    // --------------------------------------------------
+    // POSITIONAL CORRECTION TESTS
+    // --------------------------------------------------
+
+    private void createFallingBoxTest() {
+        createBox(
+                "Falling Box",
+                new Vector3f(4, 5, 4),
+                1.0f,
+                0.0f,
+                0.5f,
+                0.3f,
+                new Vector3f()
+        );
+    }
+
+    private void createBoxStackTest() {
+        createBoxStack(
+                "Box Stack",
+                new Vector3f(10, 0.5f, 4),
+                5,
+                1.0f
+        );
+    }
+
+    private void createUnevenStackTest() {
+        // TODO: Create a stack with different masses.
+        createBoxStack(
+                "Uneven Stack",
+                new Vector3f(16, 0.5f, 4),
+                5,
+                1.0f,
+                3.0f
+        );
+    }
+
+    private void createBoxStack(
+            String name,
+            Vector3f basePosition,
+            int boxCount,
+            float mass,
+            float massStep
+    ) {
+        for (int i = 0; i < boxCount; i++) {
+            createBox(
+                    name + " " + (i + 1),
+                    new Vector3f(
+                            basePosition.x,
+                            basePosition.y + i,
+                            basePosition.z
+                    ),
+                    mass + (massStep * 1),
+                    0.0f,
+                    0.5f,
+                    0.3f,
+                    new Vector3f()
+            );
+        }
+    }
+
+    private void createBoxStack(
+            String name,
+            Vector3f basePosition,
+            int boxCount,
+            float mass
+    ) {
+        createBoxStack(name, basePosition, boxCount, mass, 0f);
+    }
+
+    // --------------------------------------------------
+    // FUTURE COLLISION TESTS
+    // --------------------------------------------------
+
+    private void createWallCollisionTest() {
+        // TODO: Test a dynamic box colliding with a static wall.
+    }
+
+    private void createMultipleContactTest() {
+        // TODO: Test multiple simultaneous collision contacts.
+    }
+
+    // --------------------------------------------------
+    // FUTURE RESTITUTION TESTS
+    // --------------------------------------------------
+
+    private void createNoBounceTest() {
+        // TODO: Test two equal-mass objects with zero restitution.
+    }
+
+    private void createFullBounceTest() {
+        // TODO: Test two equal-mass objects with full restitution.
+    }
+
+    private void createDifferentMassBounceTest() {
+        // TODO: Test collisions between objects of different masses.
+    }
+
+    // --------------------------------------------------
+    // FUTURE FRICTION TESTS
+    // --------------------------------------------------
+
+    private void createFrictionTests() {
+        // TODO: Compare objects with different friction coefficients.
+    }
+
+    private void createStaticFrictionTest() {
+        // TODO: Test the transition between static and dynamic friction.
+    }
+
+    // --------------------------------------------------
+    // ENTITY CREATION
+    // --------------------------------------------------
 
     private Entity createBox(
             String name,
@@ -209,15 +239,17 @@ public class PhysicsTestScene {
         rigidBody.setDynamicFriction(dynamicFriction);
         rigidBody.setVelocity(velocity);
 
-        MeshRenderer mr = entity.addComponent(MeshRenderer.class);
+        MeshRenderer meshRenderer = entity.addComponent(MeshRenderer.class);
 
         try {
-            mr.setModel(engine.getAssets().loadModel("models/cube.obj"));
+            meshRenderer.setModel(
+                    engine.getAssets().loadModel("models/cube.obj")
+            );
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        mr.setMaterial(boxMaterial);
+        meshRenderer.setMaterial(boxMaterial);
 
         entity.getTransform().position.set(position);
         scene.addEntity(entity);
@@ -225,10 +257,33 @@ public class PhysicsTestScene {
         return entity;
     }
 
+    // --------------------------------------------------
+    // LIGHTING AND UPDATES
+    // --------------------------------------------------
+
+    private void createLights() {
+        Entity sun = new Entity("sun", scene);
+        sun.getTransform().rotation.set(-1, -1, -1);
+
+        LightComponent sunLight = sun.addComponent(LightComponent.class);
+        sunLight.setLightType(LightType.DIRECTIONAL);
+        sunLight.setColor(new Vector3f(1, 1, 1));
+        sunLight.setIntensity(1.0f);
+
+        Entity lamp = new Entity("lamp", scene);
+        lamp.getTransform().position.set(2, 1, 2);
+
+        LightComponent lampLight = lamp.addComponent(LightComponent.class);
+        lampLight.setLightType(LightType.POINT);
+        lampLight.setColor(new Vector3f(1, 0, 0));
+        lampLight.setIntensity(2.0f);
+
+        scene.addEntity(sun);
+        scene.addEntity(lamp);
+    }
+
     private void update(Event event) {
         float deltaTime = (float) event.getContext();
-
-
     }
 
     public Scene getScene() {

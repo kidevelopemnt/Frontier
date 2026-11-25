@@ -27,6 +27,9 @@ public class Physics {
     private final List<CollisionResult> collisions = new ArrayList<>();
 
     private static final float FIXED_TIME_STEP = 1.0f / 60.0f;
+    private static final float PENETRATION_SLOP = 0.01f;  // Avoid correcting for floating point errors
+    private static final float POSITION_CORRECTION_PERCENTAGE = 0.8f;  // Correct 80% of overlap each step
+
     private float physicsAccumulator = 0.0f;
     private float maxVelocity = Float.POSITIVE_INFINITY;
 
@@ -200,8 +203,10 @@ public class Physics {
         float totalInverseMass = inverseMassA + inverseMassB;
 
         if (totalInverseMass > 0.0f) {
-            Vector3f correction = new Vector3f(collision.getNormal())
-                    .mul(collision.getPenetration() / totalInverseMass);
+            float effectivePenetration = Math.max(collision.getPenetration() - PENETRATION_SLOP, 0);
+            float correctionMagnitude = effectivePenetration / totalInverseMass * POSITION_CORRECTION_PERCENTAGE;
+
+            Vector3f correction = new Vector3f(collision.getNormal()).mul(correctionMagnitude);
 
             entityA.getTransform().position.fma(
                     -inverseMassA,

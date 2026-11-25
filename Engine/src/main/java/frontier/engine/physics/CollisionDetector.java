@@ -2,6 +2,7 @@ package frontier.engine.physics;
 
 import frontier.engine.ecs.components.physics.BoxCollider;
 import frontier.engine.ecs.components.physics.Collider;
+import frontier.engine.ecs.components.physics.SphereCollider;
 import org.joml.Vector3f;
 
 public class CollisionDetector {
@@ -10,6 +11,8 @@ public class CollisionDetector {
 
         if (a instanceof BoxCollider boxA && b instanceof BoxCollider boxB) {
             result = detectBoxBox(boxA, boxB);
+        } else if (a instanceof SphereCollider sphereA && b instanceof SphereCollider sphereB) {
+            result = detectSphereSphere(sphereA, sphereB);
         }
 
         if (result == null) {
@@ -24,6 +27,8 @@ public class CollisionDetector {
     }
 
     private CollisionResult detectBoxBox(BoxCollider a, BoxCollider b) {
+        // TODO: This might not support rotated boxes...
+
         Vector3f sizeA = a.getWorldSize();
         Vector3f centerA = new Vector3f(a.getEntity().getTransform().getWorldPosition())
                 .add(a.getCenter());
@@ -80,6 +85,49 @@ public class CollisionDetector {
         if (direction.dot(normal) < 0) {
             normal.negate();
         }
+
+        return new CollisionResult(
+                a,
+                b,
+                normal,
+                penetration
+        );
+    }
+
+    private CollisionResult detectSphereSphere(
+            SphereCollider a,
+            SphereCollider b
+    ) {
+        Vector3f centerA = a.getWorldCenter();
+        Vector3f centerB = b.getWorldCenter();
+
+        float radiusA = a.getWorldRadius();
+        float radiusB = b.getWorldRadius();
+
+        Vector3f direction = new Vector3f(centerB)
+                .sub(centerA);
+
+        float distanceSquared = direction.lengthSquared();
+
+        float combinedRadius = radiusA + radiusB;
+
+        if (distanceSquared > combinedRadius * combinedRadius) {
+            return null;
+        }
+
+        float distance = (float) Math.sqrt(distanceSquared);
+
+        Vector3f normal;
+
+        if (distance > 0.000001f) {
+            normal = direction.div(distance);
+        } else {
+            // The spheres are occupying the exact same position.
+            normal = new Vector3f(1, 0, 0);
+            distance = 0.0f;
+        }
+
+        float penetration = combinedRadius - distance;
 
         return new CollisionResult(
                 a,

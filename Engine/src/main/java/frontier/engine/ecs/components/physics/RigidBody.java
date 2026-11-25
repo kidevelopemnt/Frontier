@@ -22,6 +22,12 @@ public class RigidBody extends Component {
     }
 
     public void setMass(float mass) {
+        if (!Float.isFinite(mass) || mass <= 0.0f) {
+            throw new IllegalArgumentException(
+                    "Rigidbody mass must be finite and greater than zero."
+            );
+        }
+
         this.mass = mass;
     }
 
@@ -61,15 +67,27 @@ public class RigidBody extends Component {
         return staticFriction;
     }
 
-    public void setStaticFriction(float staticFriction) {
-        this.staticFriction = Math.max(0.0f, staticFriction);
-    }
-
     public float getDynamicFriction() {
         return dynamicFriction;
     }
 
+    public void setStaticFriction(float staticFriction) {
+        if (!Float.isFinite(staticFriction)) {
+            throw new IllegalArgumentException(
+                    "Static friction must be finite."
+            );
+        }
+
+        this.staticFriction = Math.max(0.0f, staticFriction);
+    }
+
     public void setDynamicFriction(float dynamicFriction) {
+        if (!Float.isFinite(dynamicFriction)) {
+            throw new IllegalArgumentException(
+                    "Dynamic friction must be finite."
+            );
+        }
+
         this.dynamicFriction = Math.max(0.0f, dynamicFriction);
     }
 
@@ -83,7 +101,13 @@ public class RigidBody extends Component {
     }
 
     public void setRestitution(float restitution) {
-        this.restitution = restitution;
+        if (!Float.isFinite(restitution)) {
+            throw new IllegalArgumentException(
+                    "Restitution must be finite."
+            );
+        }
+
+        this.restitution = Math.clamp(restitution, 0.0f, 1.0f);
     }
 
     public float getLinearDamping() {
@@ -91,6 +115,12 @@ public class RigidBody extends Component {
     }
 
     public void setLinearDamping(float linearDamping) {
-        this.linearDamping = linearDamping;
+        if (!Float.isFinite(linearDamping)) {
+            throw new IllegalArgumentException(
+                    "Linear damping must be finite."
+            );
+        }
+
+        this.linearDamping = Math.max(0.0f, linearDamping);
     }
 }
