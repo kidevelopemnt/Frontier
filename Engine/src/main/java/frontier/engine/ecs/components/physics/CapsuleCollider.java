@@ -9,12 +9,36 @@ public class CapsuleCollider extends Collider {
     private float height = 2f;
 
     public float getRadius() { return radius; }
-    public void setRadius(float radius) { this.radius = radius; }
 
     public float getHeight() { return height; }
+
+    public void setRadius(float radius) {
+        if (!Float.isFinite(radius) || radius <= 0.0f) {
+            throw new IllegalArgumentException(
+                    "Capsule radius must be greater than zero."
+            );
+        }
+
+        if (height < radius * 2.0f) {
+            throw new IllegalArgumentException(
+                    "Capsule height must be at least 2*radius."
+            );
+        }
+
+        this.radius = radius;
+    }
+
     public void setHeight(float height) {
-        if (height < radius * 2) {
-            throw new IllegalArgumentException("Capsule height must be more than 2*radius.");
+        if (!Float.isFinite(height) || height <= 0.0f) {
+            throw new IllegalArgumentException(
+                    "Capsule height must be greater than zero."
+            );
+        }
+
+        if (height < radius * 2.0f) {
+            throw new IllegalArgumentException(
+                    "Capsule height must be at least 2*radius."
+            );
         }
 
         this.height = height;

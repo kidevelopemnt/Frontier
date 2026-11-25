@@ -207,6 +207,11 @@ public class DebugRenderer {
         int segments = 16;
 
         Vector3f direction = new Vector3f(segmentEnd).sub(segmentStart);
+        if (direction.lengthSquared() < 0.000001f) {
+            drawSphere(segmentStart, radius, color, width, lifespan);
+            return;
+        }
+
         Vector3f axis = direction.normalize();
 
         Vector3f reference = new Vector3f(0, 1, 0);
@@ -228,7 +233,6 @@ public class DebugRenderer {
 
         drawHemisphere(segmentStart, axis, right, forward, radius, -1.0f, color, width, lifespan);
         drawHemisphere(segmentEnd, axis, right, forward, radius, 1.0f, color, width, lifespan);
-
     }
 
     private static void drawHemisphere(

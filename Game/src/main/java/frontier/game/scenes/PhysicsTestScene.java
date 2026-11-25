@@ -70,14 +70,13 @@ public class PhysicsTestScene {
         // createDifferentMassBounceTest();
         // createStaticWallTest();
 
-        // Sphere-Box Collisions
-        testBoxSphereCorner();
-        testBoxSphereFace();
-        testBoxSphereInside();
-        testBoxSphereNoCollision();
-
-        // Capsule Collisions
-        testCapsule();
+        // Collision tests
+        testBoxBox();
+        testSphereSphere();
+        testBoxSphere();
+        testCapsuleCapsule();
+        testSphereCapsule();
+        testBoxCapsule();
 
         // Future friction tests
         // createFrictionTests();
@@ -320,75 +319,114 @@ public class PhysicsTestScene {
         // TODO: Test the transition between static and dynamic friction.
     }
 
-    // Box-Sphere Collision
-    private void testBoxSphereFace() {
+    // --------------------------------------------------
+    // COLLISION TESTS
+    // --------------------------------------------------
+
+    private void testBoxBox() {
+        // Two boxes approach each other along X.
         createBox(
-                "Face Box",
-                new Vector3f(10, 0.5f, 10),
-                1000.0f, 0.0f, 0.6f, 0.4f,
+                "Box-Box A",
+                new Vector3f(13.5f, 0.5f, 2),
+                1.0f, 0.4f, 0.6f, 0.4f,
+                new Vector3f(2, 0, 0)
+        );
+
+        createBox(
+                "Box-Box B",
+                new Vector3f(16.5f, 0.5f, 2),
+                1.0f, 0.4f, 0.6f, 0.4f,
+                new Vector3f(-2, 0, 0)
+        );
+    }
+
+    private void testSphereSphere() {
+        // Two spheres approach each other along X.
+        createSphere(
+                "Sphere-Sphere A",
+                new Vector3f(13.5f, 0.5f, 5),
+                0.5f, 1.0f, 0.4f, 0.6f, 0.4f,
+                new Vector3f(2, 0, 0)
+        );
+
+        createSphere(
+                "Sphere-Sphere B",
+                new Vector3f(16.5f, 0.5f, 5),
+                0.5f, 1.0f, 0.4f, 0.6f, 0.4f,
+                new Vector3f(-2, 0, 0)
+        );
+    }
+
+    private void testBoxSphere() {
+        // A sphere approaches a box along X.
+        createBox(
+                "Box-Sphere Box",
+                new Vector3f(16.5f, 0.5f, 8),
+                1.0f, 0.4f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
 
         createSphere(
-                "Face Sphere",
-                new Vector3f(10, 2f, 10),
-                1f, 1.0f, 0.0f, 0.6f, 0.4f,
-                new Vector3f(0, 0, 0)
+                "Box-Sphere Sphere",
+                new Vector3f(13.5f, 0.5f, 8),
+                0.5f, 1.0f, 0.4f, 0.6f, 0.4f,
+                new Vector3f(2, 0, 0)
         );
     }
 
-    private void testBoxSphereCorner() {
-        createBox(
-                "Corner Box",
-                new Vector3f(3, 0.5f, 10),
-                1000.0f, 0.0f, 0.6f, 0.4f,
-                new Vector3f(0, 0, 0)
+    private void testCapsuleCapsule() {
+        // Two vertical capsules approach each other along X.
+        createCapsule(
+                "Capsule-Capsule A",
+                new Vector3f(13.5f, 0.9f, 11),
+                0.4f, 1.8f,
+                1.0f, 0.4f, 0.6f, 0.4f,
+                new Vector3f(2, 0, 0)
         );
 
+        createCapsule(
+                "Capsule-Capsule B",
+                new Vector3f(16.5f, 0.9f, 11),
+                0.4f, 1.8f,
+                1.0f, 0.4f, 0.6f, 0.4f,
+                new Vector3f(-2, 0, 0)
+        );
+    }
+
+    private void testSphereCapsule() {
+        // A sphere approaches a vertical capsule along X.
         createSphere(
-                "Corner Sphere",
-                new Vector3f(4, 1.5f, 10),
-                1f, 1.0f, 0.0f, 0.6f, 0.4f,
-                new Vector3f(-2, -2, 0)
+                "Sphere-Capsule Sphere",
+                new Vector3f(13.5f, 0.5f, 14),
+                0.5f, 1.0f, 0.4f, 0.6f, 0.4f,
+                new Vector3f(2, 0, 0)
+        );
+
+        createCapsule(
+                "Sphere-Capsule Capsule",
+                new Vector3f(16.5f, 0.9f, 14),
+                0.4f, 1.8f,
+                1.0f, 0.4f, 0.6f, 0.4f,
+                new Vector3f(0, 0, 0)
         );
     }
 
-    private void testBoxSphereInside() {
+    private void testBoxCapsule() {
+        // A capsule approaches a box along X.
         createBox(
-                "Inside Box",
-                new Vector3f(17, 0.5f, 10),
-                1000.0f, 0.0f, 0.6f, 0.4f,
+                "Box-Capsule Box",
+                new Vector3f(16.5f, 0.5f, 17),
+                1.0f, 0.4f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
 
-        createSphere(
-                "Inside Sphere",
-                new Vector3f(17, 0.8f, 10),
-                1f, 1.0f, 0.0f, 0.6f, 0.4f,
-                new Vector3f(0, 0, 0)
+        createCapsule(
+                "Box-Capsule Capsule",
+                new Vector3f(13.5f, 0.9f, 17),
+                0.4f, 1.8f,
+                1.0f, 0.4f, 0.6f, 0.4f,
+                new Vector3f(2, 0, 0)
         );
-    }
-
-    private void testBoxSphereNoCollision() {
-        createBox(
-                "No Collision Box",
-                new Vector3f(24, 0.5f, 10),
-                1000.0f, 0.0f, 0.6f, 0.4f,
-                new Vector3f(0, 0, 0)
-        );
-
-        createSphere(
-                "No Collision Sphere",
-                new Vector3f(27, 3, 10),
-                1f, 1.0f, 0.0f, 0.6f, 0.4f,
-                new Vector3f(0, 0, 0)
-        );
-    }
-
-    // Capsule collisions
-    private void testCapsule() {
-        createCapsule("Capsule", new Vector3f(10, 0.5f, 11), 1f, 2f,
-                1.0f, 0.0f, 0.6f, 0.4f, new Vector3f(0, 0, 0));
     }
 
     // --------------------------------------------------
