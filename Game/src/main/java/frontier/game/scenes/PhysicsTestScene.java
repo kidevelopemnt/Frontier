@@ -8,6 +8,7 @@ import frontier.engine.ecs.components.CameraController;
 import frontier.engine.ecs.components.LightComponent;
 import frontier.engine.ecs.components.MeshRenderer;
 import frontier.engine.ecs.components.physics.BoxCollider;
+import frontier.engine.ecs.components.physics.CapsuleCollider;
 import frontier.engine.ecs.components.physics.RigidBody;
 import frontier.engine.ecs.components.physics.SphereCollider;
 import frontier.engine.events.Event;
@@ -74,6 +75,9 @@ public class PhysicsTestScene {
         testBoxSphereFace();
         testBoxSphereInside();
         testBoxSphereNoCollision();
+
+        // Capsule Collisions
+        testCapsule();
 
         // Future friction tests
         // createFrictionTests();
@@ -381,6 +385,12 @@ public class PhysicsTestScene {
         );
     }
 
+    // Capsule collisions
+    private void testCapsule() {
+        createCapsule("Capsule", new Vector3f(10, 0.5f, 11), 1f, 2f,
+                1.0f, 0.0f, 0.6f, 0.4f, new Vector3f(0, 0, 0));
+    }
+
     // --------------------------------------------------
     // ENTITY CREATION
     // --------------------------------------------------
@@ -451,6 +461,36 @@ public class PhysicsTestScene {
 
         SphereCollider collider = entity.addComponent(SphereCollider.class);
         collider.setRadius(radius);
+
+        RigidBody rigidBody = entity.addComponent(RigidBody.class);
+        rigidBody.setMass(mass);
+        rigidBody.setRestitution(restitution);
+        rigidBody.setStaticFriction(staticFriction);
+        rigidBody.setDynamicFriction(dynamicFriction);
+        rigidBody.setVelocity(velocity);
+
+        scene.addEntity(entity);
+
+        return entity;
+    }
+
+    private Entity createCapsule(
+            String name,
+            Vector3f position,
+            float radius,
+            float height,
+            float mass,
+            float restitution,
+            float staticFriction,
+            float dynamicFriction,
+            Vector3f velocity
+    ) {
+        Entity entity = new Entity(name, scene);
+        entity.getTransform().position.set(position);
+
+        CapsuleCollider collider = entity.addComponent(CapsuleCollider.class);
+        collider.setRadius(radius);
+        collider.setHeight(height);
 
         RigidBody rigidBody = entity.addComponent(RigidBody.class);
         rigidBody.setMass(mass);

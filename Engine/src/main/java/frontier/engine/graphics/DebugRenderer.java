@@ -203,6 +203,101 @@ public class DebugRenderer {
         drawSphere(origin, radius, color, width, 60);
     }
 
+    public static void drawCapsule(Vector3f segmentStart, Vector3f segmentEnd, float radius, Vector3f color, float width, int lifespan) {
+        int segments = 16;
+
+        Vector3f direction = new Vector3f(segmentEnd).sub(segmentStart);
+        Vector3f axis = direction.normalize();
+
+        Vector3f reference = new Vector3f(0, 1, 0);
+        if (Math.abs(new Vector3f(axis).dot(reference)) > 0.99f) {
+            reference.set(1, 0, 0);
+        }
+
+        Vector3f right = new Vector3f(axis).cross(reference).normalize();
+        Vector3f forward = new Vector3f(axis).cross(right).normalize();
+
+        for (int i = 0; i < segments; i++) {
+            float angle =  (2 * i * (float) Math.PI) / segments;
+            Vector3f radial = new Vector3f(right).mul((float) Math.cos(angle)).add(new Vector3f(forward).mul((float) Math.sin(angle)));
+
+            Vector3f startPoint = new Vector3f(segmentStart).add(new Vector3f(radial).mul(radius));
+            Vector3f endPoint = new Vector3f(segmentEnd).add(new Vector3f(radial).mul(radius));
+            drawLine(startPoint, endPoint, color, width, lifespan);
+        }
+
+        drawHemisphere(segmentStart, axis, right, forward, radius, -1.0f, color, width, lifespan);
+        drawHemisphere(segmentEnd, axis, right, forward, radius, 1.0f, color, width, lifespan);
+
+    }
+
+    private static void drawHemisphere(
+            Vector3f center,
+            Vector3f axis,
+            Vector3f right,
+            Vector3f forward,
+            float radius,
+            float direction,
+            Vector3f color,
+            float width,
+            int lifespan
+    ) {
+        int segments = 16;
+        int rings = 8;
+
+        // Draw meridian arcs
+        for (int i = 0; i < segments; i++) {
+            float theta = (2.0f * (float) Math.PI * i) / segments;
+
+            Vector3f radial = new Vector3f(right)
+                    .mul((float) Math.cos(theta))
+                    .add(new Vector3f(forward)
+                            .mul((float) Math.sin(theta)));
+
+            Vector3f previous = new Vector3f(center)
+                    .add(new Vector3f(radial).mul(radius));
+
+            for (int j = 1; j <= rings; j++) {
+                float phi = ((float) Math.PI * 0.5f * j) / rings;
+
+                Vector3f point = new Vector3f(center)
+                        .add(new Vector3f(radial)
+                                .mul(radius * (float) Math.cos(phi)))
+                        .add(new Vector3f(axis)
+                                .mul(radius * (float) Math.sin(phi) * direction));
+
+                drawLine(previous, point, color, width, lifespan);
+                previous = point;
+            }
+        }
+
+        // Draw latitude rings
+        for (int j = 1; j <= rings; j++) {
+            float phi = ((float) Math.PI * 0.5f * j) / rings;
+
+            float ringRadius = radius * (float) Math.cos(phi);
+            float axisOffset = radius * (float) Math.sin(phi) * direction;
+
+            Vector3f ringCenter = new Vector3f(center)
+                    .add(new Vector3f(axis).mul(axisOffset));
+
+            for (int i = 0; i < segments; i++) {
+                float theta1 = (2.0f * (float) Math.PI * i) / segments;
+                float theta2 = (2.0f * (float) Math.PI * (i + 1)) / segments;
+
+                Vector3f p1 = new Vector3f(ringCenter)
+                        .add(new Vector3f(right).mul(ringRadius * (float) Math.cos(theta1)))
+                        .add(new Vector3f(forward).mul(ringRadius * (float) Math.sin(theta1)));
+
+                Vector3f p2 = new Vector3f(ringCenter)
+                        .add(new Vector3f(right).mul(ringRadius * (float) Math.cos(theta2)))
+                        .add(new Vector3f(forward).mul(ringRadius * (float) Math.sin(theta2)));
+
+                drawLine(p1, p2, color, width, lifespan);
+            }
+        }
+    }
+
     public static void render(Camera camera, float aspectRatio, float alpha) {
         Iterator<DebugLine> iterator = lines.iterator();
 

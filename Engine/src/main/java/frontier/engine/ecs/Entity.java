@@ -3,6 +3,7 @@ package frontier.engine.ecs;
 import frontier.engine.ecs.components.Component;
 import frontier.engine.ecs.components.TransformComponent;
 import frontier.engine.ecs.components.physics.BoxCollider;
+import frontier.engine.ecs.components.physics.CapsuleCollider;
 import frontier.engine.ecs.components.physics.Collider;
 import frontier.engine.ecs.components.physics.SphereCollider;
 import frontier.engine.graphics.DebugRenderer;
@@ -49,7 +50,16 @@ public class Entity {
                 } else if (c instanceof SphereCollider sphereCollider) {
                     DebugRenderer.drawSphere(
                             sphereCollider.getWorldCenter(),
-                            sphereCollider.getRadius(),
+                            sphereCollider.getWorldRadius(),
+                            new Vector3f(1, 0, 0),
+                            5.0f,
+                            1
+                    );
+                } else if (c instanceof CapsuleCollider capsuleCollider) {
+                    DebugRenderer.drawCapsule(
+                            capsuleCollider.getSegmentStart(),
+                            capsuleCollider.getSegmentEnd(),
+                            capsuleCollider.getWorldRadius(),
                             new Vector3f(1, 0, 0),
                             5.0f,
                             1
