@@ -168,7 +168,7 @@ public class PhysicsTestScene {
                             basePosition.y + i,
                             basePosition.z
                     ),
-                    mass + (massStep * 1),
+                    mass + (massStep * i),
                     0.0f,
                     0.5f,
                     0.3f,
