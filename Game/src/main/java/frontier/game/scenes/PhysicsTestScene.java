@@ -12,6 +12,7 @@ import frontier.engine.ecs.components.physics.RigidBody;
 import frontier.engine.events.Event;
 import frontier.engine.events.UpdateEvent;
 import frontier.engine.graphics.lighting.LightType;
+import frontier.engine.input.Key;
 import frontier.engine.scene.Scene;
 import org.joml.Vector3f;
 
@@ -28,6 +29,8 @@ public class PhysicsTestScene {
     private Material boxMaterial;
     private Material groundMaterial;
 
+    private boolean physicsEnabled = false;
+
     public PhysicsTestScene(Engine engine) {
         this.engine = engine;
         scene = engine.createScene("Physics Test Scene");
@@ -42,6 +45,8 @@ public class PhysicsTestScene {
     }
 
     public void initialize() {
+        engine.getPhysics().setDoPhysics(physicsEnabled);
+
         scene.getCamera().getEntity().getTransform().position.set(8, 6, 12);
         scene.getCamera().getEntity().getTransform().rotation.set(25, 0, 0);
         scene.getCamera().getEntity().addComponent(CameraController.class);
@@ -57,10 +62,11 @@ public class PhysicsTestScene {
         // createWallCollisionTest();
         // createMultipleContactTest();
 
-        // Future restitution tests
-        // createNoBounceTest();
-        // createFullBounceTest();
-        // createDifferentMassBounceTest();
+        // Restitution tests
+        createNoBounceTest();
+        createFullBounceTest();
+        createDifferentMassBounceTest();
+        createStaticWallTest();
 
         // Future friction tests
         // createFrictionTests();
@@ -68,11 +74,7 @@ public class PhysicsTestScene {
 
         createLights();
 
-        engine.getEventBus().subscribe(
-                null,
-                UpdateEvent.class,
-                this::update
-        );
+        engine.getEventBus().subscribe(null, UpdateEvent.class, this::update);
     }
 
     private void createGround() {
@@ -104,6 +106,15 @@ public class PhysicsTestScene {
         );
 
         scene.addEntity(ground);
+    }
+
+    private void update(Event event) {
+        float deltaTime = (float) event.getContext();
+
+        if (engine.getInput().isKeyUp(Key.SPACE)) {
+            physicsEnabled = !physicsEnabled;
+            engine.getPhysics().setDoPhysics(physicsEnabled);
+        }
     }
 
     // --------------------------------------------------
@@ -192,15 +203,98 @@ public class PhysicsTestScene {
     // --------------------------------------------------
 
     private void createNoBounceTest() {
-        // TODO: Test two equal-mass objects with zero restitution.
+        // Equal masses, zero restitution.
+        // Expected: both boxes stop after the collision.
+
+        createBox(
+                "No Bounce - A",
+                new Vector3f(3, 0.5f, 4),
+                1.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                new Vector3f(2, 0, 0)
+        );
+
+        createBox(
+                "No Bounce - B",
+                new Vector3f(6, 0.5f, 4),
+                1.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                new Vector3f(-2, 0, 0)
+        );
     }
 
     private void createFullBounceTest() {
-        // TODO: Test two equal-mass objects with full restitution.
+        // Equal masses, maximum restitution.
+        // Expected: boxes exchange velocities.
+
+        createBox(
+                "Full Bounce - A",
+                new Vector3f(3, 0.5f, 8),
+                1.0f,
+                1.0f,
+                0.0f,
+                0.0f,
+                new Vector3f(2, 0, 0)
+        );
+
+        createBox(
+                "Full Bounce - B",
+                new Vector3f(6, 0.5f, 8),
+                1.0f,
+                1.0f,
+                0.0f,
+                0.0f,
+                new Vector3f(-2, 0, 0)
+        );
     }
 
     private void createDifferentMassBounceTest() {
-        // TODO: Test collisions between objects of different masses.
+        // Light body: 1 kg.
+        // Heavy body: 10 kg.
+        // Expected: the lighter body experiences a much larger
+        // velocity change than the heavier body.
+
+        createBox(
+                "Different Mass - Light",
+                new Vector3f(3, 0.5f, 12),
+                1.0f,
+                1.0f,
+                0.0f,
+                0.0f,
+                new Vector3f(4, 0, 0)
+        );
+
+        createBox(
+                "Different Mass - Heavy",
+                new Vector3f(6, 0.5f, 12),
+                10.0f,
+                1.0f,
+                0.0f,
+                0.0f,
+                new Vector3f(-1, 0, 0)
+        );
+    }
+
+    private void createStaticWallTest() {
+        // A dynamic box colliding with an immovable wall.
+        // Expected: the box rebounds, while the wall remains stationary.
+
+        createBox(
+                "Static Wall Test - Moving Box",
+                new Vector3f(20, 0.5f, 16),
+                1.0f,
+                1.0f,
+                0.0f,
+                0.0f,
+                new Vector3f(4, 0, 0)
+        );
+
+        // TODO: Create a static box collider at (23, 0.5, 16).
+        // It must have a BoxCollider but NO RigidBody component.
     }
 
     // --------------------------------------------------
@@ -280,10 +374,6 @@ public class PhysicsTestScene {
 
         scene.addEntity(sun);
         scene.addEntity(lamp);
-    }
-
-    private void update(Event event) {
-        float deltaTime = (float) event.getContext();
     }
 
     public Scene getScene() {

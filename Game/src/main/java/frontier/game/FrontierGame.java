@@ -30,10 +30,9 @@ public class FrontierGame implements IGame {
 
         // PlaygroundScene scene = new PlaygroundScene(engine);
         PhysicsTestScene scene = new PhysicsTestScene(engine);
-        scene.initialize();
-
-
         engine.setActiveScene(scene.getScene());
+
+        scene.initialize();
     }
 
     private void setupInput() {

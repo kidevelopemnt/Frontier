@@ -33,6 +33,8 @@ public class Physics {
     private float physicsAccumulator = 0.0f;
     private float maxVelocity = Float.POSITIVE_INFINITY;
 
+    private boolean doPhysics = true;
+
     public Physics(Engine engine, Scene scene) {
         this.engine = engine;
         this.scene = scene;
@@ -51,6 +53,10 @@ public class Physics {
     }
 
     private void simulate(float deltaTime) {
+        if (!doPhysics) {
+            return;
+        }
+
         // Character controllers
         for (Entity entity : scene.getEntities()) {
             if (!entity.isEnabled()) {
@@ -259,9 +265,13 @@ public class Physics {
             restitution = bodyB.getRestitution();
         }
 
-        float impulseMagnitude = -(1.0f + restitution) * velocityAlongNormal / (inverseMassA + inverseMassB);
+        if (totalInverseMass <= 0.0f) {
+            return;
+        }
+
+        float impulseMagnitude = -(1.0f + restitution) * velocityAlongNormal / totalInverseMass;
         Vector3f impulse = new Vector3f(normal).mul(impulseMagnitude);
-        float frictionImpulseMagnitude = -relativeVelocity.dot(tangent) / (inverseMassA + inverseMassB);
+        float frictionImpulseMagnitude = -relativeVelocity.dot(tangent) / totalInverseMass;
 
         float maxStaticFriction = impulseMagnitude * getStaticFriction(bodyA, bodyB);
         if (Math.abs(frictionImpulseMagnitude) > maxStaticFriction) {
@@ -420,5 +430,9 @@ public class Physics {
 
     public float getFixedTimeStep() {
         return FIXED_TIME_STEP;
+    }
+
+    public void setDoPhysics(boolean doPhysics) {
+        this.doPhysics = doPhysics;
     }
 }
