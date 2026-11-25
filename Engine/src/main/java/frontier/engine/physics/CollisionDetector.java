@@ -5,6 +5,10 @@ import frontier.engine.ecs.components.physics.Collider;
 import frontier.engine.ecs.components.physics.SphereCollider;
 import org.joml.Vector3f;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
 public class CollisionDetector {
     public CollisionResult detect(Collider a, Collider b) {
         CollisionResult result = null;
@@ -13,6 +17,14 @@ public class CollisionDetector {
             result = detectBoxBox(boxA, boxB);
         } else if (a instanceof SphereCollider sphereA && b instanceof SphereCollider sphereB) {
             result = detectSphereSphere(sphereA, sphereB);
+        } else if (a instanceof BoxCollider boxA && b instanceof SphereCollider sphereB) {
+            result = detectBoxSphere(boxA, sphereB);
+        } else if (a instanceof SphereCollider sphereA && b instanceof BoxCollider boxB) {
+            result = detectBoxSphere(boxB, sphereA);
+
+            if (result != null) {
+                result.getNormal().negate();
+            }
         }
 
         if (result == null) {
@@ -132,6 +144,80 @@ public class CollisionDetector {
         return new CollisionResult(
                 a,
                 b,
+                normal,
+                penetration
+        );
+    }
+
+    private CollisionResult detectBoxSphere(
+            BoxCollider box,
+            SphereCollider sphere
+    ) {
+        Vector3f boxHalfSize = new Vector3f(box.getWorldSize()).mul(0.5f);
+        Vector3f boxMin = new Vector3f(box.getWorldCenter()).sub(boxHalfSize);
+        Vector3f boxMax = new Vector3f(box.getWorldCenter()).add(boxHalfSize);
+
+        Vector3f sphereCenter = sphere.getWorldCenter();
+
+        Vector3f closestPoint = new Vector3f();
+        closestPoint.x = Math.clamp(sphereCenter.x, boxMin.x, boxMax.x);
+        closestPoint.y = Math.clamp(sphereCenter.y, boxMin.y, boxMax.y);
+        closestPoint.z = Math.clamp(sphereCenter.z, boxMin.z, boxMax.z);
+
+        Vector3f direction = new Vector3f(sphereCenter).sub(closestPoint);
+        float distanceSquared = direction.lengthSquared();
+        float radiusSquared = sphere.getWorldRadius() * sphere.getWorldRadius();
+
+        if (distanceSquared > radiusSquared) {
+            return null;  // No collision
+        }
+
+        float distance = (float) Math.sqrt(distanceSquared);
+        Vector3f normal;
+        float penetration;
+
+        if (distance < 0.0000001f) {
+            float posX = boxMax.x - sphereCenter.x;
+            float negX = sphereCenter.x - boxMin.x;
+            float posY = boxMax.y - sphereCenter.y;
+            float negY = sphereCenter.y - boxMin.y;
+            float posZ = boxMax.z - sphereCenter.z;
+            float negZ = sphereCenter.z - boxMin.z;
+
+            float nearestDistance = posX;
+            normal = new Vector3f(1, 0, 0);
+
+            if (negX < nearestDistance) {
+                nearestDistance = negX;
+                normal.set(-1, 0, 0);
+            }
+            if (posY < nearestDistance) {
+                nearestDistance = posY;
+                normal.set(0, 1, 0);
+            }
+            if (negY < nearestDistance) {
+                nearestDistance = negY;
+                normal.set(0, -1, 0);
+            }
+            if (posZ < nearestDistance) {
+                nearestDistance = posZ;
+                normal.set(0, 0, 1);
+            }
+            if (negZ < nearestDistance) {
+                nearestDistance = negZ;
+                normal.set(0, 0, -1);
+            }
+
+            penetration = sphere.getWorldRadius() + nearestDistance;
+
+        } else {
+            normal = new Vector3f(direction).div(distance);
+            penetration = sphere.getWorldRadius() - distance;
+        }
+
+        return new CollisionResult(
+                box,
+                sphere,
                 normal,
                 penetration
         );

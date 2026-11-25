@@ -178,4 +178,8 @@ public class BoxCollider extends Collider {
     public void setCenter(Vector3f center) {
         this.center = center;
     }
+
+    public Vector3f getWorldCenter() {
+        return new Vector3f(center).add(entity.getTransform().position);
+    }
 }
