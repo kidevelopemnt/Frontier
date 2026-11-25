@@ -320,14 +320,14 @@ public class PhysicsTestScene {
     private void testBoxSphereFace() {
         createBox(
                 "Face Box",
-                new Vector3f(0, 0, 0),
+                new Vector3f(10, 0.5f, 10),
                 1000.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
 
         createSphere(
                 "Face Sphere",
-                new Vector3f(0, 1.5f, 0),
+                new Vector3f(10, 2f, 10),
                 0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
@@ -336,14 +336,14 @@ public class PhysicsTestScene {
     private void testBoxSphereCorner() {
         createBox(
                 "Corner Box",
-                new Vector3f(10, 0, 0),
+                new Vector3f(3, 0.5f, 10),
                 1000.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
 
         createSphere(
                 "Corner Sphere",
-                new Vector3f(11, 1, 0),
+                new Vector3f(4, 1.5f, 10),
                 0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(-2, -2, 0)
         );
@@ -352,14 +352,14 @@ public class PhysicsTestScene {
     private void testBoxSphereInside() {
         createBox(
                 "Inside Box",
-                new Vector3f(20, 0, 0),
+                new Vector3f(17, 0.5f, 10),
                 1000.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
 
         createSphere(
                 "Inside Sphere",
-                new Vector3f(20, 0.3f, 0),
+                new Vector3f(17, 0.8f, 10),
                 0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
@@ -368,14 +368,14 @@ public class PhysicsTestScene {
     private void testBoxSphereNoCollision() {
         createBox(
                 "No Collision Box",
-                new Vector3f(30, 0, 0),
+                new Vector3f(24, 0.5f, 10),
                 1000.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
 
         createSphere(
                 "No Collision Sphere",
-                new Vector3f(33, 3, 0),
+                new Vector3f(27, 3, 10),
                 0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
@@ -437,6 +437,7 @@ public class PhysicsTestScene {
             Vector3f velocity
     ) {
         Entity entity = new Entity(name, scene);
+        entity.getTransform().position.set(position);
 
         MeshRenderer meshRenderer = entity.addComponent(MeshRenderer.class);
 
@@ -458,7 +459,6 @@ public class PhysicsTestScene {
         rigidBody.setDynamicFriction(dynamicFriction);
         rigidBody.setVelocity(velocity);
 
-        entity.getTransform().position.set(position);
         scene.addEntity(entity);
 
         return entity;

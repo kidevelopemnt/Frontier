@@ -2,9 +2,13 @@ package frontier.engine.ecs;
 
 import frontier.engine.ecs.components.Component;
 import frontier.engine.ecs.components.TransformComponent;
+import frontier.engine.ecs.components.physics.BoxCollider;
 import frontier.engine.ecs.components.physics.Collider;
+import frontier.engine.ecs.components.physics.SphereCollider;
+import frontier.engine.graphics.DebugRenderer;
 import frontier.engine.graphics.Transform;
 import frontier.engine.scene.Scene;
+import org.joml.Vector3f;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -32,6 +36,27 @@ public class Entity {
 
     public void update(float deltaTime) {
         for (Component c : components.values()) {
+
+            if (scene.getEngine().getApp().getConfig().debugDraw) {
+                if (c instanceof BoxCollider boxCollider) {
+                    DebugRenderer.drawBox(
+                            boxCollider.getWorldCenter(),
+                            boxCollider.getWorldSize(),
+                            new Vector3f(1, 0, 0),
+                            5.0f,
+                            1
+                    );
+                } else if (c instanceof SphereCollider sphereCollider) {
+                    DebugRenderer.drawSphere(
+                            sphereCollider.getWorldCenter(),
+                            sphereCollider.getRadius(),
+                            new Vector3f(1, 0, 0),
+                            5.0f,
+                            1
+                    );
+                }
+            }
+
             c.update(deltaTime);
         }
     }

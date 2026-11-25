@@ -47,7 +47,7 @@ public class SphereCollider extends Collider {
             Vector3f direction,
             float maxDistance
     ) {
-        // We will implement sphere raycasting next.
+        // TODO: Sphere raycasting
         return null;
     }
 }

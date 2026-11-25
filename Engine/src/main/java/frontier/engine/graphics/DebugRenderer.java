@@ -163,6 +163,46 @@ public class DebugRenderer {
         );
     }
 
+    public static void drawSphere(Vector3f origin, float radius, Vector3f color, float width, int lifespan) {
+        int segments = 24; // Increase for smoother circles, decrease for better performance
+        float angleStep = (float) (2.0 * Math.PI / segments);
+
+        for (int i = 0; i < segments; i++) {
+            float theta1 = i * angleStep;
+            float theta2 = (i + 1) * angleStep;
+
+            float cos1 = (float) Math.cos(theta1) * radius;
+            float sin1 = (float) Math.sin(theta1) * radius;
+            float cos2 = (float) Math.cos(theta2) * radius;
+            float sin2 = (float) Math.sin(theta2) * radius;
+
+            // XY Plane (Vertical ring facing Z)
+            drawLine(
+                    new Vector3f(origin.x + cos1, origin.y + sin1, origin.z),
+                    new Vector3f(origin.x + cos2, origin.y + sin2, origin.z),
+                    color, width, lifespan
+            );
+
+            // XZ Plane (Horizontal ring / Equator)
+            drawLine(
+                    new Vector3f(origin.x + cos1, origin.y, origin.z + sin1),
+                    new Vector3f(origin.x + cos2, origin.y, origin.z + sin2),
+                    color, width, lifespan
+            );
+
+            // YZ Plane (Vertical ring facing X)
+            drawLine(
+                    new Vector3f(origin.x, origin.y + cos1, origin.z + sin1),
+                    new Vector3f(origin.x, origin.y + cos2, origin.z + sin2),
+                    color, width, lifespan
+            );
+        }
+    }
+
+    public static void drawSphere(Vector3f origin, float radius, Vector3f color, float width) {
+        drawSphere(origin, radius, color, width, 60);
+    }
+
     public static void render(Camera camera, float aspectRatio, float alpha) {
         Iterator<DebugLine> iterator = lines.iterator();
 

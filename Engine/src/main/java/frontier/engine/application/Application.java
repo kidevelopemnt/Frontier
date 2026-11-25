@@ -68,4 +68,8 @@ public class Application {
     public Path getProjectDirectory() {
         return projectDirectory;
     }
+
+    public ApplicationConfiguration getConfig() {
+        return config;
+    }
 }

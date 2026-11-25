@@ -12,6 +12,7 @@ public class Frontier {
         ApplicationConfiguration appConfig = new ApplicationConfiguration();
         appConfig.logMode = Logger.LogMode.CONSOLE;
         appConfig.logLevel = Logger.LogLevel.ERROR;
+        appConfig.debugDraw = true;
         // appConfig.logFile = "log.txt";
 
         // TODO: This path is currently a placeholder for while I have Intellij open at the Frontier directory

@@ -23,7 +23,12 @@ public class CollisionDetector {
             result = detectBoxSphere(boxB, sphereA);
 
             if (result != null) {
-                result.getNormal().negate();
+                result = new CollisionResult(
+                    sphereA,
+                    boxB,
+                    new Vector3f(result.getNormal()).negate(),
+                    result.getPenetration()
+                );
             }
         }
 
@@ -68,14 +73,20 @@ public class CollisionDetector {
         }
 
         // Collision confirmed, find penetration amount on each axis
-        float penetrationX = Math.min(maxA.x, maxB.x)
-                - Math.max(minA.x, minB.x);
+        float penetrationX = Math.min(
+                maxA.x - minB.x,
+                maxB.x - minA.x
+        );
 
-        float penetrationY = Math.min(maxA.y, maxB.y)
-                - Math.max(minA.y, minB.y);
+        float penetrationY = Math.min(
+                maxA.y - minB.y,
+                maxB.y - minA.y
+        );
 
-        float penetrationZ = Math.min(maxA.z, maxB.z)
-                - Math.max(minA.z, minB.z);
+        float penetrationZ = Math.min(
+                maxA.z - minB.z,
+                maxB.z - minA.z
+        );
 
         // Find smallest penetration
         float penetration = penetrationX;
