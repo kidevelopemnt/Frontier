@@ -22,7 +22,7 @@ public class RigidBody extends Component {
     }
 
     public void setMass(float mass) {
-        if (!Float.isFinite(mass) || mass <= 0.0f) {
+        if (!Float.isFinite(mass) || mass < 0.0f) {
             throw new IllegalArgumentException(
                     "Rigidbody mass must be finite and greater than zero."
             );

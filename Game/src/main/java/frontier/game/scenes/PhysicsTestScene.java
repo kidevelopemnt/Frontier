@@ -9,6 +9,7 @@ import frontier.engine.ecs.components.LightComponent;
 import frontier.engine.ecs.components.MeshRenderer;
 import frontier.engine.ecs.components.physics.BoxCollider;
 import frontier.engine.ecs.components.physics.RigidBody;
+import frontier.engine.ecs.components.physics.SphereCollider;
 import frontier.engine.events.Event;
 import frontier.engine.events.UpdateEvent;
 import frontier.engine.graphics.lighting.LightType;
@@ -54,19 +55,25 @@ public class PhysicsTestScene {
         createGround();
 
         // Positional correction tests
-        createFallingBoxTest();
-        createBoxStackTest();
-        createUnevenStackTest();
+        // createFallingBoxTest();
+        // createBoxStackTest();
+        // createUnevenStackTest();
 
         // Future collision resolution tests
         // createWallCollisionTest();
         // createMultipleContactTest();
 
         // Restitution tests
-        createNoBounceTest();
-        createFullBounceTest();
-        createDifferentMassBounceTest();
-        createStaticWallTest();
+        // createNoBounceTest();
+        // createFullBounceTest();
+        // createDifferentMassBounceTest();
+        // createStaticWallTest();
+
+        // Sphere-Box Collisions
+        testBoxSphereCorner();
+        testBoxSphereFace();
+        testBoxSphereInside();
+        testBoxSphereNoCollision();
 
         // Future friction tests
         // createFrictionTests();
@@ -309,6 +316,71 @@ public class PhysicsTestScene {
         // TODO: Test the transition between static and dynamic friction.
     }
 
+    // Box-Sphere Collision
+    private void testBoxSphereFace() {
+        createBox(
+                "Face Box",
+                new Vector3f(0, 0, 0),
+                1000.0f, 0.0f, 0.6f, 0.4f,
+                new Vector3f(0, 0, 0)
+        );
+
+        createSphere(
+                "Face Sphere",
+                new Vector3f(0, 1.5f, 0),
+                0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
+                new Vector3f(0, 0, 0)
+        );
+    }
+
+    private void testBoxSphereCorner() {
+        createBox(
+                "Corner Box",
+                new Vector3f(10, 0, 0),
+                1000.0f, 0.0f, 0.6f, 0.4f,
+                new Vector3f(0, 0, 0)
+        );
+
+        createSphere(
+                "Corner Sphere",
+                new Vector3f(11, 1, 0),
+                0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
+                new Vector3f(-2, -2, 0)
+        );
+    }
+
+    private void testBoxSphereInside() {
+        createBox(
+                "Inside Box",
+                new Vector3f(20, 0, 0),
+                1000.0f, 0.0f, 0.6f, 0.4f,
+                new Vector3f(0, 0, 0)
+        );
+
+        createSphere(
+                "Inside Sphere",
+                new Vector3f(20, 0.3f, 0),
+                0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
+                new Vector3f(0, 0, 0)
+        );
+    }
+
+    private void testBoxSphereNoCollision() {
+        createBox(
+                "No Collision Box",
+                new Vector3f(30, 0, 0),
+                1000.0f, 0.0f, 0.6f, 0.4f,
+                new Vector3f(0, 0, 0)
+        );
+
+        createSphere(
+                "No Collision Sphere",
+                new Vector3f(33, 3, 0),
+                0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
+                new Vector3f(0, 0, 0)
+        );
+    }
+
     // --------------------------------------------------
     // ENTITY CREATION
     // --------------------------------------------------
@@ -344,6 +416,47 @@ public class PhysicsTestScene {
         }
 
         meshRenderer.setMaterial(boxMaterial);
+
+        System.out.println(entity.getTransform().position);
+        entity.getTransform().position.set(position);
+        System.out.println(entity.getTransform().position);
+        System.out.println("-----");
+        scene.addEntity(entity);
+
+        return entity;
+    }
+
+    private Entity createSphere(
+            String name,
+            Vector3f position,
+            float radius,
+            float mass,
+            float restitution,
+            float staticFriction,
+            float dynamicFriction,
+            Vector3f velocity
+    ) {
+        Entity entity = new Entity(name, scene);
+
+        MeshRenderer meshRenderer = entity.addComponent(MeshRenderer.class);
+
+        try {
+            meshRenderer.setModel(
+                    engine.getAssets().loadModel("models/sphere.obj")
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        SphereCollider collider = entity.addComponent(SphereCollider.class);
+        collider.setRadius(radius);
+
+        RigidBody rigidBody = entity.addComponent(RigidBody.class);
+        rigidBody.setMass(mass);
+        rigidBody.setRestitution(restitution);
+        rigidBody.setStaticFriction(staticFriction);
+        rigidBody.setDynamicFriction(dynamicFriction);
+        rigidBody.setVelocity(velocity);
 
         entity.getTransform().position.set(position);
         scene.addEntity(entity);
