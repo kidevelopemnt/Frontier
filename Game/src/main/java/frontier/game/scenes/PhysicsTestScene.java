@@ -328,7 +328,7 @@ public class PhysicsTestScene {
         createSphere(
                 "Face Sphere",
                 new Vector3f(10, 2f, 10),
-                0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
+                1f, 1.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
     }
@@ -344,7 +344,7 @@ public class PhysicsTestScene {
         createSphere(
                 "Corner Sphere",
                 new Vector3f(4, 1.5f, 10),
-                0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
+                1f, 1.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(-2, -2, 0)
         );
     }
@@ -360,7 +360,7 @@ public class PhysicsTestScene {
         createSphere(
                 "Inside Sphere",
                 new Vector3f(17, 0.8f, 10),
-                0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
+                1f, 1.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
     }
@@ -376,7 +376,7 @@ public class PhysicsTestScene {
         createSphere(
                 "No Collision Sphere",
                 new Vector3f(27, 3, 10),
-                0.5f, 1.0f, 0.0f, 0.6f, 0.4f,
+                1f, 1.0f, 0.0f, 0.6f, 0.4f,
                 new Vector3f(0, 0, 0)
         );
     }
