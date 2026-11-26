@@ -7,6 +7,7 @@ import frontier.engine.input.Input;
 import frontier.engine.input.InputAction;
 import frontier.engine.input.Key;
 import frontier.engine.input.KeyBinding;
+import frontier.engine.physics.CollisionLayerManager;
 import frontier.engine.physics.Ray;
 import frontier.engine.physics.RaycastHit;
 import frontier.game.input.Actions;
@@ -24,6 +25,7 @@ public class FrontierGame implements IGame {
         engine.getInput().getMouse().setCursorLocked(true);
 
         setupInput();
+        setupCollisionLayers();
 
         // Once I add an editor, the editor will handle creating scenes
         // Once I add an editor, I will use the save/load scene methods instead of this
@@ -40,6 +42,16 @@ public class FrontierGame implements IGame {
         engine.getInput().registerAction(Actions.BACK, new InputAction().addBinding(new KeyBinding(Key.S)));
         engine.getInput().registerAction(Actions.LEFT, new InputAction().addBinding(new KeyBinding(Key.A)));
         engine.getInput().registerAction(Actions.RIGHT, new InputAction().addBinding(new KeyBinding(Key.D)));
+    }
+
+    private void setupCollisionLayers() {
+        CollisionLayerManager layerManager = engine.getPhysics().getCollisionLayers();
+
+        layerManager.addLayer("player");
+        layerManager.addLayer("props");
+        layerManager.setCollision("player", "world", true);
+        layerManager.setCollision("player", "props", true);
+        layerManager.setCollision("props", "world", true);
     }
 
     @Override

@@ -180,6 +180,7 @@ public class PlaygroundScene {
 
         BoxCollider collider = player.addComponent(BoxCollider.class);
         collider.getCenter().set(0, 0.5f, 0);
+        collider.setCollisionLayer("player");
 
         CharacterController cc = player.addComponent(CharacterController.class);
 
@@ -211,7 +212,8 @@ public class PlaygroundScene {
         cube.addComponent(Spinner.class);
 
         BoxCollider boxCollider = cube.addComponent(BoxCollider.class);
-        boxCollider.setTrigger(true);
+        boxCollider.setCollisionLayer("props");
+
         engine.getEventBus().subscribe(boxCollider, OnTriggerEntered.class, this::spinningCubeClicked);
 
         scene.addEntity(cube);
