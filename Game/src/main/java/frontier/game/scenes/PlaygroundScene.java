@@ -10,6 +10,7 @@ import frontier.engine.events.Event;
 import frontier.engine.events.OnTriggerEntered;
 import frontier.engine.events.UpdateEvent;
 import frontier.engine.graphics.lighting.LightType;
+import frontier.engine.input.Key;
 import frontier.engine.scene.Scene;
 import frontier.game.ecs.Spinner;
 import frontier.game.input.Actions;
@@ -32,10 +33,10 @@ public class PlaygroundScene {
 
     public PlaygroundScene(Engine engine) {
         this.engine = engine;
+        scene = engine.createScene("Playground");
     }
 
     public void initialize() {
-        scene = engine.createScene("Playground");
 
         createRendererItems();
         createGround();
@@ -181,8 +182,6 @@ public class PlaygroundScene {
         collider.getCenter().set(0, 0.5f, 0);
 
         CharacterController cc = player.addComponent(CharacterController.class);
-        cc.getMoveDirection().x += 1;
-        cc.setMoveDirection(new Vector3f(1f, 0, 1f));
 
         MeshRenderer playerRenderer =
                 player.addComponent(MeshRenderer.class);
@@ -196,13 +195,16 @@ public class PlaygroundScene {
             throw new RuntimeException(e);
         }
 
-        player.getTransform().position.set(5, 20, 5);
+        player.getTransform().position.set(5, 1, 5);
 
         scene.addEntity(player);
     }
 
     private void createSpinningCube() {
         Entity cube = new Entity("cube", scene);
+        cube.getTransform().position.set(5, 1, 0);
+        cube.getTransform().scale.set(3, 3, 3);
+
         MeshRenderer meshRenderer = cube.addComponent(MeshRenderer.class);
         Model cubeModel = new Model(cubeMesh, cubeMaterial);
         meshRenderer.setModel(cubeModel);

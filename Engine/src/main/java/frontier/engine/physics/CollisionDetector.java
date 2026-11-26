@@ -79,7 +79,7 @@ public class CollisionDetector {
     }
 
     private CollisionResult detectBoxBox(BoxCollider a, BoxCollider b) {
-        // FIXME: This might not support rotated boxes...
+        // FIXME: This does not support rotated boxes...
 
         Vector3f sizeA = a.getWorldSize();
         Vector3f centerA = new Vector3f(a.getEntity().getTransform().getWorldPosition())

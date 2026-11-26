@@ -119,37 +119,4 @@ public class Camera extends Component {
                 10000.0f
         );
     }
-
-    public void move(float amount, Vector3f direction) {
-        Vector3f velocity = direction.mul(amount);
-        entity.getTransform().position.add(velocity);
-    }
-
-    public void moveForward(float amount) {
-        getEntity().getTransform().position.add(entity.getTransform().getForward().mul(amount));
-    }
-
-    public void moveBackward(float amount) {
-        getEntity().getTransform().position.sub(entity.getTransform().getForward().mul(amount));
-    }
-
-    public void moveRight(float amount) {
-        entity.getTransform().position.add(
-                entity.getTransform().getRight().mul(amount)
-        );
-    }
-
-    public void moveLeft(float amount) {
-        getEntity().getTransform().position.sub(
-                entity.getTransform().getRight().mul(amount)
-        );
-    }
-
-    public void moveUp(float amount) {
-        getEntity().getTransform().position.add(entity.getTransform().getUp().mul(amount));
-    }
-
-    public void moveDown(float amount) {
-        getEntity().getTransform().position.sub(entity.getTransform().getUp().mul(amount));
-    }
 }

@@ -12,7 +12,7 @@ import java.util.Map;
 public class CameraController extends Component {
     private float sensitivity = 5f;
 
-    private float pitch = 20f;
+    private float pitch = -20f;
 
     private float distance = 10f;
 

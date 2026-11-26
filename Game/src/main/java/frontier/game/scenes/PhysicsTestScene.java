@@ -465,10 +465,7 @@ public class PhysicsTestScene {
 
         meshRenderer.setMaterial(boxMaterial);
 
-        System.out.println(entity.getTransform().position);
         entity.getTransform().position.set(position);
-        System.out.println(entity.getTransform().position);
-        System.out.println("-----");
         scene.addEntity(entity);
 
         return entity;

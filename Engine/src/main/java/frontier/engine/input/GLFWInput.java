@@ -75,6 +75,18 @@ public class GLFWInput {
         keyMapping.put(Key.RIGHT_ALT, GLFW.GLFW_KEY_RIGHT_ALT);
 
         keyMapping.put(Key.ESCAPE, GLFW.GLFW_KEY_ESCAPE);
+        keyMapping.put(Key.F1, GLFW.GLFW_KEY_F1);
+        keyMapping.put(Key.F2, GLFW.GLFW_KEY_F2);
+        keyMapping.put(Key.F3, GLFW.GLFW_KEY_F3);
+        keyMapping.put(Key.F4, GLFW.GLFW_KEY_F4);
+        keyMapping.put(Key.F5, GLFW.GLFW_KEY_F5);
+        keyMapping.put(Key.F6, GLFW.GLFW_KEY_F6);
+        keyMapping.put(Key.F7, GLFW.GLFW_KEY_F7);
+        keyMapping.put(Key.F8, GLFW.GLFW_KEY_F8);
+        keyMapping.put(Key.F9, GLFW.GLFW_KEY_F9);
+        keyMapping.put(Key.F10, GLFW.GLFW_KEY_F10);
+        keyMapping.put(Key.F11, GLFW.GLFW_KEY_F11);
+        keyMapping.put(Key.F12, GLFW.GLFW_KEY_F12);
 
         keyMapping.put(Key.UP, GLFW.GLFW_KEY_UP);
         keyMapping.put(Key.DOWN, GLFW.GLFW_KEY_DOWN);
