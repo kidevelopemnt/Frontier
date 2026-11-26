@@ -3,16 +3,12 @@ package frontier.engine.physics;
 import frontier.engine.Engine;
 import frontier.engine.ecs.Entity;
 import frontier.engine.ecs.components.physics.*;
-import frontier.engine.events.Event;
-import frontier.engine.events.OnCollisionEntered;
-import frontier.engine.events.OnTriggerEntered;
+import frontier.engine.events.*;
 import frontier.engine.graphics.DebugRenderer;
 import frontier.engine.scene.Scene;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Physics {
     private final Engine engine;
@@ -22,7 +18,10 @@ public class Physics {
     private Scene scene;
 
     private final Vector3f gravity = new Vector3f(0f, -9.81f, 0f);
+
     private final List<CollisionResult> collisions = new ArrayList<>();
+    private final Map<CollisionPair, CollisionResult> previousCollisionPairs = new HashMap<>();  // true represents trigger, false represents collision
+    private final Map<CollisionPair, CollisionResult> currentCollisionPairs = new HashMap<>();
 
     private static final float FIXED_TIME_STEP = 1.0f / 60.0f;
     private static final float PENETRATION_SLOP = 0.01f;  // Avoid correcting for floating point errors
@@ -117,9 +116,14 @@ public class Physics {
 
         // Detect Collisions
         collisions.clear();
+        currentCollisionPairs.clear();
         List<Collider> colliders = new ArrayList<>();
 
         for (Entity entity : scene.getEntities()) {
+            if (!entity.isEnabled()) {
+                continue;
+            }
+
             Collider collider = entity.getCollider();
 
             if (collider != null) {
@@ -144,16 +148,35 @@ public class Physics {
                     Entity entityA = result.getColliderA().getEntity();
                     Entity entityB = result.getColliderB().getEntity();
 
+                    CollisionPair pair = new CollisionPair(a, b);
+                    CollisionResult previousResult = previousCollisionPairs.get(pair);
+
+                    if (previousResult == null) {
+                        if (result.isTrigger()) {
+                            engine.getEventBus().trigger(entityA, OnTriggerEntered.class, result);
+                            engine.getEventBus().trigger(entityB, OnTriggerEntered.class, result);
+                        } else {
+                            engine.getEventBus().trigger(entityA, OnCollisionEntered.class, result);
+                            engine.getEventBus().trigger(entityB, OnCollisionEntered.class, result);
+                        }
+                    }
+                    else if (previousResult.isTrigger() != result.isTrigger()) {
+                        // The pair changed between trigger and normal collision
+
+                        engine.getEventBus().trigger(entityA, OnTriggerExited.class, result);
+                        engine.getEventBus().trigger(entityB, OnTriggerExited.class, result);
+
+                        engine.getEventBus().trigger(entityA, OnCollisionEntered.class, result);
+                        engine.getEventBus().trigger(entityB, OnCollisionEntered.class, result);
+                    }
+
+                    currentCollisionPairs.put(pair, result);
+
                     if (result.isTrigger()) {
-                        engine.getEventBus().trigger(entityA, OnTriggerEntered.class, result);
-                        engine.getEventBus().trigger(entityB, OnTriggerEntered.class, result);
                         continue;
                     }
 
                     // Only apply physics if it is not a trigger collision
-                    engine.getEventBus().trigger(entityA, OnCollisionEntered.class, result);
-                    engine.getEventBus().trigger(entityB, OnCollisionEntered.class, result);
-
                     boolean characterA = entityA.hasComponent(CharacterController.class);
                     boolean characterB = entityB.hasComponent(CharacterController.class);
 
@@ -165,6 +188,24 @@ public class Physics {
                 }
             }
         }
+
+        for (Map.Entry<CollisionPair, CollisionResult> entry
+                : previousCollisionPairs.entrySet()) {
+
+            if (!currentCollisionPairs.containsKey(entry.getKey())) {
+                if (entry.getValue().isTrigger()) {
+                    engine.getEventBus().trigger(entry.getValue().getColliderA().getEntity(), OnTriggerExited.class, entry.getValue());
+                    engine.getEventBus().trigger(entry.getValue().getColliderB().getEntity(), OnTriggerExited.class, entry.getValue());
+                } else {
+                    engine.getEventBus().trigger(entry.getValue().getColliderA().getEntity(), OnCollisionExited.class, entry.getValue());
+                    engine.getEventBus().trigger(entry.getValue().getColliderB().getEntity(), OnCollisionExited.class, entry.getValue());
+                }
+            }
+        }
+
+        previousCollisionPairs.clear();
+        previousCollisionPairs.putAll(currentCollisionPairs);
+        currentCollisionPairs.clear();
     }
 
     private boolean canCollide(Collider a, Collider b) {
@@ -439,6 +480,11 @@ public class Physics {
     }
 
     public void setScene(Scene scene) {
+        if (this.scene != scene) {
+            previousCollisionPairs.clear();
+            currentCollisionPairs.clear();
+        }
+
         this.scene = scene;
     }
 
