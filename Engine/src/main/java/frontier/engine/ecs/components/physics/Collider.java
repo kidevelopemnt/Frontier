@@ -11,6 +11,7 @@ public abstract class Collider extends Component {
     protected Vector3f center = new Vector3f(0, 0, 0);
 
     protected boolean isTrigger = false;
+    private String collisionLayer = "world";
 
     public abstract RaycastHit raycast(
         Vector3f origin,
@@ -33,6 +34,25 @@ public abstract class Collider extends Component {
     public Vector3f getWorldSize() {
         return new Vector3f(size)
                 .mul(entity.getTransform().scale);
+    }
+
+    public void setCollisionLayer(String layerName) {
+        if (getEngine().getPhysics().getCollisionLayers().layerExists(layerName)) {
+            collisionLayer = layerName;
+        } else {
+            throw new IllegalArgumentException("Layer not found: " + layerName);
+        }
+    }
+
+    public int getCollisionMask() {
+        return getEngine()
+                .getPhysics()
+                .getCollisionLayers()
+                .getCollisionMask(collisionLayer);
+    }
+
+    public String getCollisionLayer() {
+        return collisionLayer;
     }
 
     @Override

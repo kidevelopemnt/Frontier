@@ -11,6 +11,12 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class CollisionDetector {
+    private final CollisionLayerManager collisionLayers;
+
+    public CollisionDetector(CollisionLayerManager collisionLayerManager) {
+        this.collisionLayers = collisionLayerManager;
+    }
+
     public CollisionResult detect(Collider a, Collider b) {
         CollisionResult result = null;
 

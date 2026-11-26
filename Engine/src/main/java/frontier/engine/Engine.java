@@ -44,6 +44,7 @@ public class Engine {
         eventBus = new EventBus();
         input = new Input(this, application.getMainWindow());
         logger = new Logger();
+        physics = new Physics(this);
         renderer = new Renderer();
         sceneRenderer = new SceneRenderer(renderer);
         sceneSerializer = new SceneSerializer(this);
@@ -63,7 +64,7 @@ public class Engine {
 
     public void setActiveScene(Scene scene) {
         activeScene = scene;
-        physics = new Physics(this, activeScene);
+        physics.setScene(scene);
     }
 
     public void loadScene(String filepath) {

@@ -17,6 +17,7 @@ import java.util.List;
 public class Physics {
     private final Engine engine;
     private final CollisionDetector collisionDetector;
+    private final CollisionLayerManager collisionLayers;
 
     private Scene scene;
 
@@ -32,11 +33,11 @@ public class Physics {
 
     private boolean doPhysics = true;
 
-    public Physics(Engine engine, Scene scene) {
+    public Physics(Engine engine) {
         this.engine = engine;
-        this.scene = scene;
 
-        collisionDetector = new CollisionDetector();
+        collisionLayers = new CollisionLayerManager();
+        collisionDetector = new CollisionDetector(collisionLayers);
     }
 
     public void update(float deltaTime) {
@@ -50,7 +51,7 @@ public class Physics {
     }
 
     private void simulate(float deltaTime) {
-        if (!doPhysics) {
+        if (!doPhysics || scene == null) {
             return;
         }
 
@@ -131,6 +132,10 @@ public class Physics {
                 Collider a = colliders.get(i);
                 Collider b = colliders.get(j);
 
+                if (!canCollide(a, b)) {
+                    continue;
+                }
+
                 CollisionResult result = collisionDetector.detect(a, b);
 
                 if (result != null) {
@@ -160,6 +165,16 @@ public class Physics {
                 }
             }
         }
+    }
+
+    private boolean canCollide(Collider a, Collider b) {
+        int maskA = collisionLayers.getCollisionMask(a.getCollisionLayer());
+        int maskB = collisionLayers.getCollisionMask(b.getCollisionLayer());
+
+        int layerA = collisionLayers.getLayerMask(a.getCollisionLayer());
+        int layerB = collisionLayers.getLayerMask(b.getCollisionLayer());
+
+        return (maskA & layerB) != 0 && (maskB & layerA) != 0;
     }
 
     private void resolveCollision(CollisionResult collision) {
@@ -317,6 +332,8 @@ public class Physics {
     }
 
     private void savePreviousTransforms() {
+        if (scene == null) { return; }
+
         for (Entity entity : scene.getEntities()) {
             if (!entity.isEnabled()) {
                 continue;
@@ -358,16 +375,17 @@ public class Physics {
     }
 
     public RaycastHit raycast(Ray ray) {
+        if (scene == null) { return null; }
+
         RaycastHit closestHit = null;
 
-        /*
-        // DEBUG: Draw  TODO: Add DebugMode flag or toggle
-        DebugRenderer.drawRay(
-                ray.getOrigin(),
-                ray.getDirection(),
-                ray.getDistance()
-        );
-        */
+        if (scene.getEngine().getApp().getConfig().debugDraw) {
+            DebugRenderer.drawRay(
+                    ray.getOrigin(),
+                    ray.getDirection(),
+                    ray.getDistance()
+            );
+        }
 
         for (Entity entity : scene.getEntities()) {
             Collider collider = entity.getCollider();
@@ -418,5 +436,13 @@ public class Physics {
 
     public void setDoPhysics(boolean doPhysics) {
         this.doPhysics = doPhysics;
+    }
+
+    public void setScene(Scene scene) {
+        this.scene = scene;
+    }
+
+    public CollisionLayerManager getCollisionLayers() {
+        return collisionLayers;
     }
 }
